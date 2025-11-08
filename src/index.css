@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* Add custom CSS from here if needed */
+/* Global CSS addition for smooth scrolling (add to your index.css or global styles) */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Ensure body doesn't interfere with smooth scroll */
+body {
+  overscroll-behavior: none; /* Prevents rubber-banding on mobile */
+}
+
