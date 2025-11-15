@@ -11,3 +11,21 @@ body {
   overscroll-behavior: none; /* Prevents rubber-banding on mobile */
 }
 
+.igbo-font {
+  font-family: "Cinzel", serif;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+/* .clay-shadow {
+  box-shadow: inset 8px 8px 16px rgba(0,0,0,0.5),
+              inset -8px -8px 16px rgba(255,255,255,0.05),
+              0 6px 20px rgba(0,0,0,0.6);
+}
+
+.banner-animate:hover {
+  transform: scale(1.02);
+  transition: 0.25s ease;
+} */
+
+

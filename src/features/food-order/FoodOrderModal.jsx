@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { FaPlus, FaMinus, FaTimes } from "react-icons/fa";
+import { FaPlus, FaMinus, FaTimes, FaWhatsapp } from "react-icons/fa";
 import { createPortal } from "react-dom";
 
 const foodMenu = [
@@ -14,6 +14,14 @@ const foodMenu = [
   { id: 8, name: "Craft Cocktails", price: 2200, desc: "Signature Mbaise-inspired drinks" },
 ];
 
+const BANK_DETAILS = {
+  accountName: "JUST FRIENDS INVESTMENT LTD",
+  accountNumber: "3001586851",
+  bankName: "GUARANTY TRUST BANK",
+};
+
+const WHATSAPP_NUMBER = "+447848149416";
+
 export const FoodOrderModal = ({
   isOpen,
   close,
@@ -23,12 +31,53 @@ export const FoodOrderModal = ({
   getTotal,
   customerInfo,
   setCustomerInfo,
-  handlePayment,
-  isPaying,
-  paymentSuccess,
   deliveryFee,
 }) => {
   if (!isOpen) return null;
+
+  const handleWhatsAppPayment = () => {
+    if (!customerInfo.email || cart.length === 0) {
+      alert('Please fill in your details and add items to cart.');
+      return;
+    }
+
+    const orderSummary = cart.map(item => `${item.name} (x${item.quantity}) - ₦${(item.price * item.quantity).toLocaleString()}`).join('\n');
+    const totalAmount = getTotal() + deliveryFee;
+    const message = encodeURIComponent(
+      `🌟 Friends' Lounge Mbaise Order 🌟
+
+Making Friends and Building Communities – Your Order Awaits!
+
+📋 **Order Summary:**
+${orderSummary}
+
+💰 **Subtotal:** ₦${getTotal().toLocaleString()}
+🚚 **Delivery Fee:** ₦${deliveryFee.toLocaleString()}
+💎 **Grand Total:** ₦${totalAmount.toLocaleString()}
+
+👤 **Customer Details:**
+Name: ${customerInfo.name || 'N/A'}
+Phone: ${customerInfo.phone || 'N/A'}
+Email: ${customerInfo.email}
+Address: ${customerInfo.address || 'N/A'}
+Notes: ${customerInfo.notes || 'N/A'}
+
+🏦 **Bank Transfer Instructions:**
+1. Transfer ₦${totalAmount.toLocaleString()} to:
+   - Account Name: ${BANK_DETAILS.accountName}
+   - Account No: ${BANK_DETAILS.accountNumber}
+   - Bank: ${BANK_DETAILS.bankName}
+
+2. Send payment evidence (screenshot/transfer ref) for instant order confirmation & rider dispatch from Udo kitchen (45 mins delivery).
+
+We're thrilled to serve you! Reply 'PAID' once transferred.
+
+Tagline: Friends' Lounge – Making friends and building communities 🍲✨`
+    );
+
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+    close(); // Close modal after opening WhatsApp
+  };
 
   return createPortal(
     <>
@@ -38,7 +87,7 @@ export const FoodOrderModal = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.18 }}
-        className="fixed inset-0 z-[1000] flex items-center justify-center p-4 overflow-y-auto bg-black/70 backdrop-blur-sm"
+        className="fixed inset-0 z-[1000] flex items-center justify-center p-2 md:p-4 overflow-y-auto"
         onClick={close}
       />
 
@@ -54,15 +103,15 @@ export const FoodOrderModal = ({
           mass: 0.8,
           duration: 0.22
         }}
-        className="fixed top-1/2 left-1/2 max-w-md w-full -translate-x-1/2 -translate-y-1/2 
+        className="fixed top-1/2 left-1/2 max-w-[90vw] w-full md:max-w-md -translate-x-1/2 -translate-y-1/2 
                    bg-white/20 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/25 
-                   p-6 max-h-[90vh] overflow-y-auto z-[1001] scrollbar-thin"
+                   p-4 md:p-6 max-h-[85vh] md:max-h-[90vh] overflow-y-auto z-[1001] scrollbar-thin"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={close}
-          className="absolute top-4 right-4 text-white/60 hover:text-white text-xl z-10 transition-colors"
+          className="absolute top-3 right-3 text-white/60 hover:text-white text-xl z-10 transition-colors"
           aria-label="Close modal"
         >
           <FaTimes />
@@ -133,61 +182,48 @@ export const FoodOrderModal = ({
                 placeholder="Full Name"
                 value={customerInfo.name}
                 onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                className="w-full bg-white/25 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
+                className="w-full bg-white/25 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-black/40 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
               />
               <input
                 placeholder="Phone"
                 value={customerInfo.phone}
                 onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                className="w-full bg-white/25 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
+                className="w-full bg-white/25 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-black/40 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
               />
               <input
                 placeholder="Email (required)"
                 type="email"
                 value={customerInfo.email}
                 onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
-                className="w-full bg-white/25 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
+                className="w-full bg-white/25 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-black/40 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
               />
               <textarea
                 placeholder="Delivery Address"
                 value={customerInfo.address}
                 onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
-                className="w-full bg-white/25 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 h-20 resize-none transition-all"
+                className="w-full bg-white/25 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-black/40 focus:outline-none focus:ring-2 focus:ring-red-500 h-20 resize-none transition-all"
               />
               <textarea
                 placeholder="Notes (e.g., Okada pickup)"
                 value={customerInfo.notes}
                 onChange={(e) => setCustomerInfo({ ...customerInfo, notes: e.target.value })}
-                className="w-full bg-white/25 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 h-16 resize-none transition-all"
+                className="w-full bg-white/25 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-black/40 focus:outline-none focus:ring-2 focus:ring-red-500 h-16 resize-none transition-all"
               />
             </div>
 
-            {/* Pay Button */}
+            {/* Pay Button — Bank Transfer + WhatsApp */}
             <button
-              onClick={handlePayment}
-              disabled={isPaying || !customerInfo.email || cart.length === 0}
-              className={`w-full mt-5 py-3 rounded-xl font-bold text-white transition-all ${
-                isPaying || !customerInfo.email || cart.length === 0
+              onClick={handleWhatsAppPayment}
+              disabled={!customerInfo.email || cart.length === 0}
+              className={`w-full mt-5 py-3 rounded-xl font-bold text-white transition-all flex items-center justify-center gap-2 ${
+                !customerInfo.email || cart.length === 0
                   ? "bg-gray-600 cursor-not-allowed"
-                  : "bg-red-600 hover:bg-red-700"
+                  : "bg-green-600 hover:bg-green-700"
               }`}
             >
-              {isPaying ? "Processing..." : `Pay ₦${getTotal().toLocaleString()} via Paystack`}
+              <FaWhatsapp className="text-white" />
+              Proceed to Payment
             </button>
-
-            {/* Success Message */}
-            {paymentSuccess && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="mt-4 p-4 bg-green-900/30 border border-green-500 rounded-xl text-green-300 text-center text-sm"
-              >
-                <p className="font-bold">Order Confirmed!</p>
-                <p>Rider dispatched from Achingali/Okada network.</p>
-                <p className="mt-1">We’ll call {customerInfo.phone || "you"}.</p>
-              </motion.div>
-            )}
           </div>
         )}
       </motion.div>

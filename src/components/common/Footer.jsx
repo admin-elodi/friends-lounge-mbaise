@@ -7,6 +7,7 @@ import {
   FaEnvelope,
   FaMotorcycle,
   FaConciergeBell,
+  FaFacebookF,
 } from "react-icons/fa";
 import { Instagram } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
@@ -39,9 +40,9 @@ const Card = ({ children, className = "" }) => (
   </motion.div>
 );
 
+// Only Udo Day & Heritage Food Fair
 const events = [
   { title: "Udo Day 2025", date: "Dec 26 • Nkwo Udo", highlight: "₦1M Sponsor for Unity", desc: "Celebrate culture, food, and community." },
-  { title: "Live Jazz Nights", date: "Every Friday", highlight: "Sunset Sessions", desc: "Smooth sounds, craft cocktails." },
   { title: "Heritage Food Fair", date: "Monthly", highlight: "Taste of Mbaise", desc: "Curated local dishes." },
 ];
 
@@ -53,6 +54,12 @@ const Footer = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [isBooking, setIsBooking] = useState(false);
   const [booked, setBooked] = useState(false);
+
+  // UDO DAY COUNTDOWN
+  const [daysLeft, setDaysLeft] = useState(0);
+  const [hoursLeft, setHoursLeft] = useState(0);
+  const [minutesLeft, setMinutesLeft] = useState(0);
+  const [secondsLeft, setSecondsLeft] = useState(0);
 
   const {
     isOpen: foodModalOpen,
@@ -70,11 +77,26 @@ const Footer = () => {
     deliveryFee
   } = useFoodOrder();
 
+  // Event carousel
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentEvent((prev) => (prev + 1) % events.length);
     }, 4000);
     return () => clearInterval(interval);
+  }, []);
+
+  // UDO DAY COUNTDOWN
+  useEffect(() => {
+    const target = new Date("December 26, 2025 00:00:00").getTime();
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const difference = target - now;
+      setDaysLeft(Math.max(0, Math.ceil(difference / (1000 * 60 * 60 * 24))));
+      setHoursLeft(Math.max(0, Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))));
+      setMinutesLeft(Math.max(0, Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))));
+      setSecondsLeft(Math.max(0, Math.floor((difference % (1000 * 60)) / 1000)));
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
 
   const openModal = () => setModalOpen(true);
@@ -111,14 +133,15 @@ const Footer = () => {
       </span>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-12 relative z-10">
-        {/* tightened mobile grid spacing */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
-          {/* EVENTS */}
+          {/* EVENTS — WITH "BOOK YOUR EVENT" BUTTON */}
           <Card className="flex flex-col justify-between w-full">
             <div>
               <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
                 Events
               </motion.h3>
+
+              {/* EVENT SLIDER — ONLY UDO DAY & HERITAGE */}
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-4">
                 <div className="relative h-36 overflow-hidden rounded-xl bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-white/10">
                   <AnimatePresence mode="wait">
@@ -150,15 +173,27 @@ const Footer = () => {
                     />
                   ))}
                 </div>
+
+                {/* BOOK YOUR EVENT BUTTON — MINIMALIST & IRRESISTIBLE */}
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="mt-6 w-full py-3 rounded-xl bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md border border-white/20 text-white font-medium text-sm tracking-wider hover:from-white/20 hover:to-white/10 transition-all duration-300 shadow-lg"
+                >
+                  Book Your Event
+                </motion.button>
               </motion.div>
             </div>
 
+            {/* SOCIAL ICONS — NOW WITH FACEBOOK */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex space-x-6 justify-center mt-4">
-              {[{ Icon: FaXTwitter, label: "X", hover: "hover:bg-[#1DA1F2]" },
-                { Icon: SiTiktok, label: "TikTok", hover: "hover:bg-gradient-to-br hover:from-black hover:to-red-700" },
-                { Icon: Instagram, label: "Instagram", hover: "hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#e6683c] hover:via-[#dc2743] hover:via-[#cc2366] hover:to-[#bc1888]" }
-              ].map(({ Icon, label, hover }, i) => (
-                <a key={i} href="#" className="flex flex-col items-center group" aria-label={label}>
+              {[
+                { Icon: FaXTwitter, label: "X", href: "#", hover: "hover:bg-[#1DA1F2]" },
+                { Icon: SiTiktok, label: "TikTok", href: "#", hover: "hover:bg-gradient-to-br hover:from-black hover:to-red-700" },
+                { Icon: FaFacebookF, label: "Facebook", href: "https://web.facebook.com/people/Zee-Zee/pfbid0C7TdxjCogbks77mvKJJWcDR7YrKVyYSAPrGKTBUQ4zoWhejJGYmMUE4Vpd834QBBl/?rdid=89XeiBOaKoJlWFYt&share_url=https%3A%2F%2Fweb.facebook.com%2Fshare%2F1KVjpEjku6%2F%3F_rdc%3D1%26_rdr", hover: "hover:bg-[#1877F2]" },
+                { Icon: Instagram, label: "Instagram", href: "https://www.instagram.com/friends_lounge_udo/", hover: "hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#e6683c] hover:via-[#dc2743] hover:via-[#cc2366] hover:to-[#bc1888]" }
+              ].map(({ Icon, label, href, hover }, i) => (
+                <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group" aria-label={label}>
                   <div className={`transform hover:scale-110 transition-all duration-300 rounded-full flex items-center justify-center w-12 h-12 border-2 border-white/30 bg-transparent text-white shadow-md hover:shadow-lg hover:border-opacity-0 ${hover}`}>
                     <Icon className="text-xl" />
                   </div>
@@ -168,7 +203,7 @@ const Footer = () => {
             </motion.div>
           </Card>
 
-          {/* SPECIAL SERVICES + AD */}
+          {/* SPECIAL SERVICES + UDO DAY 2025 AD CARD */}
           <Card className="w-full">
             <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
               Special Services
@@ -200,22 +235,56 @@ const Footer = () => {
                 </div>
               </DropdownCard>
 
-              {/* AD SPACE */}
-              <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.4 }} className="relative mt-4 p-6 rounded-2xl border border-white/10 bg-gray-800/20 backdrop-blur-sm hover:border-red-500/30 hover:bg-gray-800/40 transition-all duration-300">
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-red-900/10 via-transparent to-transparent opacity-30 pointer-events-none"></div>
-                <div className="text-center space-y-2">
-                  <p className="text-sm text-gray-400 tracking-wide">Sponsored Space</p>
-                  <h4 className="text-white font-semibold text-lg">Showcase Your Brand Here</h4>
-                  <p className="text-sm text-gray-500 italic">Reach thousands of visitors monthly</p>
-                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} className="mt-3 px-4 py-1.5 rounded-full border border-red-500/40 text-xs text-red-400 hover:bg-red-500/10 transition-all">
-                    Sponsor This Space
+              {/* UDO DAY 2025 AD CARD */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="relative mt-6 p-6 bg-gradient-to-br from-green-900/40 via-black/60 to-green-800/40 backdrop-blur-md border-t-2 border-b-2 border-white shadow-lg overflow-hidden group cursor-pointer"
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60"></div>
+                <div className="relative z-10 text-center space-y-2">
+                  <p className="text-xs uppercase tracking-widest text-green-300 font-light">Friends' Ad - Amplify Your Brand</p>
+                  <h3 className="text-2xl font-bold text-green-400 tracking-widest animate-softPulse">
+                    UDO DAY 2025
+                  </h3>
+                  <p className="text-xs text-gray-200 italic">A Celebration of Peace • Culture • Unity</p>
+                  <p className="text-xs text-gray-300">26th December • Nkwo Udo</p>
+
+                  {/* Countdown */}
+                  <div className="flex justify-center gap-1 text-xs font-mono text-green-400 mt-2">
+                    <span>{daysLeft}d</span>
+                    <span>{hoursLeft.toString().padStart(2, '0')}h</span>
+                    <span>{minutesLeft.toString().padStart(2, '0')}m</span>
+                    <span>{secondsLeft.toString().padStart(2, '0')}s</span>
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="mt-3 px-5 py-2 rounded-full bg-green-500 text-white text-xs font-bold tracking-wider hover:bg-green-400 transition-all shadow-lg"
+                  >
+                    Join the Vision
                   </motion.button>
+                </div>
+
+                {/* Floating particles */}
+                <div className="absolute inset-0 pointer-events-none">
+                  {[...Array(6)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute w-1 h-1 bg-green-400 rounded-full opacity-60 animate-float"
+                      style={{
+                        top: `${20 + i * 15}%`,
+                        left: `${10 + i * 12}%`,
+                        animationDelay: `${i * 0.5}s`,
+                      }}
+                    />
+                  ))}
                 </div>
               </motion.div>
             </motion.div>
           </Card>
 
-          {/* CONTACT */}
+          {/* CONTACT + QUICK LINKS */}
           <Card className="w-full">
             <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
               Connect
@@ -224,13 +293,13 @@ const Footer = () => {
               <div className="flex items-start space-x-3 w-full">
                 <FaMapMarkerAlt className="text-xl text-red-600 mt-1 flex-shrink-0" />
                 <p className="text-left leading-relaxed">
-                  Friends' House • Donameche Crescent Umuofor Udo • Ezinihitte LGA Mbaise • Imo State
+                  Friends' Lounge • Donameche Crescent Umuofor Udo • Ezinihitte LGA Mbaise • Imo State
                 </p>
               </div>
               <div className="flex items-center space-x-3">
                 <FaPhoneAlt className="text-xl text-red-600 flex-shrink-0" />
                 <a href="tel:+447848149416" className="hover:text-red-500 transition-colors">
-                  +44 7848 149416
+                  07066064379
                 </a>
               </div>
               <div className="flex items-center space-x-3">
@@ -250,6 +319,17 @@ const Footer = () => {
               >
                 View Location on Google Maps
               </motion.a>
+
+              {/* QUICK LINKS */}
+              <div className="w-full mt-6 pt-4 border-t border-white/10">
+                <p className="text-xs text-gray-400 mb-2 font-medium">Explore</p>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <a href="/friends" className="text-gray-300 hover:text-white transition">Friends</a>
+                  <a href="/events" className="text-gray-300 hover:text-white transition">Events</a>
+                  <a href="/community" className="text-gray-300 hover:text-white transition">Community</a>
+                  <a href="/projects" className="text-gray-300 hover:text-white transition">Projects</a>
+                </div>
+              </div>
             </motion.div>
           </Card>
         </div>
@@ -260,18 +340,15 @@ const Footer = () => {
             © {new Date().getFullYear()} Friends’ Lounge Mbaise — All Rights Reserved.
           </p>
           <div className="relative flex flex-col items-center justify-center mt-8 space-y-2">
-            <div className="relative flex flex-col items-center justify-center">
-              <motion.h3
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
-                className="text-lg md:text-[13px] font-black text-white tracking-widest drop-shadow-lg"
-                style={{ textShadow: "0 0 10px rgba(220,38,38,0.8), 0 0 20px rgba(220,38,38,0.6)" }}
-              >
-                Making Friends and Building Communities
-              </motion.h3>
-              
-            </div>
+            <motion.h3
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
+              className="text-lg md:text-[13px] font-black text-white tracking-widest drop-shadow-lg"
+              style={{ textShadow: "0 0 10px rgba(220,38,38,0.8), 0 0 20px rgba(220,38,38,0.6)" }}
+            >
+              Making Friends and Building Communities
+            </motion.h3>
           </div>
         </motion.div>
       </div>
@@ -308,12 +385,30 @@ const Footer = () => {
       />
 
       <style jsx>{`
-        @keyframes thrust { 0%, 100% { transform: translateX(-50%) scaleY(1); opacity: 0.2; } 50% { transform: translateX(-50%) scaleY(1.1); opacity: 0.3; } }
+        @keyframes thrust { 
+          0%, 100% { transform: translateX(-50%) scaleY(1); opacity: 0.2; } 
+          50% { transform: translateX(-50%) scaleY(1.1); opacity: 0.3; } 
+        }
         .animate-thrust { animation: thrust 8s ease-in-out infinite; }
-        @keyframes glow { 0%, 100% { opacity: 0.6; box-shadow: 0 0 10px rgba(220,38,38,0.3); } 50% { opacity: 1; box-shadow: 0 0 20px rgba(220,38,38,0.6); } }
-        .animate-glow { animation: glow 4s ease-in-out infinite; }
-        @keyframes glowText { 0%, 100% { text-shadow: 0 0 5px rgba(255,255,255,0.05); } 50% { text-shadow: 0 0 15px rgba(255,255,255,0.08); } }
+
+        @keyframes glowText { 
+          0%, 100% { text-shadow: 0 0 5px rgba(255,255,255,0.05); } 
+          50% { text-shadow: 0 0 15px rgba(255,255,255,0.08); } 
+        }
         .animate-glowText { animation: glowText 5s ease-in-out infinite; }
+
+        @keyframes softPulse { 
+          0%, 100% { text-shadow: 0 0 8px rgba(0,255,0,0.4); } 
+          50% { text-shadow: 0 0 14px rgba(0,255,0,0.8); } 
+        }
+        .animate-softPulse { animation: softPulse 4s infinite; }
+
+        @keyframes float { 
+          0% { transform: translateY(0); } 
+          50% { transform: translateY(-10px); } 
+          100% { transform: translateY(0); } 
+        }
+        .animate-float { animation: float 3s ease-in-out infinite; }
       `}</style>
     </footer>
   );

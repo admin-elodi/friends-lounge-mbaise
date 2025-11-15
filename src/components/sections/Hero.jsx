@@ -124,7 +124,7 @@ const Hero = () => {
 
   return (
     <section
-      className="relative w-full overflow-hidden border-b border-black"
+      className="relative w-full overflow-hidden border-b border-black"  // Removed mt-60 to eliminate gap
       style={{ height: `calc(${vh * 100}px)` }}
     >
       <div className="absolute inset-0">

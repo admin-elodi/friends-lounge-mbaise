@@ -109,3 +109,7 @@ Just reply with your goal, for example:
 I’ll give you clean, production-ready code with explanations.
 
 Your move!
+
+TO TERMINATE A PROCESS, RUN: netstat -ano | findstr :5173
+
+http://10.160.124.49:5175

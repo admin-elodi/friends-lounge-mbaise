@@ -1,20 +1,20 @@
 // src/components/common/Header.jsx
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { Menu, X, Search } from "lucide-react";
-import logo from "@/assets/images/friends-logo.webp";
-import { useFoodOrder, FoodOrderModal } from "@/features/food-order";   // <-- NEW
+import Logo from "@/assets/images/friends-logo.webp";
+import Banner from "@/components/sections/Banner";
 
-const Header = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isScrolling, setIsScrolling] = useState(false);
+// ✅ Import Food Order Modal hook
+import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 
-  // ---------- FOOD ORDER HOOK ----------
+export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // ✅ FOOD ORDER HOOK (connected to modal)
   const {
-    isOpen,
-    open,
-    close,
+    isOpen: foodModalOpen,
+    open: openFoodOrder,
+    close: closeFoodOrder,
     cart,
     addToCart,
     updateQuantity,
@@ -27,190 +27,119 @@ const Header = () => {
     deliveryFee
   } = useFoodOrder();
 
-  const handleSearch = () => {
-    console.log("Searching for:", searchQuery);
-    setSearchOpen(false);
-  };
-
-  // ---- SCROLL DETECTION ----
-  useEffect(() => {
-    let rafId;
-    let timeoutId;
-
-    const onScroll = () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        setIsScrolling(true);
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => setIsScrolling(false), 150);
-      });
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      clearTimeout(timeoutId);
-      cancelAnimationFrame(rafId);
-    };
-  }, []);
-
-  // ✅ Close dropdown when user opens modal or performs key action
-  const handleOrderFood = () => {
-    setMenuOpen(false); // close dropdown
-    open(); // open food order modal
-  };
-
-  const handleBookEvent = () => {
-    setMenuOpen(false); // close dropdown
-    // future event booking logic can go here
-  };
+  // TIMESTAMP (NO CHANGE)
+  const now = new Date();
+  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const formattedDate = `${dayNames[now.getDay()]}, ${monthNames[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  const time = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  const timestamp = `${formattedDate} at ${time} WAT`;
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 w-full z-50 flex justify-between items-center sm:px-4 py-4
-      text-white transition-all duration-300 ease-out will-change-transform ${
-        isScrolling ? "bg-black/90 shadow-lg" : "bg-transparent"
-      }`}
-      style={{ willChange: "background-color, box-shadow" }}
-    >
-      {/* ===== Left: Logo & Name ===== */}
-      <div className="flex flex-col sm:flex-row items-center sm:gap-2 ml-2 sm:ml-3 text-center sm:text-left transition-all duration-300 ease-out">
-        <div className="flex flex-col items-left sm:flex-row sm:items-center sm:gap-2">
-          <img
-            src={logo}
-            alt="Friends Lounge Logo"
-            className="w-18 h-14 sm:w-14 sm:h-14 object-contain"
-            loading="eager"
-          />
-          <span className="font-[Montserrat] text-[17px] sm:text-base font-bold tracking-widest whitespace-nowrap mt-1 sm:mt-0 text-center sm:text-left">
-            Friends' Lounge Mbaise
-          </span>
+    <header className="w-full bg-black/90 text-white font-montserrat relative z-50">
+      {/* TIME STAMP */}
+      <div className="w-full text-center text-xs py-1 tracking-wide opacity-80">{timestamp}</div>
+
+      {/* TOP SECTION — LOGO + EVENT BANNER */}
+      <div className="flex flex-col md:flex-row justify-between items-center px-4 md:px-10 py-3 gap-4">
+        
+        {/* LOGO + NAME + SLOGAN */}
+        <div className="flex flex-col items-center md:items-start w-full md:w-1/3 text-center md:text-left">
+          <img src={Logo} alt="Friends Lounge Logo" className="w-32 md:w-[250px] object-contain" />
+          <div className="text-center">
+            <h1 className="mt-1 text-lg md:text-xl font-montserrat font-semibold tracking-widest">
+              Friends' Lounge Mbaise
+            </h1>
+            <p className="text-[13px] opacity-80 -mt-1 font-montserrat">
+              Making Friends & Building Communities
+            </p>
+          </div>
         </div>
 
-        {/* ✅ Replaced address with a sharp slogan */}
-        <span className="text-[11px] sm:text-xs text-gray-300 mt-1 sm:mt-0 sm:ml-2 italic tracking-wide transition-all duration-500 ease-out">
-          | Making Friends and Building Communities
-        </span>
+        {/* ✅ AD / EVENT BANNER (NO CHANGE) */}
+        <div className="w-full md:w-2/3 flex justify-center relative -mx-4 md:mx-0">
+          <Banner
+            title="UDO DAY 2025"
+            subtitle="Advertise here — reach thousands of eyes daily"
+            ctaText="Buy Ad"
+            ctaBg="bg-green-500"
+          />
+        </div>
       </div>
 
-      {/* ===== Right: Menu & Search ===== */}
-      <div className="flex items-center gap-3 sm:gap-5 mr-2 sm:mr-3">
-        <div className="relative flex items-center">
-          {/* Search Button */}
-          <div className="flex flex-col items-center">
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full 
-              bg-transparent hover:bg-white/20 transition-all duration-300 ease-out shadow-none"
-              style={{ zIndex: 20 }}
-            >
-              <Search size={22} className="text-white" />
-            </button>
-          </div>
+      {/* ✅ DESKTOP NAV */}
+      <nav className="hidden md:flex justify-between items-center px-10 py-3 border-t border-white/10">
+        <ul className="flex gap-10 text-sm font-montserrat tracking-wide">
+          <li className="cursor-pointer hover:text-green-400">Home</li>
+          <li className="cursor-pointer hover:text-green-400">Friends</li>
+          <li className="cursor-pointer hover:text-green-400">Community</li>
+          <li className="cursor-pointer hover:text-green-400">Events</li>
+          <li className="cursor-pointer hover:text-green-400">Projects</li>
+        </ul>
 
-          {/* Hamburger Button */}
+        {/* ✅ BUTTON GROUP ON RIGHT (NEW) */}
+        <div className="flex items-center gap-3">
+          {/* BOOK EVENT BUTTON */}
+          <button className="bg-white text-black px-4 py-[6px] rounded-full text-sm font-semibold font-montserrat hover:bg-gray-300 transition">
+            Book Event
+          </button>
+
+          {/* ORDER FOOD BUTTON (opens FoodOrderModal.jsx) */}
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className={`relative z-30 flex flex-col justify-center items-center w-14 h-14 
-            bg-white/15 rounded-lg shadow-lg hover:bg-white/25 transition-all duration-300 ease-out 
-            transform-gpu ${menuOpen ? "scale-95" : "scale-100"}`}
+            className="bg-red-600 px-4 py-[6px] rounded-full text-sm font-semibold font-montserrat hover:bg-red-500 transition"
+            onClick={openFoodOrder}
           >
-            <div
-              className={`w-8 h-[2.5px] bg-white rounded-full transition-all duration-300 ease-out transform-gpu ${
-                menuOpen ? "rotate-45 translate-y-[6px]" : ""
-              }`}
-            ></div>
-            <div
-              className={`w-8 h-[2.5px] bg-white rounded-full my-[5px] transition-all duration-300 ease-out transform-gpu ${
-                menuOpen ? "opacity-0" : "opacity-100"
-              }`}
-            ></div>
-            <div
-              className={`w-8 h-[2.5px] bg-white rounded-full transition-all duration-300 ease-out transform-gpu ${
-                menuOpen ? "-rotate-45 -translate-y-[6px]" : ""
-              }`}
-            ></div>
+            Order Food
+          </button>
+
+          {/* SEARCH BUTTON (unchanged, just moved to rightmost) */}
+          <button className="flex items-center gap-2 border border-green-400 px-4 py-1 rounded-full hover:bg-green-500 hover:text-black transition font-montserrat text-sm">
+            <Search size={16} />
+            Search
           </button>
         </div>
+      </nav>
+
+      {/* ✅ MOBILE NAV */}
+      <div className="md:hidden flex justify-between items-center px-4 py-3 border-t border-white/10">
+        <button className="flex items-center gap-2 border border-green-400 px-3 py-[6px] rounded-full text-xs font-montserrat">
+          <Search size={14} />
+          Search
+        </button>
+
+        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
       </div>
 
-      {/* ===== Dropdown Menu ===== */}
-      {menuOpen && (
-        <div className="absolute top-full right-4 sm:right-6 mt-3 w-56 bg-white/20 
-          backdrop-blur-xl rounded-2xl shadow-2xl border border-white/25 
-          py-4 flex flex-col gap-3 items-center animate-fadeIn transform-gpu">
-          {["Home", "Friends", "Community", "Events", "Projects"].map((item) => (
-            <button
-              key={item}
-              className="text-white font-medium tracking-wide hover:text-red-500 
-              transition-all duration-300 ease-out transform-gpu"
-            >
-              {item}
-            </button>
-          ))}
+      {/* ✅ MOBILE DROPDOWN MENU */}
+      {mobileMenuOpen && (
+        <div className="absolute w-[90%] left-1/2 -translate-x-1/2 mt-2 rounded-3xl backdrop-blur-xl bg-black/30 p-6 shadow-2xl border border-white/20 font-montserrat">
+          <ul className="flex flex-col items-center gap-4 text-base">
+            <li className="cursor-pointer hover:text-green-400">Home</li>
+            <li className="cursor-pointer hover:text-green-400">Friends</li>
+            <li className="cursor-pointer hover:text-green-400">Community</li>
+            <li className="cursor-pointer hover:text-green-400">Events</li>
+            <li className="cursor-pointer hover:text-green-400">Projects</li>
+          </ul>
 
-          <div className="flex flex-col gap-2 mt-3 w-full px-4">
-            {/* <<< ORDER FOOD BUTTON NOW OPENS MODAL >>> */}
-            <button
-              onClick={handleOrderFood}
-              className="w-full bg-red-600 text-white py-2 rounded-xl font-semibold hover:bg-red-700 transition-all ease-out"
-            >
+          <div className="flex flex-col gap-3 mt-6">
+            {/* OPEN MODAL FROM MOBILE */}
+            <button onClick={openFoodOrder} className="bg-red-600 w-full py-2 rounded-full font-semibold text-sm">
               Order Food
             </button>
 
-            <button
-              onClick={handleBookEvent}
-              className="w-full bg-white text-red-600 py-2 rounded-xl font-semibold hover:bg-gray-100 transition-all ease-out"
-            >
+            <button className="bg-white w-full py-2 rounded-full text-black font-semibold text-sm">
               Book Event
             </button>
           </div>
         </div>
       )}
 
-      {/* ===== Search Modal ===== */}
-      {searchOpen && (
-        <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-[999] animate-fadeIn mt-60"
-          onClick={() => setSearchOpen(false)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white/15 border border-white/20 backdrop-blur-lg p-6 rounded-2xl shadow-2xl w-80 flex flex-col items-center gap-4 text-center text-white animate-fadeInUp transform-gpu"
-          >
-            <h3 className="text-lg font-semibold tracking-wide">
-              Search food, drink, etc
-            </h3>
-            <input
-              type="text"
-              placeholder="Type to search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 transition-all ease-out"
-            />
-
-            <div className="flex justify-between w-full mt-3">
-              <button
-                onClick={handleSearch}
-                className="flex-1 mr-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 hover:opacity-90 text-white rounded-xl font-semibold transition-all ease-out"
-              >
-                Search
-              </button>
-              <button
-                onClick={() => setSearchOpen(false)}
-                className="flex-1 ml-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all ease-out"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* <<<--- FOOD ORDER MODAL (shared) --->>> */}
+      {/* ✅ FOOD ORDER MODAL (connected to button above) */}
       <FoodOrderModal
-        isOpen={isOpen}
-        close={close}
+        isOpen={foodModalOpen}
+        close={closeFoodOrder}
         cart={cart}
         addToCart={addToCart}
         updateQuantity={updateQuantity}
@@ -224,6 +153,4 @@ const Header = () => {
       />
     </header>
   );
-};
-
-export default Header;
+}
