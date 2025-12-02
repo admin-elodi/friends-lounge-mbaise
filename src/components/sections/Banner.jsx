@@ -1,6 +1,7 @@
-// Banner.jsx — Premium Interactive Event Banner for UDO DAY 2025
+// src/components/sections/Banner.jsx
 import React, { useEffect, useState } from "react";
 import oasisFlyer from "@/assets/images/ugwu.jpg";
+import upaLogo from "@/assets/images/upa.png"; // ← Added: Upa Logo
 import { Maximize2, Minimize2 } from "lucide-react";
 
 export default function Banner() {
@@ -93,7 +94,20 @@ export default function Banner() {
         </button>
       </div>
 
-      {/* Flyer Modal Overlay — Minimalist full-view image with toggle option */}
+      {/* UPA LOGO — Left Side, Fully Visible, Perfect Balance */}
+      <div className="absolute top-1/2 -translate-y-1/2 left-1 md:left-2 pointer-events-none z-10">
+        <div className="relative">
+          <div className="absolute inset-0 w-20 h-20 md:w-28 md:h-28 bg-green-400/20 rounded-full blur-3xl animate-pulse"></div>
+          <img
+            src={upaLogo}
+            alt="UPA Mbaise"
+            className="relative w-16 h-16 md:w-24 md:h-24 object-contain drop-shadow-2xl border-4 border-green-300/50 rounded-full bg-black/30 p-2"
+          />
+          <div className="absolute inset-0 w-16 h-16 md:w-24 md:h-24 bg-green-400/30 rounded-full animate-ping"></div>
+        </div>
+      </div>
+
+      {/* Flyer Modal Overlay */}
       {showFlyer && (
         <div 
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
@@ -106,7 +120,6 @@ export default function Banner() {
             >
               ×
             </button>
-            {/* Toggle View Mode Button */}
             <button
               onClick={toggleViewMode}
               className="absolute top-4 left-4 text-white hover:text-green-400 text-xl transition-colors z-10 bg-black/50 rounded-full p-2"
@@ -123,38 +136,40 @@ export default function Banner() {
       )}
 
       {/* Animations */}
-      <style>
-        {`
-          .typing-effect {
-            width: fit-content;
-            margin: auto;
-            overflow: hidden;
-            white-space: nowrap;
-            animation: typing 4s steps(40, end) infinite;
-          }
+      <style jsx>{`
+        .typing-effect {
+          width: fit-content;
+          margin: auto;
+          overflow: hidden;
+          white-space: nowrap;
+          animation: typing 4s steps(40, end) infinite;
+        }
 
-          @keyframes typing {
-            0% { width: 0 }
-            50% { width: 100% }
-            100% { width: 0 }
-          }
+        @keyframes typing {
+          0% { width: 0 }
+          50% { width: 100% }
+          100% { width: 0 }
+        }
 
-          @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
-            100% { transform: translateY(0px); }
-          }
+        @keyframes float {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-12px); }
+          100% { transform: translateY(0px); }
+        }
 
-          .animate-softPulse {
-            animation: softPulse 4s infinite;
-          }
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
 
-          @keyframes softPulse {
-            0%, 100% { text-shadow: 0 0 8px rgba(0,255,0,0.4); }
-            50% { text-shadow: 0 0 14px rgba(0,255,0,0.8); }
-          }
-        `}
-      </style>
+        .animate-softPulse {
+          animation: softPulse 4s infinite;
+        }
+
+        @keyframes softPulse {
+          0%, 100% { text-shadow: 0 0 8px rgba(0,255,0,0.4); }
+          50% { text-shadow: 0 0 14px rgba(0,255,0,0.8); }
+        }
+      `}</style>
     </div>
   );
 }

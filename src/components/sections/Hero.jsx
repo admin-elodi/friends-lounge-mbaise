@@ -1,3 +1,4 @@
+// src/components/sections/Hero.jsx
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Volume2, VolumeX, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -39,9 +40,7 @@ const Hero = () => {
     { type: "image", src: sunset, text: "Sunset in Mbaise" },
   ];
 
-  const toggleMute = useCallback(() => {
-    setIsMuted((prev) => !prev);
-  }, []);
+  const toggleMute = useCallback(() => setIsMuted(prev => !prev), []);
 
   useEffect(() => {
     const handleResize = () => setVh(window.innerHeight * 0.01);
@@ -53,70 +52,48 @@ const Hero = () => {
   const handleManualSlide = (direction) => {
     setIsFading(true);
     setTimeout(() => {
-      setCurrentIndex((prev) =>
-        direction === "next"
-          ? (prev + 1) % slides.length
-          : (prev - 1 + slides.length) % slides.length
+      setCurrentIndex(prev => direction === "next"
+        ? (prev + 1) % slides.length
+        : (prev - 1 + slides.length) % slides.length
       );
-      setNextIndex((prev) =>
-        direction === "next"
-          ? (prev + 1) % slides.length
-          : (prev - 1 + slides.length) % slides.length
+      setNextIndex(prev => direction === "next"
+        ? (prev + 1) % slides.length
+        : (prev - 1 + slides.length) % slides.length
       );
       setIsFading(false);
-    }, 400);
+    }, 500);
   };
 
   useEffect(() => {
-    let fadeTimeout;
-    let interval;
-
-    const advanceSlide = () => {
-      setIsFading(true);
-
-      fadeTimeout = setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % slides.length);
-        setNextIndex((prev) => ((prev + 1) % slides.length));
-        setIsFading(false);
-      }, 1000);
-    };
-
-    interval = setInterval(() => {
-      advanceSlide();
+    const interval = setInterval(() => {
+      handleManualSlide("next");
     }, 12000);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(fadeTimeout);
-    };
-  }, [slides.length]);
+    return () => clearInterval(interval);
+  }, []);
 
   const currentSlide = slides[currentIndex];
   const nextSlide = slides[nextIndex];
 
-  const renderMedia = (slide, ref, extraClasses = "") => {
+  const renderMedia = (slide, ref, extra = "") => {
     if (slide.type === "video") {
       return (
         <video
           ref={ref}
-          key={slide.src}
-          className={`absolute top-0 left-0 w-full h-full object-cover ${extraClasses}`}
+          className={`absolute inset-0 w-full h-full object-cover ${extra}`}
           src={slide.src}
           autoPlay
           loop
           muted={isMuted}
           playsInline
           preload="auto"
-          onEnded={() => ref?.current?.play()}
         />
       );
     }
     return (
       <img
-        key={slide.src}
         src={slide.src}
-        alt="Friends Lounge Slide"
-        className={`absolute top-0 left-0 w-full h-full object-cover ${extraClasses}`}
+        alt=""
+        className={`absolute inset-0 w-full h-full object-cover ${extra}`}
         loading="eager"
       />
     );
@@ -124,59 +101,50 @@ const Hero = () => {
 
   return (
     <section
-      className="relative w-full overflow-hidden border-b border-black"  // Removed mt-60 to eliminate gap
+      className="relative w-full overflow-hidden border-4 border-white rounded-xl"
       style={{ height: `calc(${vh * 100}px)` }}
     >
+      {/* Media layers – no dark overlay, pure cinema */}
       <div className="absolute inset-0">
-        {renderMedia(
-          currentSlide,
-          videoRef1,
-          isFading
-            ? "opacity-0 transition-opacity duration-1000"
-            : "opacity-100 transition-opacity duration-1000"
-        )}
-        {renderMedia(
-          nextSlide,
-          videoRef2,
-          isFading
-            ? "opacity-100 transition-opacity duration-1000"
-            : "opacity-0 transition-opacity duration-1000"
-        )}
+        {renderMedia(currentSlide, videoRef1, isFading ? "opacity-0" : "opacity-100")}
+        {renderMedia(nextSlide, videoRef2, isFading ? "opacity-100" : "opacity-0")}
+        <div className={`absolute inset-0 transition-opacity duration-1000 ${isFading ? "opacity-100" : "opacity-0"}`} />
       </div>
 
-      {/* ⚡ Removed dark tint overlay here */}
-
-      <div className="absolute inset-0 flex items-center justify-center text-center z-20 transition-opacity duration-1000">
+      {/* Caption – now floating with generous breathing room */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-8">
         <h1
-          className={`text-2xl md:text-5xl font-bold text-white drop-shadow-lg ${
-            isFading ? "opacity-0" : "opacity-100"
-          } transition-opacity duration-1000`}
+          className={`text-2xl md:text-6xl lg:text-5xl font-black text-white tracking-wider text-center drop-shadow-2xl transition-all duration-1000 ${
+            isFading ? "opacity-0 translate-y-8" : "opacity-100 translate-y-0"
+          }`}
+          style={{ textShadow: "0 4px 20px rgba(0,0,0,0.7)" }}
         >
           {currentSlide.text}
         </h1>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-6 z-30">
+      {/* Navigation arrows – elegantly spaced from edges */}
+      <div className="absolute bottom-2 md:bottom-2 left-1/2 -translate-x-1/2 flex gap-8 md:gap-32">
         <button
           onClick={() => handleManualSlide("prev")}
-          className="bg-white/10 hover:bg-red-600/80 text-white rounded-full p-3 md:p-4 shadow-md transition-all duration-300 border border-white/30 hover:border-red-500"
+          className="group p-4 bg-white/10 backdrop-blur-md rounded-full border-2 border-black hover:bg-red-600/70 transition-all duration-300"
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={20} className="text-white group-hover:scale-110 transition" />
         </button>
         <button
           onClick={() => handleManualSlide("next")}
-          className="bg-white/10 hover:bg-red-600/80 text-white rounded-full p-3 md:p-4 shadow-md transition-all duration-300 border border-white/30 hover:border-red-500"
+          className="group p-4 bg-white/10 backdrop-blur-md rounded-full border-2 border-black hover:bg-red-600/70 transition-all duration-300"
         >
-          <ChevronRight size={24} />
+          <ChevronRight size={20} className="text-white group-hover:scale-110 transition" />
         </button>
       </div>
 
+      {/* Mute toggle – discreet luxury */}
       <button
         onClick={toggleMute}
-        className="absolute bottom-6 right-6 z-30 bg-white/20 backdrop-blur-md text-white
-          rounded-full p-3 shadow-lg hover:bg-white/30 transition-all duration-300"
+        className="absolute bottom-2 md:bottom-2 right-4 md:right-12 p-5 bg-white/10 backdrop-blur-md rounded-full border border-red-600 hover:bg-white/20 transition-all duration-300"
       >
-        {isMuted ? <VolumeX size={26} /> : <Volume2 size={26} />}
+        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
       </button>
     </section>
   );

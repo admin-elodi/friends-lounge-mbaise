@@ -14,9 +14,5 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
-  server: {
-    host: '0.0.0.0',  // Listen on all interfaces for accessible network dev server
-    // optional: port: 5175, // define if you want fixed port (default 5173)
-    // Additional server options can be added here
-  },
+  // No server config → uses perfect defaults (localhost + auto port increment)
 });

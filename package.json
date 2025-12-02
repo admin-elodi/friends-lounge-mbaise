@@ -1,11 +1,12 @@
 {
-  "name": "my-react-template",
+  "name": "friends-lounge-mbaise",
   "private": true,
   "version": "1.0.0",
   "description": "A clean React + Vite + Tailwind CSS v4 template",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "vite",
+    "dev:mobile": "vite --host --port 0",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",

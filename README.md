@@ -21,7 +21,7 @@ friends-lounge-mbaise/
 │   │   │   └── About.jsx
 │   │   └── ui/           # Tailwind-styled primitives (e.g., Card.jsx, Modal.jsx)
 │   ├── pages/            # Route-based pages
-│   │   ├── Home.jsx
+│   │   ├── Home.jsxjjj
 │   │   ├── Events.jsx
 │   │   ├── About.jsx
 │   │   └── Contact.jsx

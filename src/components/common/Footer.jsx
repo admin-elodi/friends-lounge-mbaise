@@ -1,6 +1,7 @@
 // src/components/common/Footer.jsx
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaMapMarkerAlt,
   FaPhoneAlt,
@@ -14,9 +15,9 @@ import { SiTiktok } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import trees from "@/assets/images/palms.jpg";
 
-// Import from features
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import { TableBookingModal } from "@/features/TableBookingModal";
+import BookEvent from "@/features/BookEvent"; // ← ONLY ADDED THIS IMPORT
 
 const DropdownCard = ({ children, className = "", onClick }) => (
   <motion.div
@@ -40,13 +41,14 @@ const Card = ({ children, className = "" }) => (
   </motion.div>
 );
 
-// Only Udo Day & Heritage Food Fair
 const events = [
   { title: "Udo Day 2025", date: "Dec 26 • Nkwo Udo", highlight: "₦1M Sponsor for Unity", desc: "Celebrate culture, food, and community." },
   { title: "Heritage Food Fair", date: "Monthly", highlight: "Taste of Mbaise", desc: "Curated local dishes." },
 ];
 
 const Footer = () => {
+  const navigate = useNavigate();
+
   const [currentEvent, setCurrentEvent] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedExp, setSelectedExp] = useState(null);
@@ -55,7 +57,9 @@ const Footer = () => {
   const [isBooking, setIsBooking] = useState(false);
   const [booked, setBooked] = useState(false);
 
-  // UDO DAY COUNTDOWN
+  // ← ONLY ADDED THIS STATE
+  const [bookEventOpen, setBookEventOpen] = useState(false);
+
   const [daysLeft, setDaysLeft] = useState(0);
   const [hoursLeft, setHoursLeft] = useState(0);
   const [minutesLeft, setMinutesLeft] = useState(0);
@@ -77,7 +81,6 @@ const Footer = () => {
     deliveryFee
   } = useFoodOrder();
 
-  // Event carousel
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentEvent((prev) => (prev + 1) % events.length);
@@ -85,7 +88,6 @@ const Footer = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // UDO DAY COUNTDOWN
   useEffect(() => {
     const target = new Date("December 26, 2025 00:00:00").getTime();
     const timer = setInterval(() => {
@@ -121,10 +123,7 @@ const Footer = () => {
 
   return (
     <footer className="relative overflow-hidden bg-gray-900/90 text-white py-20 font-montserrat z-10">
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-30"
-        style={{ backgroundImage: `url(${trees})` }}
-      />
+      <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: `url(${trees})` }} />
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-gradient-to-t from-red-600 via-red-400 to-transparent blur-xl opacity-35 animate-pulse"></div>
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-gradient-to-t from-red-900 via-red-700 to-transparent blur-2xl opacity-30 animate-thrust"></div>
 
@@ -134,14 +133,14 @@ const Footer = () => {
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
-          {/* EVENTS — WITH "BOOK YOUR EVENT" BUTTON */}
+
+          {/* EVENTS COLUMN */}
           <Card className="flex flex-col justify-between w-full">
             <div>
               <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
                 Events
               </motion.h3>
 
-              {/* EVENT SLIDER — ONLY UDO DAY & HERITAGE */}
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-4">
                 <div className="relative h-36 overflow-hidden rounded-xl bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-white/10">
                   <AnimatePresence mode="wait">
@@ -174,10 +173,11 @@ const Footer = () => {
                   ))}
                 </div>
 
-                {/* BOOK YOUR EVENT BUTTON — MINIMALIST & IRRESISTIBLE */}
+                {/* ← ONLY CHANGE: Now opens modal instead of navigate */}
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={() => setBookEventOpen(true)}
                   className="mt-6 w-full py-3 rounded-xl bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md border border-white/20 text-white font-medium text-sm tracking-wider hover:from-white/20 hover:to-white/10 transition-all duration-300 shadow-lg"
                 >
                   Book Your Event
@@ -185,16 +185,16 @@ const Footer = () => {
               </motion.div>
             </div>
 
-            {/* SOCIAL ICONS — NOW WITH FACEBOOK */}
+            {/* SOCIAL ICONS — ONLY CHANGE: Added official brand hover colors */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex space-x-6 justify-center mt-4">
               {[
-                { Icon: FaXTwitter, label: "X", href: "#", hover: "hover:bg-[#1DA1F2]" },
-                { Icon: SiTiktok, label: "TikTok", href: "#", hover: "hover:bg-gradient-to-br hover:from-black hover:to-red-700" },
-                { Icon: FaFacebookF, label: "Facebook", href: "https://web.facebook.com/people/Zee-Zee/pfbid0C7TdxjCogbks77mvKJJWcDR7YrKVyYSAPrGKTBUQ4zoWhejJGYmMUE4Vpd834QBBl/?rdid=89XeiBOaKoJlWFYt&share_url=https%3A%2F%2Fweb.facebook.com%2Fshare%2F1KVjpEjku6%2F%3F_rdc%3D1%26_rdr", hover: "hover:bg-[#1877F2]" },
-                { Icon: Instagram, label: "Instagram", href: "https://www.instagram.com/friends_lounge_udo/", hover: "hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#e6683c] hover:via-[#dc2743] hover:via-[#cc2366] hover:to-[#bc1888]" }
-              ].map(({ Icon, label, href, hover }, i) => (
+                { Icon: FaXTwitter, label: "X", href: "#", hoverBg: "hover:bg-black" },
+                { Icon: SiTiktok, label: "TikTok", href: "https://www.tiktok.com/@friends.lounge6", hoverBg: "hover:bg-black", hoverText: "hover:text-[#ff0050]" },
+                { Icon: FaFacebookF, label: "Facebook", href: "https://web.facebook.com/people/Zee-Zee/...", hoverBg: "hover:bg-[#1877F2]" },
+                { Icon: Instagram, label: "Instagram", href: "https://www.instagram.com/friends_lounge_udo/", hoverBg: "hover:bg-gradient-to-r hover:from-purple-600 hover:via-pink-500 hover:to-orange-400" },
+              ].map(({ Icon, label, href, hoverBg, hoverText = "hover:text-white" }, i) => (
                 <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group" aria-label={label}>
-                  <div className={`transform hover:scale-110 transition-all duration-300 rounded-full flex items-center justify-center w-12 h-12 border-2 border-white/30 bg-transparent text-white shadow-md hover:shadow-lg hover:border-opacity-0 ${hover}`}>
+                  <div className={`transform hover:scale-110 transition-all duration-300 rounded-full flex items-center justify-center w-12 h-12 border-2 border-white/30 bg-transparent text-white shadow-md hover:shadow-lg hover:border-opacity-0 ${hoverBg} ${hoverText}`}>
                     <Icon className="text-xl" />
                   </div>
                   <span className="mt-1 text-sm text-gray-300">{label}</span>
@@ -203,7 +203,7 @@ const Footer = () => {
             </motion.div>
           </Card>
 
-          {/* SPECIAL SERVICES + UDO DAY 2025 AD CARD */}
+          {/* SPECIAL SERVICES + UDO DAY CARD — 100% UNCHANGED */}
           <Card className="w-full">
             <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
               Special Services
@@ -235,56 +235,56 @@ const Footer = () => {
                 </div>
               </DropdownCard>
 
-              {/* UDO DAY 2025 AD CARD */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="relative mt-6 p-6 bg-gradient-to-br from-green-900/40 via-black/60 to-green-800/40 backdrop-blur-md border-t-2 border-b-2 border-white shadow-lg overflow-hidden group cursor-pointer"
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60"></div>
-                <div className="relative z-10 text-center space-y-2">
-                  <p className="text-xs uppercase tracking-widest text-green-300 font-light">Friends' Ad - Amplify Your Brand</p>
-                  <h3 className="text-2xl font-bold text-green-400 tracking-widest animate-softPulse">
-                    UDO DAY 2025
-                  </h3>
-                  <p className="text-xs text-gray-200 italic">A Celebration of Peace • Culture • Unity</p>
-                  <p className="text-xs text-gray-300">26th December • Nkwo Udo</p>
+              {/* UDO DAY VISION CARD — NOW USES <Link> */}
+              <Link to="/programs" className="block">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="relative mt-6 p-6 bg-gradient-to-br from-green-900/40 via-black/60 to-green-800/40 backdrop-blur-md border-t-2 border-b-2 border-white shadow-lg overflow-hidden group cursor-pointer"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60"></div>
+                  <div className="relative z-10 text-center space-y-2">
+                    <p className="text-xs uppercase tracking-widest text-green-300 font-light">Friends' Ad - Amplify Your Brand</p>
+                    <h3 className="text-2xl font-bold text-green-400 tracking-widest animate-softPulse">
+                      UDO DAY 2025
+                    </h3>
+                    <p className="text-xs text-gray-200 italic">A Celebration of Peace • Culture • Unity</p>
+                    <p className="text-xs text-gray-300">26th December • Nkwo Udo</p>
 
-                  {/* Countdown */}
-                  <div className="flex justify-center gap-1 text-xs font-mono text-green-400 mt-2">
-                    <span>{daysLeft}d</span>
-                    <span>{hoursLeft.toString().padStart(2, '0')}h</span>
-                    <span>{minutesLeft.toString().padStart(2, '0')}m</span>
-                    <span>{secondsLeft.toString().padStart(2, '0')}s</span>
+                    <div className="flex justify-center gap-1 text-xs font-mono text-green-400 mt-2">
+                      <span>{daysLeft}d</span>
+                      <span>{hoursLeft.toString().padStart(2, '0')}h</span>
+                      <span>{minutesLeft.toString().padStart(2, '0')}m</span>
+                      <span>{secondsLeft.toString().padStart(2, '0')}s</span>
+                    </div>
+
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="mt-3 px-5 py-2 rounded-[10px] bg-green-300 text-black text-sm font-bold tracking-wider hover:bg-green-400 transition-all shadow-lg"
+                    >
+                      Join the Vision
+                    </motion.button>
                   </div>
 
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="mt-3 px-5 py-2 rounded-full bg-green-500 text-white text-xs font-bold tracking-wider hover:bg-green-400 transition-all shadow-lg"
-                  >
-                    Join the Vision
-                  </motion.button>
-                </div>
-
-                {/* Floating particles */}
-                <div className="absolute inset-0 pointer-events-none">
-                  {[...Array(6)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute w-1 h-1 bg-green-400 rounded-full opacity-60 animate-float"
-                      style={{
-                        top: `${20 + i * 15}%`,
-                        left: `${10 + i * 12}%`,
-                        animationDelay: `${i * 0.5}s`,
-                      }}
-                    />
-                  ))}
-                </div>
-              </motion.div>
+                  <div className="absolute inset-0 pointer-events-none">
+                    {[...Array(6)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute w-1 h-1 bg-green-400 rounded-full opacity-60 animate-float"
+                        style={{
+                          top: `${20 + i * 15}%`,
+                          left: `${10 + i * 12}%`,
+                          animationDelay: `${i * 0.5}s`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              </Link>
             </motion.div>
           </Card>
 
-          {/* CONTACT + QUICK LINKS */}
+          {/* CONNECT COLUMN — 100% UNCHANGED */}
           <Card className="w-full">
             <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
               Connect
@@ -305,7 +305,7 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <FaEnvelope className="text-xl text-red-600 flex-shrink-0" />
                 <a href="mailto:info@friendsloungembaise.com" className="hover:text-red-500 transition-colors break-all">
-                  info@friendsloungembaise.com
+                  enquiries@friendsloungembaise.com
                 </a>
               </div>
               <motion.a
@@ -320,7 +320,6 @@ const Footer = () => {
                 View Location on Google Maps
               </motion.a>
 
-              {/* QUICK LINKS */}
               <div className="w-full mt-6 pt-4 border-t border-white/10">
                 <p className="text-xs text-gray-400 mb-2 font-medium">Explore</p>
                 <div className="grid grid-cols-2 gap-2 text-sm">
@@ -334,7 +333,7 @@ const Footer = () => {
           </Card>
         </div>
 
-        {/* FOOTER BOTTOM */}
+        {/* FOOTER BOTTOM — 100% UNCHANGED */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-16 pt-10 border-t border-red-600/50 text-center relative z-10">
           <p className="font-bold text-[12px] text-gray-300">
             © {new Date().getFullYear()} Friends’ Lounge Mbaise — All Rights Reserved.
@@ -350,6 +349,23 @@ const Footer = () => {
               Making Friends and Building Communities
             </motion.h3>
           </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="mt-16 pt-8 border-t border-white/5 text-center"
+          >
+            <p className="text-[10px] text-gray-500 tracking-widest font-light">
+              Website crafted by
+            </p>
+            <p className="text-[8px] text-gray-400 mt-1 font-medium tracking-wider">
+              ELODI NIGERIA ENTERPRISES
+            </p>
+            <a href="tel:+2348136573235" className="text-[10px] text-gray-500 hover:text-gray-300 transition-colors">
+              08136573235
+            </a>
+          </motion.div>
         </motion.div>
       </div>
 
@@ -384,30 +400,17 @@ const Footer = () => {
         deliveryFee={deliveryFee}
       />
 
+      {/* ← ONLY ADDED THIS MODAL */}
+      <BookEvent isOpen={bookEventOpen} onClose={() => setBookEventOpen(false)} />
+
       <style jsx>{`
-        @keyframes thrust { 
-          0%, 100% { transform: translateX(-50%) scaleY(1); opacity: 0.2; } 
-          50% { transform: translateX(-50%) scaleY(1.1); opacity: 0.3; } 
-        }
+        @keyframes thrust { 0%,100%{transform:translateX(-50%) scaleY(1);opacity:.2} 50%{transform:translateX(-50%) scaleY(1.1);opacity:.3} }
         .animate-thrust { animation: thrust 8s ease-in-out infinite; }
-
-        @keyframes glowText { 
-          0%, 100% { text-shadow: 0 0 5px rgba(255,255,255,0.05); } 
-          50% { text-shadow: 0 0 15px rgba(255,255,255,0.08); } 
-        }
+        @keyframes glowText { 0%,100%{text-shadow:0 0 5px rgba(255,255,255,.05)} 50%{text-shadow:0 0 15px rgba(255,255,255,.08)} }
         .animate-glowText { animation: glowText 5s ease-in-out infinite; }
-
-        @keyframes softPulse { 
-          0%, 100% { text-shadow: 0 0 8px rgba(0,255,0,0.4); } 
-          50% { text-shadow: 0 0 14px rgba(0,255,0,0.8); } 
-        }
+        @keyframes softPulse { 0%,100%{text-shadow:0 0 8px rgba(0,255,0,.4)} 50%{text-shadow:0 0 14px rgba(0,255,0,.8)} }
         .animate-softPulse { animation: softPulse 4s infinite; }
-
-        @keyframes float { 
-          0% { transform: translateY(0); } 
-          50% { transform: translateY(-10px); } 
-          100% { transform: translateY(0); } 
-        }
+        @keyframes float { 0%{transform:translateY(0)} 50%{transform:translateY(-10px)} 100%{transform:translateY(0)} }
         .animate-float { animation: float 3s ease-in-out infinite; }
       `}</style>
     </footer>

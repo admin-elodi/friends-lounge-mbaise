@@ -367,7 +367,7 @@ const Menu = () => {
   const closeMenu = useCallback(() => setActiveMenu(null), [])
 
   return (
-    <section className="relative h-[600px] bg-black text-white overflow-hidden will-change-transform">
+    <section className="relative h-[600px] bg-black text-white overflow-hidden will-change-transform border-4 border-white rounded-xl">
       {/* Background slideshow */}
       <div className="absolute inset-0 z-0">
         {slides.map((slide, index) => (
@@ -398,7 +398,7 @@ const Menu = () => {
           <span className="flex-grow border-t border-white/20"></span>
         </div>
 
-        <h2 className="text-3xl md:text-4xl font-light tracking-widest text-white/90 mb-8">
+        <h2 className="text-2xl md:text-4xl font-semibold tracking-widest text-white/90 mb-8">
           Explore Our Menu
         </h2>
 
@@ -507,4 +507,4 @@ const Menu = () => {
   )
 }
 
-export default Menu;
+export default Menu;  
