@@ -1,5 +1,5 @@
-// src/features/Programs.jsx
-import React from "react";
+// src/features/Programs.jsx 
+import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -8,6 +8,9 @@ import uduPot from "@/assets/images/local-fridge.jpg";          // ← The Udu p
 import ojiIgbo from "@/assets/images/oji.jpg";                 // Kola nut tray – for greeting & prayer
 import mkpoOsa from "@/assets/images/rafia.jpg";               // Traditional raffia fan used by titled men
 import futureVision from "@/assets/images/sunset.jpg";         // Creative future vision image
+
+// Background video
+import abigboDance from "@/assets/videos/abigbo-dance.mp4";   // background video
 
 const Programs = () => {
   const portals = [
@@ -45,8 +48,36 @@ const Programs = () => {
     },
   ];
 
+  const videoRef = useRef(null);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const toggleMute = () => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !videoRef.current.muted;
+    setIsMuted(videoRef.current.muted);
+  };
+
   return (
     <div className="relative min-h-screen bg-black/80 overflow-hidden">
+
+      {/* Background Video */}
+      <video
+        ref={videoRef}
+        src={abigboDance}
+        autoPlay
+        loop
+        muted
+        className="absolute inset-0 w-full h-full object-cover brightness-110 z-0"
+      />
+
+      {/* Mute/Unmute Button — subtle, small circular icon */}
+      <button
+        onClick={toggleMute}
+        className="absolute top-6 right-6 z-30 w-10 h-10 flex items-center justify-center bg-black/30 text-white rounded-full backdrop-blur-sm hover:bg-black/50 transition"
+        title={isMuted ? "Unmute" : "Mute"}
+      >
+        {isMuted ? "🔇" : "🔊"}
+      </button>
 
       {/* Hero Header */}
       <motion.div
@@ -57,7 +88,7 @@ const Programs = () => {
         <h1 className="text-xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 drop-shadow-2xl tracking-widest">
           UDO DAY 2025
         </h1>
-        <p className="mt-1 text-lg md:text-xl text-amber-200 font-light tracking-wider">
+        <p className="mt-1 text-lg md:text-xl text-black font-bold tracking-wider">
           26 December
         </p>
       </motion.div>
