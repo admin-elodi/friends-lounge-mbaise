@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import oasisFlyer from "@/assets/images/ugwu.jpg";
 import upaLogo from "@/assets/images/upa.png"; // ← Added: Upa Logo
 import { Maximize2, Minimize2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Banner() {
   const [daysLeft, setDaysLeft] = useState(0);
@@ -95,17 +96,21 @@ export default function Banner() {
       </div>
 
       {/* UPA LOGO — Left Side, Fully Visible, Perfect Balance */}
-      <div className="absolute top-1/2 -translate-y-1/2 left-1 md:left-2 pointer-events-none z-10">
-        <div className="relative">
-          <div className="absolute inset-0 w-20 h-20 md:w-28 md:h-28 bg-green-400/20 rounded-full blur-3xl animate-pulse"></div>
-          <img
-            src={upaLogo}
-            alt="UPA Mbaise"
-            className="relative w-16 h-16 md:w-24 md:h-24 object-contain drop-shadow-2xl border-4 border-green-300/50 rounded-full bg-black/30 p-2"
-          />
-          <div className="absolute inset-0 w-16 h-16 md:w-24 md:h-24 bg-green-400/30 rounded-full animate-ping"></div>
+      <Link to = "/programs">
+        <div className="absolute top-1/2 -translate-y-1/2 left-1 md:left-2 pointer-events-none z-10">
+          <div className="relative">
+            <div className="absolute inset-0 w-20 h-20 md:w-28 md:h-28 bg-green-400/20 rounded-full blur-3xl animate-pulse"></div>
+            <img
+              src={upaLogo}
+              alt="UPA Mbaise"
+              className="relative w-16 h-16 md:w-24 md:h-24 object-contain drop-shadow-2xl border-4 border-green-300/50 rounded-full bg-black/30 p-2"
+            />
+            <div className="absolute inset-0 w-16 h-16 md:w-24 md:h-24 bg-green-400/30 rounded-full animate-ping"></div>
+          </div>
         </div>
-      </div>
+      
+      </Link>
+
 
       {/* Flyer Modal Overlay */}
       {showFlyer && (

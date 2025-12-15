@@ -1,333 +1,238 @@
 // src/pages/Friends.jsx
-import React, { useState, useEffect } from "react";
+// Hero section redesigned as "Friendly Recognitions"
+// Dedicated space for celebrating inductions, honors, and community milestones with video + description
+// Core slogan "Making Friends and Building Communities" still prominent
+
+import React, { useState, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Users, Heart, Lightbulb, Sparkles, ChevronDown, ArrowRight, Zap, ArrowUp, Globe, Building2 } from "lucide-react";
-import palmsVideo from '@/assets/videos/sunset.mp4';  // Path alias for video
-import scrollImage from '@/assets/images/scroll.png';  // Path alias for scroll image
-import roadImage from '@/assets/images/road.avif';  // Path alias for road image
+import { ArrowRight, ChevronDown, Zap, Globe, Building2, Volume2, VolumeX } from "lucide-react";
+
+// Import the local video file
+import islandVideo from "@/assets/videos/island.mp4";
 
 export default function Friends() {
   const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 800], [0, 200]);
-  const y2 = useTransform(scrollY, [0, 800], [0, -150]);
-  const opacity = useTransform(scrollY, [0, 300, 600], [1, 0.7, 0.3]);
+  const heroY = useTransform(scrollY, [0, 600], [0, -80]);
+  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0.9]);
 
-  const [activeValue, setActiveValue] = useState(0);
   const [showJungleX, setShowJungleX] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
-  const values = [
-    { icon: Heart, title: "Friendship First", desc: "Every seat is taken by a friend — known or yet to be made." },
-    { icon: Sparkles, title: "Luxury with Roots", desc: "Palm wine meets champagne. Tradition meets tomorrow." },
-    { icon: Lightbulb, title: "Innovation & Safety", desc: "Here, bold ideas are born — and protected." },
-    { icon: Users, title: "Community Forever", desc: "We don't just host events. We grow legacies." },
-  ];
+  const videoRef = useRef(null);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveValue((prev) => (prev + 1) % values.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
 
   return (
     <>
-      {/* HERO — PALMS.MP4 VIDEO BACKGROUND */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* FRIENDLY RECOGNITIONS — DEDICATED CELEBRATION SECTION */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
+        {/* Video Background */}
         <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-cover"
+          src={islandVideo}
           autoPlay
           loop
-          muted
+          muted={isMuted}
           playsInline
-          className="absolute inset-0 w-full h-full object-cover brightness-75 contrast-125"
-          src={palmsVideo}
         />
+
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/70" />
+
+        {/* Unmute / Mute Toggle */}
+        <button
+          onClick={toggleMute}
+          className="absolute bottom-8 right-8 z-20 flex items-center gap-3 rounded-full bg-white/20 backdrop-blur-sm px-5 py-3 text-white hover:bg-white/30 transition"
+        >
+          {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+          <span className="text-sm font-medium">
+            {isMuted ? "Unmute" : "Mute"}
+          </span>
+        </button>
+
+        {/* Recognition Content */}
+        <motion.div
+          style={{ y: heroY, opacity: heroOpacity }}
+          className="relative z-10 max-w-5xl text-center px-6"
+        >
+          {/* Section Branding */}
+          <h1 className="text-2xl md:text-4xl py-10 font-bold tracking-widest text-white drop-shadow-2xl">
+            Friendly Recognitions
+          </h1>
+          <small className="text-white font-semibold">For background video sounds, click unmute button at lower right of this
+            section</small>
+
         
-        <motion.div style={{ y: y2, opacity }} className="relative z-20 text-center px-6 bg-black/30 border border-white/20 rounded-xl p-12 md:p-16">
-          <motion.h1
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.4, ease: "easeOut" }}
-            className="text-2xl md:text-4xl lg:text-4xl font-semmibold text-white tracking-tight leading-none bg-gradient-to-r from-white to-red-300 bg-clip-text text-transparent drop-shadow-2xl"
-          >
-            Friends' Lounge Mbaise
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 1.6 }}
-            className="mt-8 text-xl md:text-2xl lg:text-3xl font-light text-yellow-100 tracking-widest drop-shadow-xl"
-          >
-            Its not just a Lounge but a movement
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.6 }}
-            className="mt-16"
-          >
-            <ChevronDown className="mx-auto animate-bounce text-red-500 drop-shadow-lg" size={48} />
-          </motion.div>
+
+          <div className="mt-12 p-8 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 md:w-full">
+            <h2 className="text-xl md:text-3xl font-semibold text-white drop-shadow-lg">
+              Induction of <span className="font-bold">Chief Sir Barrister Santome Ibeneche (Zereuwa)</span>into Island All Stars Sports Club
+            </h2>
+          </div>
+
+          <ChevronDown
+            className="mx-auto mt-20 text-white/80 animate-bounce drop-shadow"
+            size={42}
+          />
         </motion.div>
       </section>
 
-     {/* FRIENDS' LOUNGE SPARK — FULL SCROLL.PNG OVERLAY - MOBILE RESPONSIVE HEIGHT */}
-     <section className="relative py-30 md:py-32 px-6 flex items-center justify-center">
-       <div 
-         className="absolute inset-0 bg-cover bg-center bg-no-repeat w-full h-full"
-         style={{ backgroundImage: `url(${scrollImage})` }}
-       />
-       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70" />
-       
-       <div className="relative z-20 max-w-5xl mx-auto text-center px-6 w-full max-h-[80vh] overflow-y-auto md:overflow-visible md:max-h-none scrollbar-thin scrollbar-thumb-red-600 scrollbar-track-transparent">
-         <motion.div
-           initial={{ opacity: 0, y: 40 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           viewport={{ once: true }}
-           className="mb-12"
-         >
-         <h3 className="text-2xl md:text-5xl lg:text-5xl text-white mb-4 tracking-tight bg-gradient-to-r from-yellow-400 via-red-400 to-yellow-300 bg-clip-text text-transparent drop-shadow-2xl">
-           The Spark
-         </h3>
-         </motion.div>
+      {/* THE SPARK — ORIGIN & CONTINUITY */}
+      <section className="py-32 px-6 bg-neutral-100">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-medium text-neutral-900 mb-16 text-center">
+            The Friends Lounge Spark
+          </h2>
 
-         <div className="space-y-10 max-w-4xl mx-auto text-left">
-           <motion.div
-             initial={{ opacity: 0, x: -50 }}
-             whileInView={{ opacity: 1, x: 0 }}
-             viewport={{ once: true }}
-             className="flex items-start gap-6 backdrop-blur-sm bg-white/10 rounded-2xl p-6 border border-white/20"
-           >
-             <div className="flex-shrink-0 w-3 h-3 md:w-4 md:h-4 bg-red-500 rounded-full mt-4 md:mt-5 animate-pulse" />
-             <div className="flex-1">
-               <p className="text-lg md:text-xl text-white/95 font-light leading-relaxed drop-shadow-lg">
-                 Friends Lounge Mbaise broke ground first. A quiet village road transformed into <span className="text-red-400 font-semibold">Donamenche Crescent</span>. Homes rose alongside—families followed
-               </p>
-             </div>
-           </motion.div>
+          <div className="space-y-12">
+            <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+              The story did not begin with a lounge. It began with a road.
+              What was once quiet, undeveloped land was opened through the
+              construction of <span className="text-red-600 font-medium">Donamenche Crescent</span>,
+              creating access into new territory in Udo.
+            </p>
 
-           <motion.div
-             initial={{ opacity: 0, x: -50 }}
-             whileInView={{ opacity: 1, x: 0 }}
-             viewport={{ once: true }}
-             transition={{ delay: 0.2 }}
-             className="flex items-start gap-6 backdrop-blur-sm bg-white/10 rounded-2xl p-6 border border-white/20"
-           >
-             <div className="flex-shrink-0 w-3 h-3 md:w-4 md:h-4 bg-red-500 rounded-full mt-4 md:mt-5" />
-             <div className="flex-1">
-               <p className="text-lg md:text-xl text-white/95 font-light leading-relaxed drop-shadow-lg">
-                 Our bold step opened the territory. Modern ventures with deep roots now thrive beyond our gates
-               </p>
-             </div>
-           </motion.div>
-           <motion.div
-             initial={{ opacity: 0, x: -50 }}
-             whileInView={{ opacity: 1, x: 0 }}
-             viewport={{ once: true }}
-             transition={{ delay: 0.4 }}
-             className="flex items-start gap-6 backdrop-blur-sm bg-white/10 rounded-2xl p-6 border border-white/20"
-           >
-             <div className="flex-shrink-0 w-3 h-3 md:w-4 md:h-4 bg-green-500 rounded-full mt-4 md:mt-5 animate-pulse" />
-             <div className="flex-1">
-               <p className="text-lg md:text-xl text-white/95 font-light leading-relaxed drop-shadow-lg">
-                 Now, <span className="text-red-400 font-bold text-xl md:text-2xl">Silicon Village</span> emerges—a homegrown Silicon Valley. 
-                 Traditional roots. Futurist vision. Friends Lounge made it possible.
-               </p>
-             </div>
-           </motion.div>
-         </div>
-       </div>
-     </section>
+            <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+              This effort was single‑handedly initiated by Chief Sir Barrister
+              Santome Ibeneche (a.k.a. Zereuwa). With the road came possibility.
+              Families built homes. Life followed. A new corridor of settlement
+              took shape.
+            </p>
 
-      {/* JUNGLEX — ROAD.AVIF BACKGROUND */}
-      <section className="py-24 md:py-32 px-6 relative overflow-hidden" style={{ backgroundImage: `url(${roadImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
-        <div className="max-w-4xl mx-auto text-center relative z-20">
-          <motion.h4
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-2xl md:text-4xl text-white mb-12 tracking-tight drop-shadow-2xl"
-          >
-            Silicon Village
-          </motion.h4>
+            <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+              Friends’ Lounge emerged later as a signature civic landmark at the
+              end of this growing road — not as the origin of development, but as
+              a place of gathering, culture, and shared presence within an
+              already forming community.
+            </p>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            whileHover={{ scale: 1.02 }}
-            className="group relative bg-black/50 backdrop-blur-sm rounded-3xl p-12 md:p-16 shadow-2xl shadow-green-900/50 hover:shadow-green-400/30 hover:border-green-400/70 cursor-pointer"
-            onClick={() => setShowJungleX(true)}
-          >
-            <div className="absolute inset-0 opacity-10 pointer-events-none">
-              <img
-                src="https://cdn.pixabay.com/photo/2016/01/23/15/23/lion-1158904_1280.png"
-                alt="Lion silhouette"
-                className="w-full h-full object-cover object-center mix-blend-overlay"
-                style={{ filter: "brightness(0.18) contrast(1.6)" }}
-              />
-            </div>
+            <p className="text-lg md:text-xl text-neutral-800 leading-relaxed">
+              As homes now line Don Amenche Crescent, the open land beyond continues
+              to invite imagination. Drawing inspiration from this steady growth,
+              Udo sons and daughters have begun to speak — carefully and
+              respectfully — of a larger possibility.
+            </p>
 
-            <div className="relative z-10">
-              <div className="text-xl md:text-3xl font-semibold text-yellow-100 group-hover:text-green-400 transition-all duration-700 mb-4 select-none drop-shadow-lg">JungleX</div>
-              <p className="text-lg md:text-lg text-white/95 mb-12 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-xl">
-                Friends' Lounge Mbaise introduces the world's first <span className="text-yellow-100 font-semibold drop-shadow-sm">Africanfuturist</span> social media platform called JungleX as a work in progress.
-                This gesture is also a call on Mbaise tech innovators, brothers & sisters, to build Silicon Village right here in Udo. We shall focus on clean energy and ecosystem-enriching industries.
+            {/* SILICON VILLAGE — CORE IDEA */}
+            <div className="mt-8 p-8 md:p-12 border border-neutral-300 rounded-2xl bg-white shadow-sm">
+              <h3 className="text-2xl md:text-3xl font-semibold text-neutral-900 mb-6">
+                Silicon Village, Udo.
+              </h3>
+              <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+                A respectful continuation of the tools Silicon Valley gave the
+                world — rebuilt with local purpose, clean energy, and long memory.
               </p>
-              <div className="flex flex-col sm:flex-row gap-6 items-center justify-center">
-                <div className="group-hover:-rotate-2 transition-transform duration-300">
-                  <ArrowRight className="text-yellow-100 w-10 h-10 md:w-12 md:h-12 drop-shadow-lg" />
-                </div>
-                <span className="text-yellow-100 text-lg md:text-xl font-mono tracking-wider uppercase border border-yellow-100 px-6 py-3 rounded-full bg-green-300/20 backdrop-blur-sm shadow-lg select-none">
-                  Work In Progress
-                </span>
+
+              <p className="mt-8 text-lg text-neutral-600 leading-relaxed">
+                This idea does not seek to rival history, but to learn from it.
+                One of its earliest expressions is
+                <span className="font-medium text-neutral-900"> JungleX</span> — an
+                Africanfuturist social platform conceived in Udo. JungleX is not
+                the destination, but a signal: that global‑grade technology can be
+                imagined, built, and stewarded from this soil.
+              </p>
+
+              <div className="mt-10 inline-flex items-center gap-3 text-neutral-700">
+                <button
+                  onClick={() => setShowJungleX(true)}
+                  className="inline-flex items-center gap-2 uppercase tracking-widest text-sm border-b border-neutral-400 pb-1 hover:text-neutral-900 transition"
+                >
+                  View JungleX
+                  <ArrowRight size={18} />
+                </button>
               </div>
             </div>
-          </motion.div>
+          </div>
+        </div>
 
-          {showJungleX && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-6"
-              onClick={() => setShowJungleX(false)}
+        {/* JUNGLEX MODAL */}
+        {showJungleX && (
+          <div
+            className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-6"
+            onClick={() => setShowJungleX(false)}
+          >
+            <div
+              className="w-full max-w-6xl bg-white border border-neutral-300 rounded-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
             >
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="w-full max-w-6xl max-h-[90vh] overflow-auto bg-black/95 border-2 border-green-500 rounded-3xl shadow-2xl"
-                onClick={e => e.stopPropagation()}
-              >
-                <iframe
-                  src="https://jungle-x-social-media.netlify.app/"
-                  className="w-full h-[70vh] md:h-[80vh] border-0 rounded-2xl"
-                  title="JungleX Live Demo"
-                />
-                <div className="p-8 border-t border-green-500/30 text-center">
-                  <button
-                    onClick={() => setShowJungleX(false)}
-                    className="px-8 py-4 bg-red-600/80 hover:bg-red-500 text-white font-bold rounded-2xl border border-red-500/50 transition-all duration-300 shadow-lg hover:shadow-xl"
-                  >
-                    Close Demo
-                  </button>
+              <iframe
+                src="https://jungle-x-social-media.netlify.app/"
+                className="w-full h-[75vh]"
+                title="JungleX Demo"
+              />
+              <div className="p-6 text-center">
+                <button
+                  onClick={() => setShowJungleX(false)}
+                  className="px-6 py-3 border border-neutral-400 text-neutral-800 rounded-full"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* WORK HARD / PLAY HARD — STRUCTURED & LEGIBLE */}
+      <section className="py-32 px-6 bg-neutral-200">
+        <div className="max-w-6xl mx-auto">
+          <h3 className="text-2xl md:text-4xl text-neutral-900 text-center mb-20">
+            Work Hard. Play Hard
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {["Swimming Pool", "VIP Lounge", "Live Music", "Premium Bar", "24/7 Security", "Mbaise Tours"].map(
+              (item, i) => (
+                <div
+                  key={i}
+                  className="p-10 border border-neutral-300 rounded-2xl bg-white shadow-sm"
+                >
+                  <div className="text-sm uppercase tracking-widest text-neutral-400 mb-4">
+                    0{i + 1}
+                  </div>
+                  <h4 className="text-xl text-neutral-900 font-medium">{item}</h4>
                 </div>
-              </motion.div>
-            </motion.div>
-          )}
+              )
+            )}
+          </div>
         </div>
       </section>
-      
-      {/* FINAL CALL — MINIMALIST CRYSTALLINE CTAs */}
-      <section className="py-10 bg-gradient-to-b from-black via-red-950/40 to-black/90 relative overflow-hidden border-t-2 border-yellow-100">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,197,94,0.12),transparent_50%),radial-gradient(circle_at_80%_80%,rgba(239,68,68,0.08),transparent_70%)]" />
-        <div className="relative z-10 text-center px-6">
-       
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="text-xl md:text-xl lg:text-2xl text-white/95 font-light tracking-widest max-w-3xl mx-auto leading-relaxed mb-16 drop-shadow-lg"
-          >
-            Pioneering <span className="text-red-400 font-bold">Silicon Village</span>...Mbaise's next tech frontier. 
-            Friends Lounge Mbaise presents JungleX as one of the first emerging products of Silicon Village where environment
-            friendly industries and clean energy sources will be emphasized
-          </motion.p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            <motion.a
-              href="#support-silicon-village"
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="group bg-white/10 backdrop-blur-xl border border-green-500/40 hover:border-green-400/70 hover:bg-white/20 text-white font-bold py-8 px-6 md:px-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 flex flex-col items-center gap-3 text-sm md:text-base"
-            >
-              <Building2 size={28} className="group-hover:scale-110 transition-transform duration-300" />
+
+      {/* FINAL CALL — QUIET CONFIDENCE */}
+      <section className="py-24 px-6 bg-neutral-100 border-t border-neutral-300">
+        <div className="max-w-5xl mx-auto text-center">
+          <p className="text-xl md:text-2xl text-neutral-700 leading-relaxed mb-16">
+            What is taking shape in Udo is incremental, communal, and generational —
+            rooted in lived reality, open to the world, and respectful of the
+            foundations laid by those before us.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <a className="flex flex-col items-center gap-3 p-6 border border-neutral-300 rounded-2xl text-neutral-800 bg-white hover:shadow-md transition">
+              <Building2 />
               <span>Build With Us</span>
-              <ArrowUp className="w-5 h-5 group-hover:rotate-180 transition-transform duration-300" />
-            </motion.a>
-            
-            <motion.a
-              href="mailto:partner@siliconvillageudo.com"
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="group bg-white/10 backdrop-blur-xl border border-red-500/40 hover:border-red-400/70 hover:bg-white/20 text-white font-bold py-8 px-6 md:px-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 flex flex-col items-center gap-3 text-sm md:text-base"
-            >
-              <Globe size={28} className="group-hover:scale-110 transition-transform duration-300" />
+            </a>
+            <a className="flex flex-col items-center gap-3 p-6 border border-neutral-300 rounded-2xl text-neutral-800 bg-white hover:shadow-md transition">
+              <Globe />
               <span>Corporate Sponsor</span>
-            </motion.a>
-            
-            <motion.button
+            </a>
+            <button
               onClick={() => setShowJungleX(true)}
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="group bg-white/10 backdrop-blur-xl border border-yellow-400/50 hover:border-yellow-300/70 hover:bg-white/20 text-white font-bold py-8 px-6 md:px-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 flex flex-col items-center gap-3 text-sm md:text-base"
+              className="flex flex-col items-center gap-3 p-6 border border-neutral-300 rounded-2xl text-neutral-800 bg-white hover:shadow-md transition"
             >
-              <Zap size={28} className="group-hover:scale-110 transition-transform duration-300" />
+              <Zap />
               <span>Live JungleX</span>
-            </motion.button>
-            
-            <motion.a
-              href="https://wa.me/+2348012345678?text=Silicon%20Village%20Partnership"
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="group bg-white/10 backdrop-blur-xl border border-purple-500/40 hover:border-purple-400/70 hover:bg-white/20 text-white font-bold py-8 px-6 md:px-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 flex flex-col items-center gap-3 text-sm md:text-base"
-            >
-              <ArrowRight size={28} className="group-hover:scale-110 transition-transform duration-300" />
-              <span>WhatsApp Now</span>
-            </motion.a>
-          </div>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="mt-20 text-lg md:text-xl lg:text-2xl text-yellow-100 font-semibold tracking-wide drop-shadow-xl"
-          >
-            What are Friends' for?
-          </motion.p>
-        </div>
-      </section>
-      {/* PLAY HARD — MOBILE SWIPE INDICATOR - FIXED LIGHT STREAK */}
-      <section className="py-32 bg-gradient-to-r from-black/90 via-red-950/5 to-black/90 overflow-hidden border-t border-red-900/50">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.h2
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-2xl md:text-4xl text-center text-white mb-10 tracking-tight bg-gradient-to-r from-white via-red-300 to-green-400 bg-clip-text text-transparent"
-          >
-            Work Hard & Play Hard
-          </motion.h2>
-
-          <div className="flex space-x-8 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-8 md:pb-0">
-            {[
-              { title: "Swimming Pool", desc: "Cool off. Celebrate. Repeat." },
-              { title: "VIP Mini-Lounge", desc: "Private. Intimate. Legendary." },
-              { title: "Live Music Stage", desc: "Many guests. One heartbeat." },
-              { title: "Premium Bar", desc: "Palm wine or Hennessy — your call." },
-              { title: "24/7 Security", desc: "Celebrate freely. We've got you." },
-            ].map((amenity, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ scale: 1.05, y: -10 }}
-                className="snap-center shrink-0 w-80 h-96 bg-gradient-to-b from-red-900/30 via-black/80 to-red-950/30 border-2 border-red-800/40 backdrop-blur-none shadow-2xl shadow-red-900/30 hover:border-green-500/60 hover:shadow-green-900/30 rounded-3xl p-10 flex flex-col justify-end text-left transition-all duration-500"
-              >
-                <div className="text-7xl font-black bg-gradient-to-r from-red-600 via-white to-green-500 bg-clip-text text-transparent mb-6 opacity-30">0{i + 1}</div>
-                <h3 className="text-3xl font-bold text-white mb-4 drop-shadow-lg">{amenity.title}</h3>
-                <p className="text-xl text-gray-100 font-light drop-shadow-md">{amenity.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* MOBILE SWIPE INDICATOR */}
-          <div className="md:hidden flex justify-center items-center gap-2 mt-8 text-center">
-            <motion.div
-              animate={{ x: [-8, 8, -8] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-              className="w-10 h-1 bg-gradient-to-r from-yellow-100 to-green-500 rounded-full"
-            />
-            <span className="text-lg text-white/80 font-medium tracking-wide">Swipe left to explore</span>
-            <motion.div
-              animate={{ x: [-8, 8, -8] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-              className="w-10 h-1 bg-gradient-to-r from-yellow-100 to-green-500 rounded-full"
-            />
+            </button>
+            <a className="flex flex-col items-center gap-3 p-6 border border-neutral-300 rounded-2xl text-neutral-800 bg-white hover:shadow-md transition">
+              <ArrowRight />
+              <span>WhatsApp</span>
+            </a>
           </div>
         </div>
       </section>

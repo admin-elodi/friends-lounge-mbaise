@@ -104,7 +104,7 @@ Tagline: Friends' Lounge – Making friends and building communities 🍲✨`
           duration: 0.22
         }}
         className="fixed top-1/2 left-1/2 max-w-[90vw] w-full md:max-w-md -translate-x-1/2 -translate-y-1/2 
-                   bg-white/20 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/25 
+                   bg-black/40 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/25 
                    p-4 md:p-6 max-h-[85vh] md:max-h-[90vh] overflow-y-auto z-[1001] scrollbar-thin"
         onClick={(e) => e.stopPropagation()}
       >

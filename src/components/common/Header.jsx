@@ -1,11 +1,10 @@
 // src/components/common/Header.jsx
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Menu, X, Search } from "lucide-react";
 import Logo from "@/assets/images/friends-logo.webp";
-import upaBadge from "@/assets/images/upa.png"; // ← badge image
+import upaBadge from "@/assets/images/upa.png";
 import Banner from "@/components/sections/Banner";
-
-// Food Order Modal hook
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 
 export default function Header() {
@@ -34,13 +33,8 @@ export default function Header() {
   const time = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
   const timestamp = `${formattedDate} at ${time} WAT`;
 
-  const goTo = (path) => {
-    window.location.href = path;
-    setMobileMenuOpen(false);
-  };
-
   return (
-    <header className="w-full bg-black/90 text-white font-montserrat relative z-50">
+    <header className="w-full bg-black/90 text-white font-montserrat relative z-50 border-b-2 border-white">
       {/* TIMESTAMP */}
       <div className="relative w-full py-3 overflow-hidden border-b border-white/10">
         <div className="absolute top-1/2 left-1/2 w-[260px] h-[260px] -translate-x-1/2 -translate-y-1/2 bg-yellow-300/20 blur-2xl rounded-full animate-bigSun pointer-events-none"></div>
@@ -73,22 +67,22 @@ export default function Header() {
         </div>
       </div>
 
-      {/* DESKTOP NAV */}
+      {/* DESKTOP NAV - OPTIMIZED WITH React Router Links + prefetch */}
       <nav className="hidden md:flex justify-between items-center px-10 py-3 border-t border-white/10">
         <ul className="flex gap-10 text-sm font-montserrat tracking-wide relative">
-          <li><a onClick={() => goTo("/")} className="cursor-pointer hover:text-green-400 transition">Home</a></li>
+          <li><Link to="/" className="hover:text-green-400 transition" prefetch="intent">Home</Link></li>
 
           {/* PROGRAMS WITH BADGE */}
           <li className="relative">
-            <a onClick={() => goTo("/programs")} className="cursor-pointer hover:text-green-400 transition flex items-center gap-1">
+            <Link to="/programs" className="hover:text-green-400 transition flex items-center gap-1" prefetch="intent">
               Programs
-            </a>
+            </Link>
             <img src={upaBadge} alt="badge" className="absolute -top-2 -right-4 w-5 h-5 md:w-6 md:h-6 rounded-full border border-white/30 shadow-lg" />
           </li>
 
-          <li><a onClick={() => goTo("/friends")} className="cursor-pointer hover:text-green-400 transition">Friends</a></li>
-          <li><a onClick={() => goTo("/mbaise")} className="cursor-pointer hover:text-green-400 transition">Mbaise</a></li>
-          <li><a onClick={() => goTo("/projects")} className="cursor-pointer hover:text-green-400 transition">Projects</a></li>
+          <li><Link to="/friends" className="hover:text-green-400 transition" prefetch="intent">Friends</Link></li>
+          <li><Link to="/mbaise" className="hover:text-green-400 transition" prefetch="intent">Mbaise</Link></li>
+          <li><Link to="/projects" className="hover:text-green-400 transition" prefetch="intent">Projects</Link></li>
         </ul>
 
         <div className="flex items-center gap-3">
@@ -119,23 +113,27 @@ export default function Header() {
         </button>
       </div>
 
-      {/* MOBILE DROPDOWN */}
+      {/* MOBILE DROPDOWN - OPTIMIZED WITH React Router Links */}
       {mobileMenuOpen && (
         <div className="absolute w-[90%] left-1/2 -translate-x-1/2 mt-2 rounded-3xl backdrop-blur-xl bg-black/30 p-6 shadow-2xl border border-white/20 font-montserrat">
           <ul className="flex flex-col items-center gap-4 text-base">
-            <li><a onClick={() => goTo("/")} className="hover:text-green-400 transition">Home</a></li>
+            <li><Link to="/" className="hover:text-green-400 transition" onClick={() => setMobileMenuOpen(false)}>Home</Link></li>
 
             {/* MOBILE PROGRAMS BADGE */}
             <li className="relative">
-              <a onClick={() => goTo("/programs")} className="hover:text-green-400 transition flex items-center gap-1">
+              <Link 
+                to="/programs" 
+                className="hover:text-green-400 transition flex items-center gap-1" 
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Programs
-              </a>
+              </Link>
               <img src={upaBadge} alt="badge" className="absolute -top-1 -right-5 w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30 shadow-sm" />
             </li>
 
-            <li><a onClick={() => goTo("/friends")} className="hover:text-green-400 transition">Friends</a></li>
-            <li><a onClick={() => goTo("/mbaise")} className="hover:text-green-400 transition">Mbaise</a></li>
-            <li><a onClick={() => goTo("/projects")} className="hover:text-green-400 transition">Projects</a></li>
+            <li><Link to="/friends" className="hover:text-green-400 transition" onClick={() => setMobileMenuOpen(false)}>Friends</Link></li>
+            <li><Link to="/mbaise" className="hover:text-green-400 transition" onClick={() => setMobileMenuOpen(false)}>Mbaise</Link></li>
+            <li><Link to="/projects" className="hover:text-green-400 transition" onClick={() => setMobileMenuOpen(false)}>Projects</Link></li>
           </ul>
 
           <div className="flex flex-col gap-3 mt-6">

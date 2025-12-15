@@ -1,244 +1,438 @@
 // src/pages/Projects.jsx
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
   HandCoins,
   PiggyBank,
   Eye,
   Trash2,
+  User,
+  Calendar,
+  Archive,
+  ChevronDown,
 } from "lucide-react";
 
-// 🔥 Minimal Udo/Mbaise Transparency Engine
+// 🔥 Udo Transparency Archive - Friends' Lounge Mbaise
 export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [contributions, setContributions] = useState({});
-  const [newProjectName, setNewProjectName] = useState("");
-  const [newInitiatorName, setNewInitiatorName] = useState("");
+  const [newProject, setNewProject] = useState({ 
+    name: "", 
+    initiator: "", 
+    description: "",
+    status: "ongoing",
+    amount: ""
+  });
+  const [isCreating, setIsCreating] = useState(false);
+  const [showCompleted, setShowCompleted] = useState(false);
+  const [showHistorical, setShowHistorical] = useState(false);
 
-  // ------------------------------
-  // LOAD LOCAL STORAGE ON MOUNT
-  // ------------------------------
+  // Load data
   useEffect(() => {
     const savedProjects = localStorage.getItem("projects");
     const savedContributions = localStorage.getItem("contributions");
-
     if (savedProjects) setProjects(JSON.parse(savedProjects));
     if (savedContributions) setContributions(JSON.parse(savedContributions));
   }, []);
 
-  // SAVE PROJECTS
+  // Persist data
   useEffect(() => {
     localStorage.setItem("projects", JSON.stringify(projects));
-  }, [projects]);
-
-  // SAVE CONTRIBUTIONS
-  useEffect(() => {
     localStorage.setItem("contributions", JSON.stringify(contributions));
-  }, [contributions]);
+  }, [projects, contributions]);
 
-  // CREATE NEW PROJECT
-  const createProject = () => {
-    if (!newProjectName.trim() || !newInitiatorName.trim()) return;
+  // Calculate totals by status
+  const totals = useMemo(() => {
+    const ongoingTotal = projects
+      .filter(p => p.status === "ongoing")
+      .reduce((acc, proj) => {
+        acc[proj.id] = (contributions[proj.id] || []).reduce((a, b) => a + b, 0);
+        return acc;
+      }, {});
 
-    const newProj = {
+    const grandOngoing = Object.values(ongoingTotal).reduce((a, b) => a + b, 0);
+    
+    return {
+      ongoing: ongoingTotal,
+      grandOngoing,
+      completed: projects.filter(p => p.status === "completed").length,
+      historical: projects.filter(p => p.status === "historical").length,
+    };
+  }, [projects, contributions]);
+
+  const isFormValid = newProject.name.trim() && newProject.initiator.trim();
+
+  const handleInputChange = useCallback((field, value) => {
+    setNewProject(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const createProject = useCallback(async () => {
+    if (!isFormValid) return;
+    
+    setIsCreating(true);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const project = {
       id: Date.now(),
-      name: newProjectName.trim(),
-      initiator: newInitiatorName.trim(),
+      name: newProject.name.trim(),
+      initiator: newProject.initiator.trim(),
+      description: newProject.description.trim(),
+      status: newProject.status,
+      amount: newProject.amount.trim() || null,
       createdAt: new Date().toISOString(),
+      contributions: []
     };
 
-    setProjects((p) => [...p, newProj]);
-    setNewProjectName("");
-    setNewInitiatorName("");
-  };
+    setProjects(prev => [...prev, project]);
+    setNewProject({ name: "", initiator: "", description: "", status: "ongoing", amount: "" });
+    setIsCreating(false);
+  }, [newProject, isFormValid]);
 
-  // ADD CONTRIBUTION
-  const addContribution = (id) => {
-    const amount = prompt("Enter amount contributed (₦):");
-    if (!amount || isNaN(amount)) return;
+  const addContribution = useCallback((id) => {
+    const amount = window.prompt("Enter contribution amount (₦):");
+    if (!amount?.trim()) return;
 
-    const amt = Number(amount);
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount) || numAmount <= 0) {
+      alert("Please enter a valid positive amount");
+      return;
+    }
 
-    setContributions((prev) => ({
+    setContributions(prev => ({
       ...prev,
-      [id]: [...(prev[id] || []), amt],
+      [id]: [...(prev[id] || []), numAmount]
     }));
-  };
+  }, []);
 
-  // DELETE PROJECT
-  const deleteProject = (id) => {
-    if (!confirm("Are you sure you want to delete this project?")) return;
+  const deleteProject = useCallback((id) => {
+    if (!window.confirm("Delete this project?")) return;
+    
+    setProjects(prev => prev.filter(p => p.id !== id));
+    setContributions(prev => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  }, []);
 
-    setProjects((p) => p.filter((proj) => proj.id !== id));
+  const filteredProjects = useMemo(() => {
+    let result = projects;
+    
+    if (!showCompleted) result = result.filter(p => p.status !== "completed");
+    if (!showHistorical) result = result.filter(p => p.status !== "historical");
+    
+    return result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }, [projects, showCompleted, showHistorical]);
 
-    const updated = { ...contributions };
-    delete updated[id];
-    setContributions(updated);
+  const ProjectCard = ({ project }) => {
+    const total = totals.ongoing[project.id] || 0;
+    const contribCount = contributions[project.id]?.length || 0;
+    const createdDate = new Date(project.createdAt).toLocaleDateString('en-NG');
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="group bg-black/20 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
+      >
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="text-xl font-bold text-white">{project.name}</h3>
+            <div className="flex items-center gap-4 mt-2 text-sm text-gray-400">
+              <div className="flex items-center gap-1">
+                <User size={14} />
+                {project.initiator}
+              </div>
+              <div className="flex items-center gap-1">
+                <Calendar size={14} />
+                {createdDate}
+              </div>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                project.status === 'ongoing' ? 'bg-green-500/20 text-green-400 border border-green-400/30' :
+                project.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-400/30' :
+                'bg-gray-500/20 text-gray-400 border border-gray-400/30'
+              }`}>
+                {project.status === 'historical' ? 'Historical' : project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+              </span>
+            </div>
+          </div>
+          
+          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            {project.status === 'ongoing' && (
+              <button
+                onClick={() => addContribution(project.id)}
+                className="p-2 bg-green-500/20 hover:bg-green-500/40 border border-green-500/30 rounded-lg transition-all hover:scale-105"
+                title="Contribute"
+              >
+                <HandCoins size={16} />
+              </button>
+            )}
+            <button
+              onClick={() => deleteProject(project.id)}
+              className="p-2 bg-red-500/20 hover:bg-red-500/40 border border-red-500/30 rounded-lg transition-all hover:scale-105"
+              title="Delete"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+        </div>
+
+        {project.description && (
+          <p className="text-gray-300 text-sm mb-4 leading-relaxed">{project.description}</p>
+        )}
+
+        {project.amount && (
+          <p className="text-xs text-gray-500 mb-3">Est. Cost: ₦{parseFloat(project.amount).toLocaleString()}</p>
+        )}
+
+        {project.status === 'ongoing' && total > 0 && (
+          <div className="bg-green-500/10 p-3 rounded-lg border border-green-500/20">
+            <p className="text-lg font-bold text-green-400">₦{total.toLocaleString()}</p>
+            <p className="text-green-300 text-xs">{contribCount} contribution{contribCount !== 1 ? 's' : ''}</p>
+          </div>
+        )}
+      </motion.div>
+    );
   };
 
   return (
-    <div className="relative min-h-screen w-full text-white overflow-hidden">
+    <div className="min-h-screen text-white">
+      {/* Enhanced Background with map.jpg */}
+      <div className="fixed inset-0 -z-10">
+        {/* Blurred and dimmed map image as background */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 blur-sm"
+          style={{ backgroundImage: "url('/map.jpg')" }}  // Assuming map.jpg is in public folder (public/map.jpg)
+        />
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/70" />
+        {/* Retained subtle gradient accents for depth */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-80" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,#6366f1_0%,transparent_50%),radial-gradient(circle_at_80%_20%,#f59e0b_0%,transparent_50%)] opacity-20" />
+      </div>
 
-      {/* BACKGROUND LOOPING VIDEO */}
-      <video
-        src="/src/assets/videos/dollars.mp4"
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="fixed inset-0 w-full h-full object-cover"
-      />
+      {/* Scroll Indicator */}
+      <div className="fixed right-6 bottom-6 w-2 h-20 bg-gradient-to-t from-red-500/30 to-transparent rounded-full z-40 animate-pulse" />
 
-      {/* DARK OVERLAY TO IMPROVE READABILITY */}
-      <div className="fixed inset-0 bg-black/60" />
-
-      {/* PAGE CONTENT */}
-      <div className="relative z-10">
-
-        {/* EXTERNAL LINKS TO PROJECT TRACKING PORTALS */}
-        <section className="mt-4 max-w-3xl mx-auto px-6 py-10 bg-black/40 border border-white/10 rounded-lg shadow-xl backdrop-blur-md mb-2">
-          <h2 className="text-xl font-bold mb-6">Track Community Projects</h2>
-          <p className="mb-4 text-gray-300">
-            Friends Lounge encourages Udo and beyond to watch the money in public projects by
-            using the tools below. True Friends of the people spend wisely on their behalf
-          </p>
-          <ul className="list-disc list-inside space-y-2">
-            <li>
-              <a
-                href="https://tracka.ng"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-red-500 hover:underline"
-              >
-                Tracka - BudgIT Foundation
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://www.eyemark.ng"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-red-500 hover:underline"
-              >
-                Eyemark
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://constrack.ng"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-red-500 hover:underline"
-              >
-                ConsTrack
-              </a>
-            </li>
-          </ul>
-        </section>
-
-        {/* HERO */}
-        <section className="py-32 text-center">
-          <h1 className="text-xl md:text-4xl font-black">
-            Udo & Mbaise Public Projects
-          </h1>
-          <p className="mt-6 text-xl md:text-xl text-gray-300 max-w-3xl mx-auto">
-            Welcome to a special Friends Lounge space for transparency
-            and accountability   A centralized space where you can 
-            view details of active projects initiated here
-          </p>
-        </section>
-
-        {/* CREATE PROJECT */}
-        <section className="max-w-4xl mx-auto px-6 py-20">
-          <div className="bg-black/40 border border-white/10 p-10 rounded-3xl shadow-xl backdrop-blur-md">
-            <h2 className="text-xl font-bold mb-8 flex items-center gap-3">
-              <Plus /> Start a New Project
-            </h2>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <input
-                type="text"
-                placeholder="Project Name"
-                value={newProjectName}
-                onChange={(e) => setNewProjectName(e.target.value)}
-                className="px-6 py-4 rounded-xl bg-black/50 border border-white/20 focus:outline-none focus:border-red-500"
-              />
-              <input
-                type="text"
-                placeholder="Initiator Name"
-                value={newInitiatorName}
-                onChange={(e) => setNewInitiatorName(e.target.value)}
-                className="px-6 py-4 rounded-xl bg-black/50 border border-white/20 focus:outline-none focus:border-red-500"
-              />
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-12">
+        
+        {/* FRIENDS' LOUNGE MBAISE - MISSION HEADER */}
+        <motion.section className="text-center mb-20">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-3 bg-black/40 px-6 py-3 rounded-xl border border-white/20 mb-8 backdrop-blur-sm"
+          >
+            <div>
+              <h1 className="text-xl bg-gradient-to-r from-white via-gray-100 to-transparent bg-clip-text">
+                Friends' Lounge Mbaise
+              </h1>
+              <p className="text-xs text-red-400 font-medium tracking-wide">Encouraging Accountability</p>
             </div>
+          </motion.div>
 
-            <button
-              onClick={createProject}
-              className="mt-8 px-10 py-4 bg-red-600 hover:bg-red-500 rounded-full font-bold text-lg shadow-lg transition"
-            >
-              Create Project
-            </button>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-2xl md:text-3xl bg-gradient-to-r from-white via-gray-100 to-transparent bg-clip-text mb-6"
+          >
+            Udo Transparency Archive
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-lg md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed"
+          >
+            Honoring past Contributors - Tracking ongoing Projects - Preserving History
+          </motion.p>
+       
+        </motion.section>
+
+        {/* STATS DASHBOARD */}
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid md:grid-cols-3 gap-6 mb-16"
+        >
+          <div className="bg-black/30 border border-white/10 rounded-xl p-6 text-center backdrop-blur-sm">
+            <div className="text-3xl font-black text-green-400">₦{totals.grandOngoing.toLocaleString()}</div>
+            <div className="text-gray-400 text-sm mt-1">Ongoing Total</div>
           </div>
-        </section>
+          <div className="bg-black/30 border border-white/10 rounded-xl p-6 text-center backdrop-blur-sm">
+            <div className="text-3xl font-black">{totals.completed}</div>
+            <div className="text-gray-400 text-sm mt-1">Completed</div>
+          </div>
+          <div className="bg-black/30 border border-white/10 rounded-xl p-6 text-center backdrop-blur-sm">
+            <div className="text-3xl font-black">{totals.historical}</div>
+            <div className="text-gray-400 text-sm mt-1">Historical</div>
+          </div>
+        </motion.section>
 
-        {/* PROJECT LIST */}
-        <section className="max-w-6xl mx-auto px-6 pb-40">
-          <h2 className="text-xl font-black mb-10 flex items-center gap-3">
-            <Eye /> Active Community Projects
+        {/* TRACKING TOOLS - Friends' Lounge Accountability Partners */}
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-16"
+        >
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 justify-center">
+            <Eye className="w-8 h-8" />
+            Track Public Spending
           </h2>
+          <p className="text-center text-gray-400 mb-8 text-sm">
+            Friends' Lounge Mbaise cordially invites active use of Nigeria's leading transparency platforms
+          </p>
+          <div className="grid md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+            {[
+              { url: "https://tracka.ng", name: "Tracka" },
+              { url: "https://www.eyemark.ng", name: "Eyemark" },
+              { url: "https://constrack.ng", name: "ConsTrack" }
+            ].map(({ url, name }, i) => (
+              <a
+                key={i}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-black/30 hover:bg-red-500/20 border border-white/20 rounded-xl p-4 text-center transition-all hover:scale-105 hover:border-red-400 backdrop-blur-sm"
+              >
+                <div className="font-bold text-white group-hover:text-red-400 transition-colors">{name}</div>
+              </a>
+            ))}
+          </div>
+        </motion.section>
 
-          {projects.length === 0 ? (
-            <p className="text-gray-400 text-lg">
-              No projects yet. Start one above.
-            </p>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-10">
-              {projects.map((proj) => {
-                const total = (contributions[proj.id] || []).reduce(
-                  (a, b) => a + b,
-                  0
-                );
-
-                return (
-                  <div
-                    key={proj.id}
-                    className="bg-black/40 border border-white/10 p-8 rounded-3xl backdrop-blur-lg shadow-lg"
-                  >
-                    <h3 className="text-2xl font-bold">{proj.name}</h3>
-                    <p className="text-gray-400 mt-2">
-                      Initiator: <span className="text-white">{proj.initiator}</span>
-                    </p>
-
-                    <div className="mt-6">
-                      <p className="text-xl font-black text-green-400">
-                        Total Raised: ₦{total.toLocaleString()}
-                      </p>
-                    </div>
-
-                    <div className="flex justify-between items-center mt-8">
-                      <button
-                        onClick={() => addContribution(proj.id)}
-                        className="px-5 py-3 bg-green-600 hover:bg-green-500 rounded-full font-bold flex items-center gap-2"
-                      >
-                        <HandCoins size={20} />
-                        Contribute
-                      </button>
-
-                      <button
-                        onClick={() => deleteProject(proj.id)}
-                        className="px-5 py-3 bg-red-700 hover:bg-red-600 rounded-full font-bold flex items-center gap-2"
-                      >
-                        <Trash2 size={20} />
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+        {/* PROJECT FORM - Friends' Lounge Contribution Engine */}
+        <section className="max-w-2xl mx-auto mb-16">
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-black/30 border border-white/10 rounded-xl p-8 backdrop-blur-sm"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <Plus className="w-7 h-7 text-red-400" />
+              <h2 className="text-xl font-bold">Add Project</h2>
             </div>
-          )}
+            
+            <div className="space-y-4">
+              <input
+                placeholder="Project Name (e.g. Udo Market Roof)"
+                value={newProject.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-white/20 rounded-lg focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all text-sm"
+              />
+              <input
+                placeholder="Initiator (e.g. De Lucius Nwosu)"
+                value={newProject.initiator}
+                onChange={(e) => handleInputChange('initiator', e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-white/20 rounded-lg focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all text-sm"
+              />
+              <textarea
+                placeholder="Description (e.g. Built Udo market road single-handedly)"
+                value={newProject.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                rows={3}
+                className="w-full px-4 py-3 bg-black/50 border border-white/20 rounded-lg focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all resize-none text-sm"
+              />
+              <input
+                placeholder="Est. Cost ₦ (optional)"
+                value={newProject.amount}
+                onChange={(e) => handleInputChange('amount', e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-white/20 rounded-lg focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all text-sm"
+              />
+              <div className="flex gap-2 pt-2">
+                <select
+                  value={newProject.status}
+                  onChange={(e) => handleInputChange('status', e.target.value)}
+                  className="flex-1 px-4 py-3 bg-black/50 border border-white/20 rounded-lg focus:border-red-400 text-sm"
+                >
+                  <option value="ongoing">Ongoing</option>
+                  <option value="completed">Completed</option>
+                  <option value="historical">Historical</option>
+                </select>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={createProject}
+                  disabled={!isFormValid || isCreating}
+                  className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 disabled:opacity-50 rounded-lg font-bold transition-all text-sm"
+                >
+                  {isCreating ? "Adding..." : "Add Project"}
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
         </section>
+
+        {/* FILTER TOGGLES */}
+        <div className="flex flex-wrap gap-3 justify-center mb-12">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            className={`px-6 py-2 rounded-full font-medium border transition-all text-sm ${
+              showCompleted ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300' : 'border-white/30 text-gray-400 hover:border-white/50'
+            }`}
+            onClick={() => setShowCompleted(!showCompleted)}
+          >
+            Completed ({totals.completed})
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            className={`px-6 py-2 rounded-full font-medium border transition-all text-sm ${
+              showHistorical ? 'bg-gray-500/20 border-gray-400 text-gray-300' : 'border-white/30 text-gray-400 hover:border-white/50'
+            }`}
+            onClick={() => setShowHistorical(!showHistorical)}
+          >
+            Historical ({totals.historical})
+          </motion.button>
+        </div>
+
+        {/* PROJECTS GRID */}
+        <section className="pb-24">
+          <AnimatePresence mode="wait">
+            {filteredProjects.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="text-center py-32"
+              >
+                <div className="rounded-lg w-20 h-12 bg-gradient-to-br from-red-500/20 to-amber-500/20 mx-auto mb-2 flex items-center justify-center backdrop-blur-sm shadow-lg">
+                  <Eye className="w-10 h-8 text-red-400 drop-shadow-lg" />
+                </div>
+                <h3 className="text-xl mb-4 text-gray-300">No projects yet</h3>
+                <p className="text-lg text-gray-500 max-w-md mx-auto">
+                  Friends' Lounge Mbaise invites you to add the first project above
+                </p>
+              </motion.div>
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="grid md:grid-cols-2 xl:grid-cols-3 gap-6"
+              >
+                {filteredProjects.map(project => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </section>
+
+        {/* FOOTER BRANDING */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center py-12 border-t border-white/10 mt-20"
+        >
+          <p className="text-gray-500 text-sm">
+            Transparency Engine by <span className="font-bold text-white">Friends' Lounge Mbaise</span>
+          </p>
+          <p className="text-xs text-gray-600 mt-1 tracking-wide">
+            Building Udo through accountability • Donamenche Crescent, Mbaise
+          </p>
+        </motion.div>
       </div>
     </div>
   );

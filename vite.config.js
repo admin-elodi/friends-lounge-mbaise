@@ -1,3 +1,4 @@
+// vite.config.js
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
@@ -14,5 +15,27 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
-  // No server config → uses perfect defaults (localhost + auto port increment)
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['lucide-react', 'framer-motion']
+        },
+      },
+    },
+    sourcemap: false, // Faster builds
+    minify: 'terser',
+  },
+  server: {
+    watch: {
+      usePolling: false, // Fixed: Simple boolean instead of process.env check
+    },
+    hmr: {
+      overlay: false, // Disable error overlay for faster recovery
+    },
+  },
+  optimizeDeps: {
+    exclude: [],
+  },
 });
