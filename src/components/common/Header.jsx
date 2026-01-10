@@ -6,9 +6,13 @@ import Logo from "@/assets/images/friends-logo.webp";
 import upaBadge from "@/assets/images/upa.png";
 import Banner from "@/components/sections/Banner";
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
+import BookEvent from "@/features/BookEvent";  // ← Added this import
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Added: same pattern as Footer for controlling BookEvent modal
+  const [bookEventOpen, setBookEventOpen] = useState(false);
 
   const {
     isOpen: foodModalOpen,
@@ -34,12 +38,12 @@ export default function Header() {
   const timestamp = `${formattedDate} at ${time} WAT`;
 
   return (
-    <header className="w-full bg-black/90 text-white font-montserrat relative z-50 border-b-2 border-white">
+    <header className="w-full bg-black/90 text-white font-montserrat relative z-50">
       {/* TIMESTAMP */}
       <div className="relative w-full py-3 overflow-hidden border-b border-white/10">
         <div className="absolute top-1/2 left-1/2 w-[260px] h-[260px] -translate-x-1/2 -translate-y-1/2 bg-yellow-300/20 blur-2xl rounded-full animate-bigSun pointer-events-none"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shine"></div>
-        <div className="relative text-center text-sm tracking-wider font-semibold bg-gradient-to-r from-green-400/20 via-green-400/10 to-green-400/20 py-[6px] border-y border-green-400/20 backdrop-blur-md shadow-lg animate-timeLift">
+        <div className="relative text-center text-sm tracking-wider font-semibold bg-gradient-to-r from-yellow-400/20 via-yellow-400/10 to-yellow-400/20 py-[6px] border-y border-yellow-400/20 backdrop-blur-md shadow-lg animate-timeLift">
           {timestamp}
         </div>
       </div>
@@ -86,7 +90,11 @@ export default function Header() {
         </ul>
 
         <div className="flex items-center gap-3">
-          <button className="bg-white text-black px-4 py-[6px] rounded-full text-sm font-semibold font-montserrat hover:bg-gray-300 transition">
+          {/* Changed: now opens the modal */}
+          <button 
+            onClick={() => setBookEventOpen(true)}
+            className="bg-white text-black px-4 py-[6px] rounded-full text-sm font-semibold font-montserrat hover:bg-gray-300 transition"
+          >
             Book Event
           </button>
           <button
@@ -140,7 +148,11 @@ export default function Header() {
             <button onClick={openFoodOrder} className="bg-red-600 w-full py-2 rounded-full font-semibold text-sm">
               Order Food
             </button>
-            <button className="bg-white w-full py-2 rounded-full text-black font-semibold text-sm">
+            {/* Changed: now opens the modal - same as Footer */}
+            <button 
+              onClick={() => setBookEventOpen(true)}
+              className="bg-white w-full py-2 rounded-full text-black font-semibold text-sm"
+            >
               Book Event
             </button>
           </div>
@@ -161,6 +173,12 @@ export default function Header() {
         isPaying={isPaying}
         paymentSuccess={paymentSuccess}
         deliveryFee={deliveryFee}
+      />
+
+      {/* Added: Book Event Modal - same pattern as Footer */}
+      <BookEvent 
+        isOpen={bookEventOpen} 
+        onClose={() => setBookEventOpen(false)} 
       />
 
       {/* ANIMATIONS */}

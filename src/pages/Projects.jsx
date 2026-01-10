@@ -1,5 +1,5 @@
 // src/pages/Projects.jsx
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -27,20 +27,6 @@ export default function Projects() {
   const [isCreating, setIsCreating] = useState(false);
   const [showCompleted, setShowCompleted] = useState(false);
   const [showHistorical, setShowHistorical] = useState(false);
-
-  // Load data
-  useEffect(() => {
-    const savedProjects = localStorage.getItem("projects");
-    const savedContributions = localStorage.getItem("contributions");
-    if (savedProjects) setProjects(JSON.parse(savedProjects));
-    if (savedContributions) setContributions(JSON.parse(savedContributions));
-  }, []);
-
-  // Persist data
-  useEffect(() => {
-    localStorage.setItem("projects", JSON.stringify(projects));
-    localStorage.setItem("contributions", JSON.stringify(contributions));
-  }, [projects, contributions]);
 
   // Calculate totals by status
   const totals = useMemo(() => {
@@ -137,99 +123,110 @@ export default function Projects() {
         exit={{ opacity: 0, y: -20 }}
         className="group bg-black/20 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
       >
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-xl font-bold text-white">{project.name}</h3>
-            <div className="flex items-center gap-4 mt-2 text-sm text-gray-400">
-              <div className="flex items-center gap-1">
-                <User size={14} />
-                {project.initiator}
+        <div className="flex flex-col gap-4">
+          <div className="flex items-start justify-between">
+            <div className="flex-1 min-w-0">
+              <h3 className="text-xl font-bold text-white truncate">{project.name}</h3>
+              <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-400">
+                <div className="flex items-center gap-1">
+                  <User size={14} />
+                  <span className="truncate">{project.initiator}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Calendar size={14} />
+                  {createdDate}
+                </div>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                  project.status === 'ongoing'
+                    ? 'bg-green-500/20 text-green-400 border border-green-400/30'
+                    : project.status === 'completed'
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-400/30'
+                    : 'bg-gray-500/20 text-gray-400 border border-gray-400/30'
+                }`}>
+                  {project.status === 'historical'
+                    ? 'Historical'
+                    : project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                </span>
               </div>
-              <div className="flex items-center gap-1">
-                <Calendar size={14} />
-                {createdDate}
-              </div>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                project.status === 'ongoing' ? 'bg-green-500/20 text-green-400 border border-green-400/30' :
-                project.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-400/30' :
-                'bg-gray-500/20 text-gray-400 border border-gray-400/30'
-              }`}>
-                {project.status === 'historical' ? 'Historical' : project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-              </span>
+            </div>
+
+            <div className="flex gap-2 ml-4 flex-shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity lg:transition-opacity">
+              {project.status === 'ongoing' && (
+                <button
+                  onClick={() => addContribution(project.id)}
+                  className="p-2 bg-green-500/20 hover:bg-green-500/40 border border-green-500/30 rounded-lg transition-all hover:scale-105"
+                  title="Contribute"
+                  aria-label="Contribute"
+                >
+                  <HandCoins size={16} />
+                </button>
+              )}
+              <button
+                onClick={() => deleteProject(project.id)}
+                className="p-2 bg-red-500/20 hover:bg-red-500/40 border border-red-500/30 rounded-lg transition-all hover:scale-105"
+                title="Delete"
+                aria-label="Delete"
+              >
+                <Trash2 size={16} />
+              </button>
             </div>
           </div>
-          
-          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            {project.status === 'ongoing' && (
-              <button
-                onClick={() => addContribution(project.id)}
-                className="p-2 bg-green-500/20 hover:bg-green-500/40 border border-green-500/30 rounded-lg transition-all hover:scale-105"
-                title="Contribute"
-              >
-                <HandCoins size={16} />
-              </button>
-            )}
-            <button
-              onClick={() => deleteProject(project.id)}
-              className="p-2 bg-red-500/20 hover:bg-red-500/40 border border-red-500/30 rounded-lg transition-all hover:scale-105"
-              title="Delete"
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
+
+          {project.description && (
+            <p className="text-gray-300 text-sm leading-relaxed">{project.description}</p>
+          )}
+
+          {project.amount && (
+            <p className="text-xs text-gray-500">
+              Est. Cost: ₦{parseFloat(project.amount).toLocaleString()}
+            </p>
+          )}
+
+          {project.status === 'ongoing' && total > 0 && (
+            <div className="bg-green-500/10 p-3 rounded-lg border border-green-500/20">
+              <p className="text-lg font-bold text-green-400">
+                ₦{total.toLocaleString()}
+              </p>
+              <p className="text-green-300 text-xs">
+                {contribCount} contribution{contribCount !== 1 ? 's' : ''}
+              </p>
+            </div>
+          )}
         </div>
-
-        {project.description && (
-          <p className="text-gray-300 text-sm mb-4 leading-relaxed">{project.description}</p>
-        )}
-
-        {project.amount && (
-          <p className="text-xs text-gray-500 mb-3">Est. Cost: ₦{parseFloat(project.amount).toLocaleString()}</p>
-        )}
-
-        {project.status === 'ongoing' && total > 0 && (
-          <div className="bg-green-500/10 p-3 rounded-lg border border-green-500/20">
-            <p className="text-lg font-bold text-green-400">₦{total.toLocaleString()}</p>
-            <p className="text-green-300 text-xs">{contribCount} contribution{contribCount !== 1 ? 's' : ''}</p>
-          </div>
-        )}
       </motion.div>
     );
   };
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen text-white overflow-x-hidden">
       {/* Enhanced Background with map.jpg */}
       <div className="fixed inset-0 -z-10">
-        {/* Blurred and dimmed map image as background */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 blur-sm"
-          style={{ backgroundImage: "url('/map.jpg')" }}  // Assuming map.jpg is in public folder (public/map.jpg)
+          style={{ backgroundImage: "url('/map.jpg')" }}
         />
-        {/* Dark overlay for better text readability */}
         <div className="absolute inset-0 bg-black/70" />
-        {/* Retained subtle gradient accents for depth */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-80" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,#6366f1_0%,transparent_50%),radial-gradient(circle_at_80%_20%,#f59e0b_0%,transparent_50%)] opacity-20" />
       </div>
 
-      {/* Scroll Indicator */}
       <div className="fixed right-6 bottom-6 w-2 h-20 bg-gradient-to-t from-red-500/30 to-transparent rounded-full z-40 animate-pulse" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-12">
-        
-        {/* FRIENDS' LOUNGE MBAISE - MISSION HEADER */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-12">
+        {/* HEADER */}
         <motion.section className="text-center mb-20">
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-3 bg-black/40 px-6 py-3 rounded-xl border border-white/20 mb-8 backdrop-blur-sm"
+            className="inline-flex items-center gap-3 bg-black/40 px-6 py-3 rounded-lg border border-white/20 mb-8 backdrop-blur-sm"
           >
             <div>
               <h1 className="text-xl bg-gradient-to-r from-white via-gray-100 to-transparent bg-clip-text">
                 Friends' Lounge Mbaise
               </h1>
-              <p className="text-xs text-red-400 font-medium tracking-wide">Encouraging Accountability</p>
+              <p className="text-xs text-red-400 font-medium tracking-wide">
+                Encouraging Accountability
+              </p>
             </div>
           </motion.div>
 
@@ -240,6 +237,7 @@ export default function Projects() {
           >
             Udo Transparency Archive
           </motion.h1>
+
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -248,17 +246,18 @@ export default function Projects() {
           >
             Honoring past Contributors - Tracking ongoing Projects - Preserving History
           </motion.p>
-       
         </motion.section>
 
-        {/* STATS DASHBOARD */}
+        {/* STATS */}
         <motion.section 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="grid md:grid-cols-3 gap-6 mb-16"
         >
           <div className="bg-black/30 border border-white/10 rounded-xl p-6 text-center backdrop-blur-sm">
-            <div className="text-3xl font-black text-green-400">₦{totals.grandOngoing.toLocaleString()}</div>
+            <div className="text-3xl font-black text-green-400">
+              ₦{totals.grandOngoing.toLocaleString()}
+            </div>
             <div className="text-gray-400 text-sm mt-1">Ongoing Total</div>
           </div>
           <div className="bg-black/30 border border-white/10 rounded-xl p-6 text-center backdrop-blur-sm">
@@ -271,40 +270,7 @@ export default function Projects() {
           </div>
         </motion.section>
 
-        {/* TRACKING TOOLS - Friends' Lounge Accountability Partners */}
-        <motion.section 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-16"
-        >
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 justify-center">
-            <Eye className="w-8 h-8" />
-            Track Public Spending
-          </h2>
-          <p className="text-center text-gray-400 mb-8 text-sm">
-            Friends' Lounge Mbaise cordially invites active use of Nigeria's leading transparency platforms
-          </p>
-          <div className="grid md:grid-cols-3 gap-4 max-w-2xl mx-auto">
-            {[
-              { url: "https://tracka.ng", name: "Tracka" },
-              { url: "https://www.eyemark.ng", name: "Eyemark" },
-              { url: "https://constrack.ng", name: "ConsTrack" }
-            ].map(({ url, name }, i) => (
-              <a
-                key={i}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-black/30 hover:bg-red-500/20 border border-white/20 rounded-xl p-4 text-center transition-all hover:scale-105 hover:border-red-400 backdrop-blur-sm"
-              >
-                <div className="font-bold text-white group-hover:text-red-400 transition-colors">{name}</div>
-              </a>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* PROJECT FORM - Friends' Lounge Contribution Engine */}
+        {/* FORM */}
         <section className="max-w-2xl mx-auto mb-16">
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }}
@@ -315,7 +281,7 @@ export default function Projects() {
               <Plus className="w-7 h-7 text-red-400" />
               <h2 className="text-xl font-bold">Add Project</h2>
             </div>
-            
+
             <div className="space-y-4">
               <input
                 placeholder="Project Name (e.g. Udo Market Roof)"
@@ -342,7 +308,7 @@ export default function Projects() {
                 onChange={(e) => handleInputChange('amount', e.target.value)}
                 className="w-full px-4 py-3 bg-black/50 border border-white/20 rounded-lg focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all text-sm"
               />
-              <div className="flex gap-2 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <select
                   value={newProject.status}
                   onChange={(e) => handleInputChange('status', e.target.value)}
@@ -366,12 +332,14 @@ export default function Projects() {
           </motion.div>
         </section>
 
-        {/* FILTER TOGGLES */}
+        {/* FILTERS */}
         <div className="flex flex-wrap gap-3 justify-center mb-12">
           <motion.button
             whileHover={{ scale: 1.05 }}
             className={`px-6 py-2 rounded-full font-medium border transition-all text-sm ${
-              showCompleted ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300' : 'border-white/30 text-gray-400 hover:border-white/50'
+              showCompleted
+                ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                : 'border-white/30 text-gray-400 hover:border-white/50'
             }`}
             onClick={() => setShowCompleted(!showCompleted)}
           >
@@ -380,7 +348,9 @@ export default function Projects() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             className={`px-6 py-2 rounded-full font-medium border transition-all text-sm ${
-              showHistorical ? 'bg-gray-500/20 border-gray-400 text-gray-300' : 'border-white/30 text-gray-400 hover:border-white/50'
+              showHistorical
+                ? 'bg-gray-500/20 border-gray-400 text-gray-300'
+                : 'border-white/30 text-gray-400 hover:border-white/50'
             }`}
             onClick={() => setShowHistorical(!showHistorical)}
           >
@@ -388,7 +358,7 @@ export default function Projects() {
           </motion.button>
         </div>
 
-        {/* PROJECTS GRID */}
+        {/* GRID */}
         <section className="pb-24">
           <AnimatePresence mode="wait">
             {filteredProjects.length === 0 ? (
@@ -420,11 +390,52 @@ export default function Projects() {
           </AnimatePresence>
         </section>
 
-        {/* FOOTER BRANDING */}
+        {/* PUBLIC TRACKERS */}
+        <motion.section 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-32 pt-16 border-t-2 border-dashed border-white/20"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-4 justify-center">
+              <Eye className="w-10 h-10 text-red-400 ml-2" />
+              Track Public Spending
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {[
+              { url: "https://tracka.ng", name: "Tracka", desc: "Track government projects in your community" },
+              { url: "https://www.eyemark.ng", name: "Eyemark", desc: "Monitor capital projects across Nigeria" },
+              { url: "https://constrack.ng", name: "ConsTrack", desc: "Track constituency and executive projects" }
+            ].map(({ url, name, desc }, i) => (
+              <a
+                key={i}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-black/40 hover:bg-red-500/20 border-2 border-white/30 hover:border-red-400 rounded-2xl p-8 text-center transition-all duration-300 hover:scale-105 backdrop-blur-md shadow-xl"
+              >
+                <div className="font-bold text-2xl text-white group-hover:text-red-400 transition-colors mb-3">
+                  {name}
+                </div>
+                <p className="text-gray-400 text-sm">{desc}</p>
+              </a>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-xs text-gray-600">
+              These are independent third-party platforms for tracking public projects and holding leaders accountability
+            </p>
+          </div>
+        </motion.section>
+
+        {/* FOOTER */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center py-12 border-t border-white/10 mt-20"
+          className="text-center py-12 border-t border-white/10 mt-32"
         >
           <p className="text-gray-500 text-sm">
             Transparency Engine by <span className="font-bold text-white">Friends' Lounge Mbaise</span>

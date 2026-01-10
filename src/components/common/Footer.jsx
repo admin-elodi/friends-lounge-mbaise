@@ -304,7 +304,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <FaEnvelope className="text-xl text-red-600 flex-shrink-0" />
-                <a href="mailto:info@friendsloungembaise.com" className="hover:text-red-500 transition-colors break-all">
+                <a href="mailto:enquiries@friendsloungembaise.com" className="hover:text-red-500 text-[15px] transition-colors break-all">
                   enquiries@friendsloungembaise.com
                 </a>
               </div>
@@ -323,10 +323,10 @@ const Footer = () => {
               <div className="w-full mt-6 pt-4 border-t border-white/10">
                 <p className="text-xs text-gray-400 mb-2 font-medium">Explore</p>
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  <a href="/friends" className="text-gray-300 hover:text-white transition">Friends</a>
-                  <a href="/events" className="text-gray-300 hover:text-white transition">Events</a>
-                  <a href="/community" className="text-gray-300 hover:text-white transition">Community</a>
-                  <a href="/projects" className="text-gray-300 hover:text-white transition">Projects</a>
+                  <Link to="/friends" className="text-gray-300 hover:text-white transition">Friends</Link>
+                  <Link to="/programs" className="text-gray-300 hover:text-white transition">Programs</Link>
+                  <Link to="/mbaise" className="text-gray-300 hover:text-white transition">Mbaise</Link>
+                  <Link to="/projects" className="text-gray-300 hover:text-white transition">Projects</Link>
                 </div>
               </div>
             </motion.div>

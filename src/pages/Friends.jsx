@@ -1,23 +1,17 @@
 // src/pages/Friends.jsx
-// Hero section redesigned as "Friendly Recognitions"
-// Dedicated space for celebrating inductions, honors, and community milestones with video + description
-// Core slogan "Making Friends and Building Communities" still prominent
-
 import React, { useState, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, ChevronDown, Zap, Globe, Building2, Volume2, VolumeX } from "lucide-react";
 
-// Import the local video file
+// Local video
 import islandVideo from "@/assets/videos/island.mp4";
 
 export default function Friends() {
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 600], [0, -80]);
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0.9]);
+  const heroY = useTransform(scrollY, [0, 600], [0, -60]);
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0.85]);
 
-  const [showJungleX, setShowJungleX] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-
   const videoRef = useRef(null);
 
   const toggleMute = () => {
@@ -27,11 +21,53 @@ export default function Friends() {
     }
   };
 
+  // Typewriter variants
+  const container = {
+    hidden: { opacity: 0 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      transition: { staggerChildren: 0.04, delayChildren: 0.4 },
+    }),
+  };
+
+  const child = {
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", damping: 12, stiffness: 140 },
+    },
+    hidden: { opacity: 0, y: 20 },
+  };
+
+  const recognitionText =
+    "Induction of Chief Sir Barrister Santome Ibeneche (Zereuwa) into Island All Stars Sports Club";
+
   return (
-    <>
-      {/* FRIENDLY RECOGNITIONS — DEDICATED CELEBRATION SECTION */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
-        {/* Video Background */}
+    <div className="bg-black text-white font-montserrat">
+      {/* Top Branded Banner */}
+      <div className="relative z-30 bg-gradient-to-r from-red-950/60 to-black py-10 border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: "easeOut" }}
+            className="text-5xl md:text-7xl font-black tracking-tighter text-white drop-shadow-lg"
+          >
+            Friendly Recognitions
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.9 }}
+            transition={{ delay: 0.6, duration: 1 }}
+            className="mt-4 text-xl md:text-2xl text-gray-300 font-light"
+          >
+            Celebrating leaders, milestones, and community pillars
+          </motion.p>
+        </div>
+      </div>
+
+      {/* Hero Video Section */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <video
           ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover"
@@ -41,201 +77,207 @@ export default function Friends() {
           muted={isMuted}
           playsInline
         />
+        <div className="absolute inset-0 bg-black/65" />
 
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/70" />
-
-        {/* Unmute / Mute Toggle */}
+        {/* Mute Toggle */}
         <button
           onClick={toggleMute}
-          className="absolute bottom-8 right-8 z-20 flex items-center gap-3 rounded-full bg-white/20 backdrop-blur-sm px-5 py-3 text-white hover:bg-white/30 transition"
+          className="absolute bottom-10 right-6 md:right-10 z-20 flex items-center gap-3 
+                     bg-black/40 backdrop-blur-md px-5 py-3 rounded-full text-white 
+                     hover:bg-black/60 transition-all duration-300 border border-white/20"
         >
-          {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
-          <span className="text-sm font-medium">
+          {isMuted ? <VolumeX size={22} /> : <Volume2 size={22} />}
+          <span className="text-sm font-medium hidden sm:inline">
             {isMuted ? "Unmute" : "Mute"}
           </span>
         </button>
 
-        {/* Recognition Content */}
+        {/* Recognition Text */}
         <motion.div
           style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 max-w-5xl text-center px-6"
+          className="relative z-10 max-w-6xl text-center px-6"
         >
-          {/* Section Branding */}
-          <h1 className="text-2xl md:text-4xl py-10 font-bold tracking-widest text-white drop-shadow-2xl">
-            Friendly Recognitions
-          </h1>
-          <small className="text-white font-semibold">For background video sounds, click unmute button at lower right of this
-            section</small>
-
-        
-
-          <div className="mt-12 p-8 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 md:w-full">
-            <h2 className="text-xl md:text-3xl font-semibold text-white drop-shadow-lg">
-              Induction of <span className="font-bold">Chief Sir Barrister Santome Ibeneche (Zereuwa)</span>into Island All Stars Sports Club
-            </h2>
-          </div>
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="visible"
+            className="mt-20 md:mt-0 p-8 md:p-12 bg-black/40 backdrop-blur-xl rounded-3xl 
+                       border border-white/10 shadow-2xl"
+          >
+            {recognitionText.split(" ").map((word, index) => (
+              <motion.span
+                key={index}
+                variants={child}
+                className="text-2xl md:text-4xl font-semibold text-white drop-shadow-xl inline-block mx-1"
+              >
+                {word}
+              </motion.span>
+            ))}
+          </motion.div>
 
           <ChevronDown
-            className="mx-auto mt-20 text-white/80 animate-bounce drop-shadow"
-            size={42}
+            className="mx-auto mt-16 md:mt-24 text-white/70 animate-bounce"
+            size={48}
           />
         </motion.div>
       </section>
 
-      {/* THE SPARK — ORIGIN & CONTINUITY */}
-      <section className="py-32 px-6 bg-neutral-100">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-medium text-neutral-900 mb-16 text-center">
+      {/* The Spark Section */}
+      <section className="py-32 px-6 bg-gradient-to-b from-black to-neutral-950">
+        <div className="max-w-5xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-4xl md:text-5xl font-bold text-center mb-16 text-white"
+          >
             The Friends Lounge Spark
-          </h2>
+          </motion.h2>
 
-          <div className="space-y-12">
-            <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+          <div className="space-y-10 text-lg md:text-xl text-gray-300 leading-relaxed">
+            <p>
               The story did not begin with a lounge. It began with a road.
               What was once quiet, undeveloped land was opened through the
-              construction of <span className="text-red-600 font-medium">Donamenche Crescent</span>,
+              construction of{" "}
+              <span className="text-red-400 font-medium">Donamenche Crescent</span>,
               creating access into new territory in Udo.
             </p>
 
-            <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
-              This effort was single‑handedly initiated by Chief Sir Barrister
-              Santome Ibeneche (a.k.a. Zereuwa). With the road came possibility.
-              Families built homes. Life followed. A new corridor of settlement
-              took shape.
+            <p>
+              This effort was single‑handedly initiated by{" "}
+              <span className="text-white font-medium">
+                Chief Sir Barrister Santome Ibeneche (Zereuwa)
+              </span>
+              . With the road came possibility. Families built homes. Life followed.
+              A new corridor of settlement took shape.
             </p>
 
-            <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+            <p>
               Friends’ Lounge emerged later as a signature civic landmark at the
-              end of this growing road — not as the origin of development, but as
-              a place of gathering, culture, and shared presence within an
-              already forming community.
+              end of this growing road — a place of gathering, culture, and shared
+              presence within an already forming community.
             </p>
 
-            <p className="text-lg md:text-xl text-neutral-800 leading-relaxed">
-              As homes now line Don Amenche Crescent, the open land beyond continues
-              to invite imagination. Drawing inspiration from this steady growth,
-              Udo sons and daughters have begun to speak — carefully and
-              respectfully — of a larger possibility.
-            </p>
-
-            {/* SILICON VILLAGE — CORE IDEA */}
-            <div className="mt-8 p-8 md:p-12 border border-neutral-300 rounded-2xl bg-white shadow-sm">
-              <h3 className="text-2xl md:text-3xl font-semibold text-neutral-900 mb-6">
-                Silicon Village, Udo.
-              </h3>
-              <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
-                A respectful continuation of the tools Silicon Valley gave the
-                world — rebuilt with local purpose, clean energy, and long memory.
-              </p>
-
-              <p className="mt-8 text-lg text-neutral-600 leading-relaxed">
-                This idea does not seek to rival history, but to learn from it.
-                One of its earliest expressions is
-                <span className="font-medium text-neutral-900"> JungleX</span> — an
-                Africanfuturist social platform conceived in Udo. JungleX is not
-                the destination, but a signal: that global‑grade technology can be
-                imagined, built, and stewarded from this soil.
-              </p>
-
-              <div className="mt-10 inline-flex items-center gap-3 text-neutral-700">
-                <button
-                  onClick={() => setShowJungleX(true)}
-                  className="inline-flex items-center gap-2 uppercase tracking-widest text-sm border-b border-neutral-400 pb-1 hover:text-neutral-900 transition"
-                >
-                  View JungleX
-                  <ArrowRight size={18} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* JUNGLEX MODAL */}
-        {showJungleX && (
-          <div
-            className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-6"
-            onClick={() => setShowJungleX(false)}
-          >
-            <div
-              className="w-full max-w-6xl bg-white border border-neutral-300 rounded-2xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
+            {/* Silicon Village Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.9 }}
+              className="mt-12 p-8 md:p-12 bg-white/5 backdrop-blur-xl rounded-3xl 
+                         border border-white/10 shadow-2xl"
             >
-              <iframe
-                src="https://jungle-x-social-media.netlify.app/"
-                className="w-full h-[75vh]"
-                title="JungleX Demo"
-              />
-              <div className="p-6 text-center">
+              <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                Silicon Village, Udo
+              </h3>
+              <p className="text-gray-300 leading-relaxed">
+                A respectful continuation of the tools Silicon Valley gave the world —
+                rebuilt with local purpose, clean energy, and long memory.
+              </p>
+
+              <p className="mt-6 text-gray-300 leading-relaxed">
+                One of its earliest expressions is{" "}
+                <span className="text-red-400 font-medium">JungleX</span> — an
+                Africanfuturist social platform conceived in Udo. JungleX is not the
+                destination, but a signal: global‑grade technology can be imagined,
+                built, and stewarded from this soil.
+              </p>
+
+              <div className="mt-10">
                 <button
-                  onClick={() => setShowJungleX(false)}
-                  className="px-6 py-3 border border-neutral-400 text-neutral-800 rounded-full"
+                  onClick={() => window.open("https://jungle-x-social-media.netlify.app/", "_blank")}
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-red-600/80 hover:bg-red-600 
+                             rounded-full text-white font-medium transition-all shadow-lg shadow-red-900/30"
                 >
-                  Close
+                  Explore JungleX
+                  <ArrowRight size={20} />
                 </button>
               </div>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* WORK HARD / PLAY HARD — STRUCTURED & LEGIBLE */}
-      <section className="py-32 px-6 bg-neutral-200">
-        <div className="max-w-6xl mx-auto">
-          <h3 className="text-2xl md:text-4xl text-neutral-900 text-center mb-20">
-            Work Hard. Play Hard
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-            {["Swimming Pool", "VIP Lounge", "Live Music", "Premium Bar", "24/7 Security", "Mbaise Tours"].map(
-              (item, i) => (
-                <div
-                  key={i}
-                  className="p-10 border border-neutral-300 rounded-2xl bg-white shadow-sm"
-                >
-                  <div className="text-sm uppercase tracking-widest text-neutral-400 mb-4">
-                    0{i + 1}
-                  </div>
-                  <h4 className="text-xl text-neutral-900 font-medium">{item}</h4>
-                </div>
-              )
-            )}
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* FINAL CALL — QUIET CONFIDENCE */}
-      <section className="py-24 px-6 bg-neutral-100 border-t border-neutral-300">
+      {/* Work Hard / Play Hard */}
+      <section className="py-32 px-6 bg-gradient-to-b from-neutral-950 to-black">
+        <div className="max-w-6xl mx-auto">
+          <motion.h3
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-4xl md:text-5xl font-bold text-center mb-20 text-white"
+          >
+            Work Hard. Play Hard
+          </motion.h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              "Swimming Pool",
+              "VIP Lounge",
+              "Live Music",
+              "Premium Bar",
+              "24/7 Security",
+              "Mbaise Tours",
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
+                className="p-8 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 
+                           hover:border-red-500/40 transition-all duration-300 shadow-lg"
+              >
+                <div className="text-sm uppercase tracking-widest text-gray-400 mb-4">
+                  Feature {i + 1}
+                </div>
+                <h4 className="text-2xl font-semibold text-white">{item}</h4>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final Call to Action */}
+      <section className="py-32 px-6 bg-black border-t border-white/10">
         <div className="max-w-5xl mx-auto text-center">
-          <p className="text-xl md:text-2xl text-neutral-700 leading-relaxed mb-16">
+          <motion.p
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+            className="text-2xl md:text-3xl text-gray-300 leading-relaxed mb-16"
+          >
             What is taking shape in Udo is incremental, communal, and generational —
-            rooted in lived reality, open to the world, and respectful of the
-            foundations laid by those before us.
-          </p>
+            rooted in lived reality, open to the world, and respectful of the foundations
+            laid by those before us.
+          </motion.p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <a className="flex flex-col items-center gap-3 p-6 border border-neutral-300 rounded-2xl text-neutral-800 bg-white hover:shadow-md transition">
-              <Building2 />
-              <span>Build With Us</span>
-            </a>
-            <a className="flex flex-col items-center gap-3 p-6 border border-neutral-300 rounded-2xl text-neutral-800 bg-white hover:shadow-md transition">
-              <Globe />
-              <span>Corporate Sponsor</span>
-            </a>
-            <button
-              onClick={() => setShowJungleX(true)}
-              className="flex flex-col items-center gap-3 p-6 border border-neutral-300 rounded-2xl text-neutral-800 bg-white hover:shadow-md transition"
-            >
-              <Zap />
-              <span>Live JungleX</span>
-            </button>
-            <a className="flex flex-col items-center gap-3 p-6 border border-neutral-300 rounded-2xl text-neutral-800 bg-white hover:shadow-md transition">
-              <ArrowRight />
-              <span>WhatsApp</span>
-            </a>
+            {[
+              { icon: Building2, text: "Build With Us" },
+              { icon: Globe, text: "Corporate Sponsor" },
+              { icon: Zap, text: "Live JungleX", action: () => window.open("https://jungle-x-social-media.netlify.app/", "_blank") },
+              { icon: ArrowRight, text: "WhatsApp Us" },
+            ].map((item, i) => (
+              <motion.button
+                key={i}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={item.action}
+                className="flex flex-col items-center gap-4 p-8 bg-white/5 backdrop-blur-xl 
+                           rounded-2xl border border-white/10 hover:border-red-500/40 
+                           transition-all duration-300 shadow-lg"
+              >
+                <item.icon size={32} className="text-red-400" />
+                <span className="text-lg font-medium text-white">{item.text}</span>
+              </motion.button>
+            ))}
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
