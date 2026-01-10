@@ -1,6 +1,6 @@
 // src/features/food-order/FoodOrderModal.jsx
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { FaPlus, FaMinus, FaTimes, FaWhatsapp } from "react-icons/fa";
 import { createPortal } from "react-dom";
 import Logo from "@/assets/images/friends-logo.webp";
@@ -45,39 +45,40 @@ export const FoodOrderModal = ({
     }
 
     const orderSummary = cart
-      .map((item) => `${item.name} (x${item.quantity}) - ₦${(item.price * item.quantity).toLocaleString()}`)
+      .map(
+        (item) =>
+          `${item.name} (x${item.quantity}) - ₦${(
+            item.price * item.quantity
+          ).toLocaleString()}`
+      )
       .join("\n");
+
     const totalAmount = getTotal() + deliveryFee;
+
     const message = encodeURIComponent(
       `🌟 Friends' Lounge Mbaise Order 🌟
 
-Making Friends and Building Communities – Your Order Awaits!
-
-📋 **Order Summary:**
+📋 Order Summary:
 ${orderSummary}
 
-💰 **Subtotal:** ₦${getTotal().toLocaleString()}
-🚚 **Delivery Fee:** ₦${deliveryFee.toLocaleString()}
-💎 **Grand Total:** ₦${totalAmount.toLocaleString()}
+💰 Subtotal: ₦${getTotal().toLocaleString()}
+🚚 Delivery Fee: ₦${deliveryFee.toLocaleString()}
+💎 Grand Total: ₦${totalAmount.toLocaleString()}
 
-👤 **Customer Details:**
-Name: ${customerInfo.name || "N/A"}
-Phone: ${customerInfo.phone || "N/A"}
-Email: ${customerInfo.email || "—"}
-Address: ${customerInfo.address || "N/A"}
-Notes: ${customerInfo.notes || "N/A"}
+👤 Customer:
+${customerInfo.name || "N/A"}
+${customerInfo.phone || "N/A"}
+${customerInfo.email || "—"}
+${customerInfo.address || "N/A"}
 
-🏦 **Bank Transfer Instructions:**
-1. Transfer ₦${totalAmount.toLocaleString()} to:
-   - Account Name: ${BANK_DETAILS.accountName}
-   - Account No: ${BANK_DETAILS.accountNumber}
-   - Bank: ${BANK_DETAILS.bankName}
+🏦 Bank Transfer:
+${BANK_DETAILS.accountName}
+${BANK_DETAILS.accountNumber}
+${BANK_DETAILS.bankName}
 
-2. Send payment evidence (screenshot/transfer ref) for instant order confirmation & rider dispatch from Udo kitchen (45 mins delivery).
+Send payment proof to confirm order.
 
-We're thrilled to serve you! Reply 'PAID' once transferred.
-
-Tagline: Friends' Lounge – Making friends and building communities 🍲✨`
+Friends’ Lounge – Making friends & building communities`
     );
 
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, "_blank");
@@ -91,7 +92,6 @@ Tagline: Friends' Lounge – Making friends and building communities 🍲✨`
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
         className="fixed inset-0 z-[1000] bg-black/30 backdrop-blur-lg"
         onClick={close}
       />
@@ -108,72 +108,87 @@ Tagline: Friends' Lounge – Making friends and building communities 🍲✨`
           mass: 0.75,
         }}
         className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                   w-full max-w-[480px] bg-black/35 backdrop-blur-2xl 
-                   border border-white/20 rounded-2xl shadow-xl overflow-hidden 
-                   flex flex-col max-h-[88vh] scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent z-[1001]"
+        w-full max-w-[480px] bg-black/35 backdrop-blur-2xl border 
+        border-white/20 rounded-lg shadow-xl overflow-hidden flex flex-col 
+        max-h-[88vh] z-[1001]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header: Logo left + Image right */}
-        <div className="relative h-32 bg-gradient-to-r from-black/70 to-transparent flex items-center px-6 border-b border-white/10">
+        {/* IMAGE HEADER */}
+        <div className="relative w-full h-50">
+
+          {/* Full width image */}
           <img
-            src={Logo}
-            alt="Friends Lounge"
-            className="w-32 md:w-40 object-contain opacity-95 z-10"
+            src={ChipsImage}
+            alt="Food"
+            className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute right-0 top-0 bottom-0 w-1/2 overflow-hidden">
+
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+          {/* Floating logo */}
+          <div className="absolute inset-0 flex items-center justify-left left-4 z-10">
             <img
-              src={ChipsImage}
-              alt="Delicious Food"
-              className="w-full h-full object-cover opacity-80"
+              src={Logo}
+              alt="Friends Lounge"
+              className="w-24 md:w-28 object-contain drop-shadow-2xl animate-floatSlow"
             />
-            <div className="absolute inset-0 bg-gradient-to-l from-black/70 via-transparent to-transparent" />
           </div>
         </div>
 
-        {/* Close Button */}
+        {/* Close */}
         <button
           onClick={close}
-          className="absolute top-4 right-4 z-20 text-white/80 hover:text-white transition-colors"
-          aria-label="Close modal"
+          className="absolute top-3 right-3 z-20 text-white/80 hover:text-white"
         >
           <FaTimes size={20} />
         </button>
 
-        {/* Content */}
+        {/* CONTENT */}
         <div className="flex-1 px-6 pt-5 pb-8 overflow-y-auto">
           <h3 className="text-2xl font-bold text-white mb-1">Order Food</h3>
           <p className="text-gray-400 text-sm mb-6">Mbaise-wide Delivery</p>
 
-          {/* Menu Items */}
+          {/* MENU */}
           <div className="space-y-4 mb-6">
             {foodMenu.map((item) => {
-              const qty = cart.find((i) => i.id === item.id)?.quantity || 0;
+              const qty =
+                cart.find((i) => i.id === item.id)?.quantity || 0;
               return (
                 <div
                   key={item.id}
                   className="bg-white/10 border border-white/15 rounded-xl p-4 flex justify-between items-center"
                 >
-                  <div className="flex-1">
-                    <h5 className="font-semibold text-white text-sm">{item.name}</h5>
-                    <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    <p className="text-sm font-medium text-red-400 mt-1">
+                  <div>
+                    <h5 className="font-semibold text-white text-sm">
+                      {item.name}
+                    </h5>
+                    <p className="text-xs text-gray-400">
+                      {item.desc}
+                    </p>
+                    <p className="text-sm font-medium text-red-400">
                       ₦{item.price.toLocaleString()}
                     </p>
                   </div>
+
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => updateQuantity(item.id, -1)}
                       disabled={qty === 0}
-                      className="w-7 h-7 rounded-full bg-white/15 hover:bg-white/25 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white transition-colors"
+                      className="w-7 h-7 rounded-full bg-white/15 disabled:opacity-40"
                     >
-                      <FaMinus className="w-3 h-3" />
+                      <FaMinus size={12} />
                     </button>
-                    <span className="w-7 text-center font-medium text-white text-sm">{qty}</span>
+
+                    <span className="w-6 text-center text-white text-sm">
+                      {qty}
+                    </span>
+
                     <button
                       onClick={() => addToCart(item)}
-                      className="w-7 h-7 rounded-full bg-red-600 hover:bg-red-700 flex items-center justify-center text-white transition-colors"
+                      className="w-7 h-7 rounded-full bg-red-600"
                     >
-                      <FaPlus className="w-3 h-3" />
+                      <FaPlus size={12} />
                     </button>
                   </div>
                 </div>
@@ -181,79 +196,100 @@ Tagline: Friends' Lounge – Making friends and building communities 🍲✨`
             })}
           </div>
 
-          {/* Cart Summary & Customer Form */}
+          {/* SUMMARY */}
           {cart.length > 0 && (
-            <div className="bg-white/5 border border-white/10 rounded-xl p-5 space-y-5">
-              <h4 className="font-semibold text-white text-base">Your Order</h4>
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5 space-y-4">
 
-              <div className="space-y-2 text-sm">
-                {cart.map((item) => (
-                  <div key={item.id} className="flex justify-between text-gray-300">
-                    <span>{item.name} × {item.quantity}</span>
-                    <span>₦{(item.price * item.quantity).toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between text-gray-300">
-                  <span>Delivery</span>
-                  <span>₦{deliveryFee.toLocaleString()}</span>
+              <h4 className="text-white font-semibold">Your Order</h4>
+
+              {cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex justify-between text-sm text-gray-300"
+                >
+                  <span>
+                    {item.name} × {item.quantity}
+                  </span>
+                  <span>
+                    ₦{(item.price * item.quantity).toLocaleString()}
+                  </span>
                 </div>
-                <div className="border-t border-white/15 pt-3 mt-3 flex justify-between font-semibold text-white">
-                  <span>Total</span>
-                  <span className="text-red-400">₦{(getTotal() + deliveryFee).toLocaleString()}</span>
-                </div>
+              ))}
+
+              <div className="flex justify-between text-sm text-gray-300">
+                <span>Delivery</span>
+                <span>₦{deliveryFee.toLocaleString()}</span>
               </div>
 
-              {/* Customer Info */}
-              <div className="space-y-4">
+              <div className="border-t border-white/10 pt-3 flex justify-between text-white font-semibold">
+                <span>Total</span>
+                <span className="text-red-400">
+                  ₦{(getTotal() + deliveryFee).toLocaleString()}
+                </span>
+              </div>
+
+              {/* CUSTOMER */}
+              <div className="space-y-3">
                 <input
                   placeholder="Full Name"
                   value={customerInfo.name}
-                  onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                  className="w-full bg-white/10 border border-white/15 rounded-xl px-5 py-3.5 text-white placeholder-gray-400 focus:border-red-500/50 focus:bg-white/15 outline-none transition-all text-sm"
+                  onChange={(e) =>
+                    setCustomerInfo({
+                      ...customerInfo,
+                      name: e.target.value,
+                    })
+                  }
+                  className="w-full bg-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 />
+
                 <input
                   placeholder="Phone"
                   value={customerInfo.phone}
-                  onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                  className="w-full bg-white/10 border border-white/15 rounded-xl px-5 py-3.5 text-white placeholder-gray-400 focus:border-red-500/50 focus:bg-white/15 outline-none transition-all text-sm"
+                  onChange={(e) =>
+                    setCustomerInfo({
+                      ...customerInfo,
+                      phone: e.target.value,
+                    })
+                  }
+                  className="w-full bg-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 />
-                <input
-                  placeholder="Email (optional)"
-                  type="email"
-                  value={customerInfo.email}
-                  onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
-                  className="w-full bg-white/10 border border-white/15 rounded-xl px-5 py-3.5 text-white placeholder-gray-400 focus:border-red-500/50 focus:bg-white/15 outline-none transition-all text-sm"
-                />
+
                 <textarea
                   placeholder="Delivery Address"
                   value={customerInfo.address}
-                  onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
-                  className="w-full bg-white/10 border border-white/15 rounded-xl px-5 py-3.5 text-white placeholder-gray-400 focus:border-red-500/50 focus:bg-white/15 outline-none transition-all h-20 resize-none text-sm"
-                />
-                <textarea
-                  placeholder="Notes (e.g., Okada pickup)"
-                  value={customerInfo.notes}
-                  onChange={(e) => setCustomerInfo({ ...customerInfo, notes: e.target.value })}
-                  className="w-full bg-white/10 border border-white/15 rounded-xl px-5 py-3.5 text-white placeholder-gray-400 focus:border-red-500/50 focus:bg-white/15 outline-none transition-all h-16 resize-none text-sm"
+                  onChange={(e) =>
+                    setCustomerInfo({
+                      ...customerInfo,
+                      address: e.target.value,
+                    })
+                  }
+                  className="w-full bg-white/10 rounded-xl px-4 py-3 text-white text-sm h-16"
                 />
               </div>
 
-              {/* Payment Button */}
+              {/* PAY */}
               <button
                 onClick={handleWhatsAppPayment}
-                disabled={cart.length === 0}
-                className={`w-full mt-6 py-4 rounded-xl font-medium text-white transition-all flex items-center justify-center gap-2 text-sm tracking-wide ${
-                  cart.length === 0
-                    ? "bg-gray-700 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-700"
-                }`}
+                className="w-full mt-4 py-4 rounded-xl bg-green-600 flex items-center justify-center gap-2 text-white text-sm"
               >
-                <FaWhatsapp className="text-lg" />
+                <FaWhatsapp />
                 Proceed to Payment
               </button>
             </div>
           )}
         </div>
+
+        {/* Floating animation */}
+        <style>{`
+          @keyframes floatSlow {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-7px); }
+            100% { transform: translateY(0px); }
+          }
+          .animate-floatSlow {
+            animation: floatSlow 4.5s ease-in-out infinite;
+          }
+        `}</style>
       </motion.div>
     </>,
     document.body

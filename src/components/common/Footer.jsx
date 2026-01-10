@@ -14,10 +14,11 @@ import { Instagram } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import trees from "@/assets/images/palms.jpg";
+import mtnLogo from "@/assets/images/mtn-n.png"; // ✅ MTN LOGO
 
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import { TableBookingModal } from "@/features/TableBookingModal";
-import BookEvent from "@/features/BookEvent"; // ← ONLY ADDED THIS IMPORT
+import BookEvent from "@/features/BookEvent"; 
 
 const DropdownCard = ({ children, className = "", onClick }) => (
   <motion.div
@@ -57,7 +58,6 @@ const Footer = () => {
   const [isBooking, setIsBooking] = useState(false);
   const [booked, setBooked] = useState(false);
 
-  // ← ONLY ADDED THIS STATE
   const [bookEventOpen, setBookEventOpen] = useState(false);
 
   const [daysLeft, setDaysLeft] = useState(0);
@@ -163,6 +163,7 @@ const Footer = () => {
                     </motion.div>
                   </AnimatePresence>
                 </div>
+
                 <div className="flex justify-center space-x-2 mt-2">
                   {events.map((_, i) => (
                     <button
@@ -173,7 +174,6 @@ const Footer = () => {
                   ))}
                 </div>
 
-                {/* ← ONLY CHANGE: Now opens modal instead of navigate */}
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
@@ -185,7 +185,7 @@ const Footer = () => {
               </motion.div>
             </div>
 
-            {/* SOCIAL ICONS — ONLY CHANGE: Added official brand hover colors */}
+            {/* SOCIAL ICONS */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex space-x-6 justify-center mt-4">
               {[
                 { Icon: FaXTwitter, label: "X", href: "#", hoverBg: "hover:bg-black" },
@@ -203,12 +203,14 @@ const Footer = () => {
             </motion.div>
           </Card>
 
-          {/* SPECIAL SERVICES + UDO DAY CARD — 100% UNCHANGED */}
+          {/* SPECIAL SERVICES + MTN AD */}
           <Card className="w-full">
             <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
               Special Services
             </motion.h3>
+
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-4">
+
               <DropdownCard onClick={openFoodOrder}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -235,79 +237,83 @@ const Footer = () => {
                 </div>
               </DropdownCard>
 
-              {/* UDO DAY VISION CARD — NOW USES <Link> */}
+              {/* 🔥 MTN AD – ONLY CHANGE */}
               <Link to="/programs" className="block">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="relative mt-6 p-6 bg-gradient-to-br from-green-900/40 via-black/60 to-green-800/40 backdrop-blur-md border-t-2 border-b-2 border-white shadow-lg overflow-hidden group cursor-pointer"
+                  className="relative mt-6 p-6 bg-gradient-to-br from-yellow-400/30 via-black/60 to-yellow-500/40 backdrop-blur-md border-t-2 border-b-2 border-yellow-400 shadow-lg overflow-hidden group cursor-pointer"
                 >
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60"></div>
-                  <div className="relative z-10 text-center space-y-2">
-                    <p className="text-xs uppercase tracking-widest text-green-300 font-light">Friends' Ad - Amplify Your Brand</p>
-                    <h3 className="text-2xl font-bold text-green-400 tracking-widest animate-softPulse">
-                      UDO DAY 2025
-                    </h3>
-                    <p className="text-xs text-gray-200 italic">A Celebration of Peace • Culture • Unity</p>
-                    <p className="text-xs text-gray-300">26th December • Nkwo Udo</p>
 
-                    <div className="flex justify-center gap-1 text-xs font-mono text-green-400 mt-2">
-                      <span>{daysLeft}d</span>
-                      <span>{hoursLeft.toString().padStart(2, '0')}h</span>
-                      <span>{minutesLeft.toString().padStart(2, '0')}m</span>
-                      <span>{secondsLeft.toString().padStart(2, '0')}s</span>
-                    </div>
+                  <div className="relative z-10 text-center space-y-2">
+                    <p className="text-xs uppercase tracking-widest text-yellow-300 font-light">
+                      Sponsored Partner
+                    </p>
+
+                    <img
+                      src={mtnLogo}
+                      alt="MTN Nigeria"
+                      className="w-14 mx-auto"
+                    />
+
+                    <h3 className="text-2xl font-bold text-yellow-400 tracking-widest animate-softPulse">
+                      MTN NIGERIA
+                    </h3>
+
+                    <p className="text-xs text-gray-200 italic">
+                      Everywhere You Go
+                    </p>
+
+                    <p className="text-xs text-gray-300">
+                      Powering digital connection across communities
+                    </p>
 
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="mt-3 px-5 py-2 rounded-[10px] bg-green-300 text-black text-sm font-bold tracking-wider hover:bg-green-400 transition-all shadow-lg"
+                      className="mt-3 px-5 py-2 rounded-[10px] bg-yellow-300 text-black text-sm font-bold tracking-wider hover:bg-yellow-400 transition-all shadow-lg"
                     >
-                      Join the Vision
+                      Explore MTN Offers
                     </motion.button>
-                  </div>
-
-                  <div className="absolute inset-0 pointer-events-none">
-                    {[...Array(6)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="absolute w-1 h-1 bg-green-400 rounded-full opacity-60 animate-float"
-                        style={{
-                          top: `${20 + i * 15}%`,
-                          left: `${10 + i * 12}%`,
-                          animationDelay: `${i * 0.5}s`,
-                        }}
-                      />
-                    ))}
                   </div>
                 </motion.div>
               </Link>
             </motion.div>
           </Card>
 
-          {/* CONNECT COLUMN — 100% UNCHANGED */}
+          {/* CONNECT COLUMN */}
           <Card className="w-full">
             <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
               Connect
             </motion.h3>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex flex-col items-start space-y-4 text-base text-gray-300 mt-4 w-full max-w-md mx-auto">
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex flex-col items-start space-y-4 text-base text-gray-300 mt-4 w-full max-w-md mx-auto"
+            >
               <div className="flex items-start space-x-3 w-full">
                 <FaMapMarkerAlt className="text-xl text-red-600 mt-1 flex-shrink-0" />
                 <p className="text-left leading-relaxed">
                   Friends' Lounge • Donameche Crescent Umuofor Udo • Ezinihitte LGA Mbaise • Imo State
                 </p>
               </div>
+
               <div className="flex items-center space-x-3">
                 <FaPhoneAlt className="text-xl text-red-600 flex-shrink-0" />
                 <a href="tel:+447848149416" className="hover:text-red-500 transition-colors">
                   07066064379
                 </a>
               </div>
+
               <div className="flex items-center space-x-3">
                 <FaEnvelope className="text-xl text-red-600 flex-shrink-0" />
                 <a href="mailto:enquiries@friendsloungembaise.com" className="hover:text-red-500 text-[15px] transition-colors break-all">
                   enquiries@friendsloungembaise.com
                 </a>
               </div>
+
               <motion.a
                 href="https://maps.app.goo.gl/qa1JNAykYzaZV6EEA"
                 target="_blank"
@@ -333,11 +339,12 @@ const Footer = () => {
           </Card>
         </div>
 
-        {/* FOOTER BOTTOM — 100% UNCHANGED */}
+        {/* FOOTER BOTTOM */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-16 pt-10 border-t border-red-600/50 text-center relative z-10">
           <p className="font-bold text-[12px] text-gray-300">
             © {new Date().getFullYear()} Friends’ Lounge Mbaise — All Rights Reserved.
           </p>
+
           <div className="relative flex flex-col items-center justify-center mt-8 space-y-2">
             <motion.h3
               initial={{ opacity: 0, scale: 0.8 }}
@@ -400,7 +407,6 @@ const Footer = () => {
         deliveryFee={deliveryFee}
       />
 
-      {/* ← ONLY ADDED THIS MODAL */}
       <BookEvent isOpen={bookEventOpen} onClose={() => setBookEventOpen(false)} />
 
       <style jsx>{`
@@ -408,7 +414,7 @@ const Footer = () => {
         .animate-thrust { animation: thrust 8s ease-in-out infinite; }
         @keyframes glowText { 0%,100%{text-shadow:0 0 5px rgba(255,255,255,.05)} 50%{text-shadow:0 0 15px rgba(255,255,255,.08)} }
         .animate-glowText { animation: glowText 5s ease-in-out infinite; }
-        @keyframes softPulse { 0%,100%{text-shadow:0 0 8px rgba(0,255,0,.4)} 50%{text-shadow:0 0 14px rgba(0,255,0,.8)} }
+        @keyframes softPulse { 0%,100%{text-shadow:0 0 8px rgba(255,204,0,.4)} 50%{text-shadow:0 0 14px rgba(255,204,0,.8)} }
         .animate-softPulse { animation: softPulse 4s infinite; }
         @keyframes float { 0%{transform:translateY(0)} 50%{transform:translateY(-10px)} 100%{transform:translateY(0)} }
         .animate-float { animation: float 3s ease-in-out infinite; }

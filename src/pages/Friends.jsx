@@ -51,7 +51,7 @@ export default function Friends() {
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
-            className="text-5xl md:text-7xl font-black tracking-tighter text-white drop-shadow-lg"
+            className="text-5xl md:text-4xl tracking-tighter text-white drop-shadow-lg"
           >
             Friendly Recognitions
           </motion.h1>
@@ -59,9 +59,9 @@ export default function Friends() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.9 }}
             transition={{ delay: 0.6, duration: 1 }}
-            className="mt-4 text-xl md:text-2xl text-gray-300 font-light"
+            className="mt-4 text-xl md:text-xl text-gray-300 font-light"
           >
-            Celebrating leaders, milestones, and community pillars
+            Celebrating leaders, milestones, and pillars of the community
           </motion.p>
         </div>
       </div>
@@ -101,14 +101,14 @@ export default function Friends() {
             variants={container}
             initial="hidden"
             animate="visible"
-            className="mt-20 md:mt-0 p-8 md:p-12 bg-black/40 backdrop-blur-xl rounded-3xl 
+            className="mt-20 md:mt-0 p-8 md:p-12 bg-black/40 backdrop-blur-xl rounded-lg 
                        border border-white/10 shadow-2xl"
           >
             {recognitionText.split(" ").map((word, index) => (
               <motion.span
                 key={index}
                 variants={child}
-                className="text-2xl md:text-4xl font-semibold text-white drop-shadow-xl inline-block mx-1"
+                className="text-2xl md:text-xl font-semibold text-white drop-shadow-xl inline-block mx-1"
               >
                 {word}
               </motion.span>
@@ -130,7 +130,7 @@ export default function Friends() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-4xl md:text-5xl font-bold text-center mb-16 text-white"
+            className="text-4xl md:text-3xl font-semibold text-center mb-16 text-white"
           >
             The Friends Lounge Spark
           </motion.h2>
@@ -165,10 +165,10 @@ export default function Friends() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.9 }}
-              className="mt-12 p-8 md:p-12 bg-white/5 backdrop-blur-xl rounded-3xl 
+              className="mt-12 p-8 md:p-12 bg-white/5 backdrop-blur-xl rounded-lg 
                          border border-white/10 shadow-2xl"
             >
-              <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              <h3 className="text-3xl md:text-3xl font-semibold text-white mb-6">
                 Silicon Village, Udo
               </h3>
               <p className="text-gray-300 leading-relaxed">
@@ -187,8 +187,8 @@ export default function Friends() {
               <div className="mt-10">
                 <button
                   onClick={() => window.open("https://jungle-x-social-media.netlify.app/", "_blank")}
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-red-600/80 hover:bg-red-600 
-                             rounded-full text-white font-medium transition-all shadow-lg shadow-red-900/30"
+                  className="inline-flex items-center gap-3 px-8 py-2 bg-red-600/80 hover:bg-red-600 
+                             rounded-lg text-white font-medium transition-all shadow-lg shadow-red-900/30"
                 >
                   Explore JungleX
                   <ArrowRight size={20} />
@@ -199,7 +199,47 @@ export default function Friends() {
         </div>
       </section>
 
-      {/* Work Hard / Play Hard */}
+      {/* Final Call to Action */}
+      <section className="py-32 px-6 bg-black border-t border-white/10">
+        <div className="max-w-5xl mx-auto text-center">
+          <motion.p
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+            className="text-2xl md:text-3xl text-gray-300 leading-relaxed mb-16"
+          >
+            The idea of a Silicon Village in Udo is a biggie. JungleX
+            is one of the early builders that seeks to pioneer an ecosystem of Africanfuturist
+            tech companies rooted in culture but built for the world. With full respects to 
+            Silicon Valley, USA whose awesome inventions power much of modern life. 
+          </motion.p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: Building2, text: "Build With Us" },
+              { icon: Globe, text: "Corporate Sponsor" },
+              { icon: Zap, text: "Live JungleX", action: () => window.open("https://jungle-x-social-media.netlify.app/", "_blank") },
+              { icon: ArrowRight, text: "WhatsApp Us" },
+            ].map((item, i) => (
+              <motion.button
+                key={i}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={item.action}
+                className="flex flex-col items-center gap-4 p-8 bg-white/5 backdrop-blur-xl 
+                           rounded-2xl border border-white/10 hover:border-red-500/40 
+                           transition-all duration-300 shadow-lg"
+              >
+                <item.icon size={32} className="text-red-400" />
+                <span className="text-lg font-medium text-white">{item.text}</span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Work Hard / Play Hard - Moved to last position */}
       <section className="py-32 px-6 bg-gradient-to-b from-neutral-950 to-black">
         <div className="max-w-6xl mx-auto">
           <motion.h3
@@ -207,9 +247,9 @@ export default function Friends() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-4xl md:text-5xl font-bold text-center mb-20 text-white"
+            className="text-4xl md:text-3xl font-semibold text-center mb-20 text-white"
           >
-            Work Hard. Play Hard
+            Work Hard, Play Hard
           </motion.h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -235,45 +275,6 @@ export default function Friends() {
                 </div>
                 <h4 className="text-2xl font-semibold text-white">{item}</h4>
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final Call to Action */}
-      <section className="py-32 px-6 bg-black border-t border-white/10">
-        <div className="max-w-5xl mx-auto text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="text-2xl md:text-3xl text-gray-300 leading-relaxed mb-16"
-          >
-            What is taking shape in Udo is incremental, communal, and generational —
-            rooted in lived reality, open to the world, and respectful of the foundations
-            laid by those before us.
-          </motion.p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: Building2, text: "Build With Us" },
-              { icon: Globe, text: "Corporate Sponsor" },
-              { icon: Zap, text: "Live JungleX", action: () => window.open("https://jungle-x-social-media.netlify.app/", "_blank") },
-              { icon: ArrowRight, text: "WhatsApp Us" },
-            ].map((item, i) => (
-              <motion.button
-                key={i}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={item.action}
-                className="flex flex-col items-center gap-4 p-8 bg-white/5 backdrop-blur-xl 
-                           rounded-2xl border border-white/10 hover:border-red-500/40 
-                           transition-all duration-300 shadow-lg"
-              >
-                <item.icon size={32} className="text-red-400" />
-                <span className="text-lg font-medium text-white">{item.text}</span>
-              </motion.button>
             ))}
           </div>
         </div>

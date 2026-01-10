@@ -1,13 +1,7 @@
-// src/components/Menu.jsx
-// Friends Lounge Mbaise — FULL & VERIFIED MENU (Drinks + Food)
-// Captured line-by-line from provided Friends Menu. No omissions.
-// Now with smooth top-to-down unfurl animation when opening Food/Drinks menu (slightly faster)
-
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Slideshow images (keep yours as-is or replace paths)
 import happyWeekend from "@/assets/images/happy-weekend.webp";
 import egusi from "@/assets/images/food/egusi.webp";
 import nkwobi from "@/assets/images/food/nkwobi.webp";
@@ -15,7 +9,7 @@ import nkwobi from "@/assets/images/food/nkwobi.webp";
 export default function Menu() {
   const slides = [happyWeekend, egusi, nkwobi];
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [activeMenu, setActiveMenu] = useState(null); // 'drinks' | 'food'
+  const [activeMenu, setActiveMenu] = useState(null);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -24,7 +18,8 @@ export default function Menu() {
     return () => clearInterval(id);
   }, [slides.length]);
 
-  const menu = {
+  /* 🔐 DATA LOCKED */
+  const menu = { 
     drinks: {
       title: "Friends' Lounge Drinks Menu",
       categories: [
@@ -355,10 +350,12 @@ export default function Menu() {
       ],
     },
   };
+  
+  /* 🔐 END DATA */
 
   return (
-    <section className="relative h-[600px] overflow-hidden rounded-2xl border-4 border-white bg-black text-white">
-      {/* Slideshow */}
+    <section className="relative h-[600px] overflow-hidden bg-black text-white">
+      {/* SLIDES */}
       <div className="absolute inset-0">
         {slides.map((s, i) => (
           <div
@@ -374,95 +371,87 @@ export default function Menu() {
 
       {/* CTA */}
       <div className="relative z-10 flex h-full flex-col items-center justify-end pb-20">
-        <h2 className="mb-6 text-3xl font-semibold tracking-widest">Explore Our Menu</h2>
+        <h2 className="mb-6 text-3xl font-semibold tracking-widest">
+          Explore Our Menu
+        </h2>
         <div className="flex gap-6">
-          <button onClick={() => setActiveMenu("food")} className="menu-btn">Food Menu</button>
-          <button onClick={() => setActiveMenu("drinks")} className="menu-btn">Drinks Menu</button>
+          <button onClick={() => setActiveMenu("food")} className="menu-btn">
+            Food Menu
+          </button>
+          <button onClick={() => setActiveMenu("drinks")} className="menu-btn">
+            Drinks Menu
+          </button>
         </div>
       </div>
 
-      {/* Animated Modal - Slightly faster top-to-down animation */}
+      {/* MODAL */}
       <AnimatePresence>
         {activeMenu && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70"
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80"
           >
             <motion.div
-              initial={{ opacity: 0, y: -50, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -50, scale: 0.95 }}
-              transition={{
-                duration: 0.55, // reduced from 0.7
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="relative max-h-[85vh] w-[92%] max-w-6xl overflow-y-auto rounded-2xl bg-gray-900/80 p-8 shadow-2xl"
+              initial={{ y: -40, opacity: 0, scale: 0.97 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: -40, opacity: 0, scale: 0.97 }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+              className="relative max-h-[85vh] w-[92%] max-w-6xl overflow-y-auto bg-gray-900/90 p-8 shadow-2xl"
             >
               <button
                 onClick={() => setActiveMenu(null)}
-                className="absolute right-4 top-4 text-white/70 hover:text-white transition"
+                className="absolute right-4 top-4 text-white/70 hover:text-white"
               >
                 <X size={26} />
               </button>
 
-              <motion.h2
-                initial={{ y: -30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.55, ease: "easeOut" }}
-                className="mb-8 text-center text-xl font-semibold"
-              >
+              <h2 className="mb-8 text-center text-xl font-semibold">
                 {menu[activeMenu].title}
-              </motion.h2>
+              </h2>
 
               <div className="grid gap-8 md:grid-cols-2">
                 {menu[activeMenu].categories.map((cat, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 + 0.08 * i, duration: 0.55, ease: "easeOut" }}
-                  >
-                    <h3 className="mb-4 text-sky-400">{cat.title}</h3>
+                  <div key={i}>
+                    <h3 className="mb-4 text-sky-400 tracking-wider">
+                      {cat.title}
+                    </h3>
+
                     <ul className="space-y-4">
                       {cat.items.map((it, j) => (
-                        <motion.li
+                        <li
                           key={j}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.3 + 0.04 * j + 0.08 * i, duration: 0.45, ease: "easeOut" }}
                           className="border-b border-white/10 pb-3"
                         >
                           <div className="flex justify-between gap-4">
-                            <span className="font-medium">{it.name}</span>
-                            <span className="font-bold text-yellow-100">{it.price}</span>
+                            <span className="font-medium">
+                              {it.name}
+                            </span>
+                            <span className="font-bold text-yellow-100">
+                              {it.price}
+                            </span>
                           </div>
+
                           {it.desc && (
-                            <p className="mt-1 text-xs italic text-gray-400">{it.desc}</p>
+                            <p className="mt-1 text-xs italic text-gray-400">
+                              {it.desc}
+                            </p>
                           )}
-                        </motion.li>
+                        </li>
                       ))}
                     </ul>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.6, ease: "easeOut" }}
-                className="mt-10 text-center text-sm italic text-white/60"
-              >
-                A 10% service charge is applied to support our dedicated hospitality team
+              <p className="mt-10 text-center text-sm italic text-white/60">
+                A 10% service charge is applied
                 <br />
                 Prices include VAT
                 <br />
-                All meals are freshly prepared to order with ingredients sourced from trusted local farmers across Mbaise.
-                <br />
-                At Friends Lounge, every meal celebrates friendship, comfort, and community
-              </motion.p>
+                All meals are freshly prepared
+              </p>
             </motion.div>
           </motion.div>
         )}
@@ -471,13 +460,12 @@ export default function Menu() {
       <style jsx>{`
         .menu-btn {
           padding: 0.75rem 2rem;
-          border-radius: 9999px;
-          border: 1px solid rgba(255,255,255,0.2);
+          border: 1px solid rgba(255,255,255,0.25);
           background: rgba(255,255,255,0.1);
           transition: all 0.3s ease;
         }
         .menu-btn:hover {
-          background: rgba(255,255,255,0.2);
+          background: rgba(255,255,255,0.25);
         }
       `}</style>
     </section>
