@@ -1,4 +1,3 @@
-// src/components/common/Footer.jsx
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,7 +13,6 @@ import { Instagram } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import trees from "@/assets/images/palms.jpg";
-import mtnLogo from "@/assets/images/mtn-n.png"; // ✅ MTN LOGO
 
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import { TableBookingModal } from "@/features/TableBookingModal";
@@ -203,7 +201,7 @@ const Footer = () => {
             </motion.div>
           </Card>
 
-          {/* SPECIAL SERVICES + MTN AD */}
+          {/* SPECIAL SERVICES + AD SLOT */}
           <Card className="w-full">
             <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
               Special Services
@@ -237,43 +235,50 @@ const Footer = () => {
                 </div>
               </DropdownCard>
 
-              {/* 🔥 MTN AD – ONLY CHANGE */}
-              <Link to="/programs" className="block">
+              {/* 🔥 NEUTRAL AD SLOT */}
+              <Link to="/advertise" className="block">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="relative mt-6 p-6 bg-gradient-to-br from-yellow-400/30 via-black/60 to-yellow-500/40 backdrop-blur-md border-t-2 border-b-2 border-yellow-400 shadow-lg overflow-hidden group cursor-pointer"
+                  className="relative mt-6 p-6 bg-gradient-to-br 
+                  from-black via-gray-900 to-black 
+                  backdrop-blur-md border border-red-500/40 
+                  shadow-lg overflow-hidden group cursor-pointer"
                 >
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60"></div>
 
                   <div className="relative z-10 text-center space-y-2">
-                    <p className="text-xs uppercase tracking-widest text-yellow-300 font-light">
-                      Sponsored Partner
+                    <p className="text-xs uppercase tracking-widest text-red-400 font-light">
+                      Sponsored Space
                     </p>
 
-                    <img
-                      src={mtnLogo}
-                      alt="MTN Nigeria"
-                      className="w-14 mx-auto"
-                    />
+                    <div className="w-14 h-14 mx-auto rounded-full 
+                    border border-red-500/60 flex items-center 
+                    justify-center text-red-500 font-black">
+                      LOGO
+                    </div>
 
-                    <h3 className="text-2xl font-bold text-yellow-400 tracking-widest animate-softPulse">
-                      MTN NIGERIA
+                    <h3 className="text-xl font-bold text-white tracking-widest animate-softPulse">
+                      YOUR BRAND HERE
                     </h3>
 
                     <p className="text-xs text-gray-200 italic">
-                      Everywhere You Go
+                      Reach the Mbaise community
                     </p>
 
                     <p className="text-xs text-gray-300">
-                      Powering digital connection across communities
+                      Banner • Programs • Footer exposure
                     </p>
 
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="mt-3 px-5 py-2 rounded-[10px] bg-yellow-300 text-black text-sm font-bold tracking-wider hover:bg-yellow-400 transition-all shadow-lg"
+                      className="mt-3 px-5 py-2 rounded-[10px] 
+                      bg-gradient-to-r from-red-600 to-red-500 
+                      text-white text-sm font-bold tracking-wider 
+                      hover:from-red-500 hover:to-red-400 
+                      transition-all shadow-lg"
                     >
-                      Explore MTN Offers
+                      Advertise With Us
                     </motion.button>
                   </div>
                 </motion.div>
@@ -376,6 +381,7 @@ const Footer = () => {
         </motion.div>
       </div>
 
+      {/* MODALS */}
       <TableBookingModal
         isOpen={modalOpen}
         onClose={closeModal}
@@ -407,14 +413,17 @@ const Footer = () => {
         deliveryFee={deliveryFee}
       />
 
-      <BookEvent isOpen={bookEventOpen} onClose={() => setBookEventOpen(false)} />
+      <BookEvent
+        isOpen={bookEventOpen}
+        onClose={() => setBookEventOpen(false)}
+      />
 
       <style jsx>{`
         @keyframes thrust { 0%,100%{transform:translateX(-50%) scaleY(1);opacity:.2} 50%{transform:translateX(-50%) scaleY(1.1);opacity:.3} }
         .animate-thrust { animation: thrust 8s ease-in-out infinite; }
         @keyframes glowText { 0%,100%{text-shadow:0 0 5px rgba(255,255,255,.05)} 50%{text-shadow:0 0 15px rgba(255,255,255,.08)} }
         .animate-glowText { animation: glowText 5s ease-in-out infinite; }
-        @keyframes softPulse { 0%,100%{text-shadow:0 0 8px rgba(255,204,0,.4)} 50%{text-shadow:0 0 14px rgba(255,204,0,.8)} }
+        @keyframes softPulse { 0%,100%{text-shadow:0 0 8px rgba(220,38,38,.4)} 50%{text-shadow:0 0 14px rgba(220,38,38,.8)} }
         .animate-softPulse { animation: softPulse 4s infinite; }
         @keyframes float { 0%{transform:translateY(0)} 50%{transform:translateY(-10px)} 100%{transform:translateY(0)} }
         .animate-float { animation: float 3s ease-in-out infinite; }

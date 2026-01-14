@@ -1,158 +1,203 @@
 import React, { useState, useMemo, useEffect } from "react";
-import mtnLogo from "@/assets/images/mtn-n.png";
-import campaignVisual from "@/assets/images/mtn.jpg";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import boatImage from "@/assets/images/boat.jpg";
 
 export default function Banner({
-  sponsor = "MTN Nigeria",
-  slogan = "EVERYWHERE YOU GO",
-  subline = "Data • Voice • Digital Lifestyle",
-  tagline = "Proudly connecting communities across Mbaise",
-  cta = "DISCOVER MTN DIGITAL EXPERIENCES",
-  logo = mtnLogo,
-  image = campaignVisual,
-  link = "/programs",
+  sponsor = "Friends' Ads – Amplify Your Brand",
+  headline = "Showcase Your Brand To Mbaise & The World",
+  subline = "Community • Culture • Real Engagement",
+  logoText = "Your Logo",
+  link = "/advertise",
+  flyerImage = ""
 }) {
-  const [showVisual, setShowVisual] = useState(false);
-  const [viewMode, setViewMode] = useState("fit");
+  const [flyerOpen, setFlyerOpen] = useState(false);
 
-  const toggleVisual = () => setShowVisual(v => !v);
-  const toggleViewMode = () =>
-    setViewMode(v => (v === "fit" ? "full" : "fit"));
+  const particles = useMemo(
+    () =>
+      [...Array(8)].map(() => ({
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        delay: Math.random() * 6,
+      })),
+    []
+  );
 
-  /* Stable particles */
-  const particles = useMemo(() => {
-    return [...Array(14)].map(() => ({
-      top: Math.random() * 100,
-      left: Math.random() * 100,
-      delay: Math.random() * 6,
-    }));
-  }, []);
-
-  /* ESC close */
   useEffect(() => {
-    const handleKey = e => {
-      if (e.key === "Escape") setShowVisual(false);
+    const esc = (e) => {
+      if (e.key === "Escape") {
+        setFlyerOpen(false);
+      }
     };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
+    window.addEventListener("keydown", esc);
+    return () => window.removeEventListener("keydown", esc);
   }, []);
 
   return (
-    <div className="w-full">
-
-      {/* FRIENDS ADS LABEL (STATIC BRAND) */}
-      <div className="w-screen -ml-4 md:ml-0 md:w-[700px] text-center py-1 bg-black border-t border-yellow-400/40">
-        <p className="text-[10px] md:text-xs uppercase tracking-widest text-yellow-400 font-semibold">
-          Friends’ Ads • Amplify Your Brand
-        </p>
-      </div>
-
-      {/* MAIN BANNER */}
-      <div className="relative group overflow-hidden w-screen -ml-4 md:w-[700px] md:ml-0 rounded-none border-b-2 border-yellow-400 shadow-[0_0_6px_rgba(255,204,0,0.5)] cursor-pointer transition-all duration-500 select-none min-h-[90px] md:min-h-[130px] flex items-center">
-
-        {/* Floating particles */}
-        <div className="absolute inset-0 pointer-events-none">
-          {particles.map((p, i) => (
-            <div
-              key={i}
-              className="absolute w-1.5 h-1.5 bg-yellow-400/70 rounded-full animate-float"
-              style={{
-                top: `${p.top}%`,
-                left: `${p.left}%`,
-                animationDelay: `${p.delay}s`,
-              }}
-            />
-          ))}
+    <>
+      {/* TRUE FULL SCREEN MOBILE BANNER */}
+      <div
+        className="
+          w-[400px] h-fit py-2 relative z-10 mx-0 px-0
+          md:w-[700px] md:mx-auto md:px-0
+          min-h-[96px] md:min-h-[170px]
+          bg-gradient-to-r from-black/80 via-neutral-900/70 to-black/80
+          backdrop-blur-md border border-white/5
+          flex items-center overflow-hidden
+          border-t-4 border-b-4 border-red-600/50
+          shadow-xl shadow-black/50
+          animate-heavy-bob
+          !m-0
+        "
+      >
+        {/* FULL WIDTH BOAT TEXTURE */}
+        <div className="absolute inset-0 w-screen left-0 -ml-4 md:ml-0 md:w-[700px] md:-ml-0">
+          <img
+            src={boatImage}
+            className="w-full h-full object-cover opacity-20"
+            alt="Imo River canoe texture"
+          />
         </div>
 
-        {/* Main content */}
-        <div className="relative w-full h-full bg-gradient-to-r from-black via-yellow-900/20 to-black py-2 md:py-3 text-center transition-all duration-500 group-hover:scale-[1.02] flex flex-col justify-center items-center px-4 space-y-1">
+        {/* MINIMAL OVERLAY */}
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm w-screen left-0 -ml-4 md:ml-0 md:w-[700px] md:-ml-0" />
 
-          <p className="text-xs md:text-sm uppercase text-gray-300 tracking-widest font-light">
-            Sponsored • {sponsor}
+        {/* SUBTLE PARTICLES */}
+        {particles.map((p, i) => (
+          <span
+            key={i}
+            className="absolute w-1.5 h-1.5 bg-red-400/40 rounded-full animate-float backdrop-blur-sm"
+            style={{
+              top: `${p.top}%`,
+              left: `${p.left}%`,
+              animationDelay: `${p.delay}s`,
+            }}
+          />
+        ))}
+
+        {/* CONTENT */}
+        <div className="relative w-full text-center px-3 md:px-10 space-y-1.5 z-20 flex-1">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-red-300 bg-white/3 px-2 py-0.5 rounded-sm backdrop-blur-sm inline-block">
+            {sponsor}
           </p>
 
-          <h2 className="text-xl md:text-3xl font-black tracking-widest w-full text-yellow-400 drop-shadow-lg animate-softPulse">
-            {slogan}
+          <h2 className="text-[13px] md:text-xl text-white font-light drop-shadow-sm">
+            Your Brand Name Here
           </h2>
 
-          <p className="text-xs md:text-sm text-gray-200 font-medium tracking-wide">
+          <p className="text-[9px] uppercase tracking-widest text-gray-200">
+            {headline}
+          </p>
+          
+          <p className="text-[9px] uppercase tracking-widest text-gray-300">
+            Banner • Footer • Feature Page
+          </p>
+
+          <p className="text-[11px] md:text-sm text-gray-200">
             {subline}
           </p>
 
-          <p className="text-[10px] md:text-base text-gray-300 tracking-wide">
-            {tagline}
-          </p>
+          
 
-          <span className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-500 text-yellow-400 font-semibold text-[10px] tracking-widest">
-            {cta}
-          </span>
-
+          {/* MINIMAL GLASS BUTTON */}
           <button
-            onClick={toggleVisual}
-            aria-label="View campaign visual"
-            className="opacity-80 hover:opacity-100 transition-opacity duration-300 text-yellow-400 font-semibold text-xs tracking-wider border border-yellow-400/40 rounded-full px-4 py-1.5 bg-black/30 backdrop-blur-sm"
+            onClick={() => {
+              console.log("View Flyer clicked");
+              setFlyerOpen(true);
+            }}
+            className="
+              mt-2 text-[10px] md:text-sm font-medium
+              bg-white/5 backdrop-blur-sm border border-red-500/40
+              px-6 py-[5px] md:px-8 md:py-1.5 rounded-xl
+              text-red-200 hover:text-white hover:bg-white/10 hover:border-red-400/60
+              transition-all duration-300 shadow-lg hover:shadow-red-500/20
+              hover:scale-[1.02]
+            "
           >
-            View Campaign
+            View Event Flyer
           </button>
         </div>
 
-        {/* Logo */}
+        {/* MINIMALIST LOGO */}
         <Link to={link}>
-          <div className="absolute top-1/2 -translate-y-1/2 left-1 md:left-2 z-10">
-            <div className="relative">
-              <div className="absolute inset-0 w-20 h-20 md:w-28 md:h-28 bg-yellow-400/30 rounded-full blur-3xl animate-pulse"></div>
-
-              <img
-                src={logo}
-                alt={sponsor}
-                className="relative w-16 h-16 md:w-24 md:h-24 object-contain drop-shadow-2xl border-4 border-yellow-300/60 rounded-full bg-black/30 p-2"
-              />
-
-              <div className="absolute inset-0 w-16 h-16 md:w-24 md:h-24 bg-yellow-400/30 rounded-full animate-ping"></div>
+          <div className="absolute left-1 md:left-6 top-1/2 -translate-y-1/2 z-20">
+            <div className="relative w-14 h-14 md:w-24 md:h-24">
+              <div className="absolute inset-0 bg-emerald-400/20 rounded-full blur-sm" />
+              <div className="absolute inset-0 bg-black/90 backdrop-blur-sm border-2 border-red-600/60 rounded-full" />
+              <div
+                className="
+                  absolute inset-0 flex items-center justify-center
+                  text-[8.5px] md:text-xs text-gray-100 font-medium
+                  tracking-[0.2em] md:tracking-widest leading-[0.9]
+                "
+              >
+                {logoText}
+              </div>
             </div>
           </div>
         </Link>
-
-        {/* Modal */}
-        {showVisual && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
-            onClick={toggleVisual}
-          >
-            <div
-              className="relative w-full h-full p-4 flex items-center justify-center"
-              onClick={e => e.stopPropagation()}
-            >
-              <button
-                onClick={toggleVisual}
-                aria-label="Close"
-                className="absolute top-4 right-4 text-white hover:text-yellow-400 text-3xl transition-colors z-10 bg-black/50 rounded-full p-2"
-              >
-                ×
-              </button>
-
-              <button
-                onClick={toggleViewMode}
-                aria-label="Toggle view mode"
-                className="absolute top-4 left-4 text-white hover:text-yellow-400 text-xl transition-colors z-10 bg-black/50 rounded-full p-2"
-              >
-                {viewMode === "fit" ? <Maximize2 /> : <Minimize2 />}
-              </button>
-
-              <img
-                src={image}
-                alt={`${sponsor} Campaign`}
-                className={`w-full h-full ${
-                  viewMode === "fit" ? "object-contain" : "object-cover"
-                } rounded-lg shadow-2xl`}
-              />
-            </div>
-          </div>
-        )}
       </div>
-    </div>
+
+      {/* CLEAN FLYER MODAL */}
+      {flyerOpen && (
+        <div
+          className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[110] flex flex-col items-center justify-center p-4"
+          onClick={() => setFlyerOpen(false)}
+        >
+          <button
+            onClick={() => setFlyerOpen(false)}
+            className="
+              absolute top-6 left-6 z-40
+              flex items-center gap-2 px-5 py-2.5
+              bg-black/70 backdrop-blur-md text-white text-sm font-medium
+              rounded-xl border border-white/20 shadow-xl
+              hover:bg-white/10 hover:border-red-400/40 transition-all duration-200
+              hover:scale-[1.05]
+            "
+          >
+            <ArrowLeft size={18} /> Back to Banner
+          </button>
+
+          {flyerImage ? (
+            <img
+              src={flyerImage}
+              className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border-2 border-white/20 backdrop-blur-sm"
+              alt="Event Flyer"
+            />
+          ) : (
+            <div className="text-center text-white max-w-lg px-6 space-y-4 backdrop-blur-sm bg-black/50 rounded-2xl border border-white/10 py-10">
+              <h2 className="text-2xl md:text-4xl font-bold text-emerald-300 drop-shadow-lg">
+                Flyer Preview Area
+              </h2>
+              <p className="text-lg md:text-xl text-gray-100 leading-relaxed">
+                This full-screen area displays your complete event flyer for maximum impact and visibility across Friends Lounge.
+              </p>
+              <p className="text-base md:text-lg text-gray-200">
+                Seen by thousands throughout Mbaise and beyond.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* CLEAN ANIMATIONS */}
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes heavyBob {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-14px); }
+        }
+        .animate-heavy-bob {
+          animation: heavyBob 4.2s ease-in-out infinite;
+        }
+      `}</style>
+    </>
   );
 }

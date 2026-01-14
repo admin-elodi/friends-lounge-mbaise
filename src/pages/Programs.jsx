@@ -2,47 +2,47 @@ import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-import dataImg from "@/assets/images/local-fridge.jpg";
+import livestreamImg from "@/assets/images/local-fridge.jpg";
 import whatsappImg from "@/assets/images/palmwine.jpg";
-import momoImg from "@/assets/images/rafia.jpg";
+import supportImg from "@/assets/images/rafia.jpg";
 import futureImg from "@/assets/images/sunset.jpg";
 
-import mtnVideo from "@/assets/videos/abigbo-dance.mp4";
+import bgVideo from "@/assets/videos/abigbo-dance.mp4";
 
 const Programs = () => {
 
   const portals = [
     {
-      img: dataImg,
-      title: "MTN Livestream Zone",
-      subtitle: "Watch events powered by MTN data",
-      desc: "Zero buffering • HD streaming • Everywhere you go",
-      link: "https://youtube.com",
-      gradient: "from-yellow-400/40 to-black/60",
+      img: livestreamImg,
+      title: "Event Livestream Portal",
+      subtitle: "Broadcast your event live",
+      desc: "Brands can livestream ceremonies, festivals & conferences through Friends Lounge.",
+      cta: "STREAM EVENT",
+      link: "/advertise",
     },
     {
       img: whatsappImg,
-      title: "MTN WhatsApp Connect",
-      subtitle: "Instant community chat",
-      desc: "Fast network • Voice notes • Real-time updates",
-      link: "https://wa.me/2348136573235",
-      gradient: "from-green-600/40 to-black/60",
+      title: "Community Contact Hub",
+      subtitle: "Direct WhatsApp access",
+      desc: "Connect audiences directly to event organisers or committee leadership.",
+      cta: "OPEN CHAT",
+      link: "/advertise",
     },
     {
-      img: momoImg,
-      title: "MTN MoMo Payments",
-      subtitle: "Support community digitally",
-      desc: "Donate • Pay • Sponsor instantly",
-      link: "/donate",
-      gradient: "from-yellow-500/40 to-black/60",
+      img: supportImg,
+      title: "Support & Sponsorship",
+      subtitle: "Fund the vision",
+      desc: "Donations, sponsorships & material support for community events.",
+      cta: "SUPPORT EVENT",
+      link: "/advertise",
     },
     {
       img: futureImg,
-      title: "MTN 5G Future",
-      subtitle: "Smart communities by 2030",
-      desc: "Innovation • Connectivity • Growth",
-      link: "#",
-      gradient: "from-purple-700/40 to-black/60",
+      title: "Future Vision Portal",
+      subtitle: "Thinking beyond today",
+      desc: "Reverse-engineer future editions and long-term event impact.",
+      cta: "EXPLORE FUTURE",
+      link: "/advertise",
     },
   ];
 
@@ -60,75 +60,182 @@ const Programs = () => {
       {/* Background Video */}
       <video
         ref={videoRef}
-        src={mtnVideo}
+        src={bgVideo}
         autoPlay
         loop
         muted
-        className="absolute inset-0 w-full h-full object-cover brightness-110 z-0"
+        className="absolute inset-0 w-full h-full 
+        object-cover brightness-110 
+        grayscale z-0"
       />
+
+      {/* Dark unify overlay */}
+      <div className="absolute inset-0 bg-black/40 z-[1]" />
 
       {/* Mute */}
       <button
         onClick={toggleMute}
-        className="absolute top-6 right-6 z-30 w-10 h-10 bg-black/40 text-white rounded-full"
+        className="absolute top-6 right-6 z-30 
+        w-10 h-10 bg-black/50 text-white 
+        rounded-full border border-white/20"
       >
         {isMuted ? "🔇" : "🔊"}
       </button>
 
       {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: -60 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="absolute top-10 left-1/2 -translate-x-1/2 text-center z-20"
-      >
-        <h1 className="text-xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-500 to-orange-600 tracking-widest">
-          MTN EXPERIENCE HUB
-        </h1>
+          initial={{ opacity: 0, y: -60 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute top-10 left-1/2 
+          -translate-x-1/2 text-center z-20 space-y-1"
+        >
+          <h1
+            className="
+              text-lg md:text-3xl font-black 
+              tracking-widest text-white 
+              whitespace-nowrap
+            "
+          >
+            EVENT EXPERIENCE HUB
+          </h1>
 
-        <p className="mt-2 text-lg text-black font-bold tracking-wider">
-          Powered by Friends Lounge
-        </p>
-      </motion.div>
+          <p
+            className="
+              text-[11px] md:text-lg 
+              text-red-400 font-bold 
+              tracking-[0.25em] 
+              whitespace-nowrap
+            "
+          >
+            POWERED BY FRIENDS LOUNGE MBAISE
+          </p>
+        </motion.div>
+
 
       {/* Grid */}
-      <div className="pt-40 pb-20 px-4 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div
+        className="relative z-10 pt-40 pb-20 
+        px-4 max-w-6xl mx-auto 
+        grid grid-cols-1 md:grid-cols-2 gap-10"
+        style={{ perspective: "1200px" }}
+      >
 
         {portals.map((p, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, y: 80 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.2 }}
-            whileHover={{ scale: 1.05, y: -10 }}
+            initial={{ opacity: 0, y: 80, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: i * 0.15 }}
+            whileHover={{
+              scale: 1.05,
+              rotateX: -2,
+              rotateY: 2,
+            }}
+            className="transform-gpu"
           >
-            <Link to={p.link} target="_blank">
-              <div className="relative overflow-hidden rounded-xl shadow-2xl border border-white/10">
+            <Link to={p.link}>
+              <div
+                className="
+                relative overflow-hidden 
+                rounded-2xl 
+                bg-white/5 
+                backdrop-blur-xl 
+                border border-white/10
+                shadow-[inset_0_2px_8px_rgba(255,255,255,0.05),
+                        inset_0_-4px_12px_rgba(0,0,0,0.6)]
+                "
+                style={{ transformStyle: "preserve-3d" }}
+              >
 
-                <img
-                  src={p.img}
-                  className="w-full h-96 object-cover"
+                {/* IGBO PATTERN BORDER */}
+                <div
+                  className="absolute inset-0 pointer-events-none rounded-2xl"
+                  style={{
+                    backgroundImage: `
+                      repeating-linear-gradient(
+                        45deg,
+                        rgba(220,38,38,0.35) 0px,
+                        rgba(220,38,38,0.35) 2px,
+                        transparent 2px,
+                        transparent 8px
+                      ),
+                      repeating-linear-gradient(
+                        -45deg,
+                        rgba(255,255,255,0.15) 0px,
+                        rgba(255,255,255,0.15) 1px,
+                        transparent 1px,
+                        transparent 6px
+                      )
+                    `,
+                    maskImage:
+                      "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                    WebkitMaskImage:
+                      "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                    padding: "3px",
+                  }}
                 />
 
-                <div className="absolute inset-0 bg-black/60" />
-                <div className={`absolute inset-0 bg-gradient-to-t ${p.gradient}`} />
+                {/* Image */}
+                <img
+                  src={p.img}
+                  className="w-full h-96 object-cover grayscale opacity-60"
+                  alt="event portal"
+                />
 
-                <div className="absolute bottom-0 p-8">
-                  <h2 className="text-2xl font-black text-white">
+                {/* Emboss overlay */}
+                <div
+                  className="absolute inset-0 
+                  bg-gradient-to-br 
+                  from-white/5 
+                  via-transparent 
+                  to-black/40"
+                />
+
+                {/* Content */}
+                <div
+                  className="absolute bottom-0 p-8 
+                  translate-z-[30px]"
+                >
+                  <h2
+                    className="text-2xl font-black 
+                    text-white tracking-wide"
+                  >
                     {p.title}
                   </h2>
 
-                  <p className="mt-2 text-yellow-300 font-bold">
+                  <p
+                    className="mt-2 text-red-400 
+                    font-bold"
+                  >
                     {p.subtitle}
                   </p>
 
-                  <p className="mt-3 text-white/90">
+                  <p
+                    className="mt-3 text-gray-300"
+                  >
                     {p.desc}
                   </p>
 
-                  <div className="mt-5 inline-block px-8 py-3 bg-yellow-400 text-black font-bold rounded-full">
-                    ENTER
+                  <div
+                    className="
+                    mt-5 inline-block 
+                    px-8 py-3 
+                    bg-gradient-to-r 
+                    from-red-600 to-red-500 
+                    text-white font-bold 
+                    rounded-full shadow-lg"
+                  >
+                    {p.cta}
                   </div>
                 </div>
+
+                {/* Top light edge */}
+                <div
+                  className="absolute inset-0 
+                  pointer-events-none 
+                  rounded-2xl 
+                  shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                />
               </div>
             </Link>
           </motion.div>

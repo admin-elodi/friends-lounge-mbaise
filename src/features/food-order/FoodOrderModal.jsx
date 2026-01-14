@@ -39,46 +39,39 @@ export const FoodOrderModal = ({
   if (!isOpen) return null;
 
   const handleWhatsAppPayment = () => {
-    if (cart.length === 0) {
-      alert("Please add items to your cart.");
-      return;
-    }
+    if (!cart.length) return alert("Add items to cart");
 
-    const orderSummary = cart
+    const summary = cart
       .map(
-        (item) =>
-          `${item.name} (x${item.quantity}) - ₦${(
-            item.price * item.quantity
+        (i) =>
+          `${i.name} (x${i.quantity}) - ₦${(
+            i.price * i.quantity
           ).toLocaleString()}`
       )
       .join("\n");
 
-    const totalAmount = getTotal() + deliveryFee;
+    const total = getTotal() + deliveryFee;
 
     const message = encodeURIComponent(
-      `🌟 Friends' Lounge Mbaise Order 🌟
+      `🌟 Friends' Lounge Order 🌟
 
-📋 Order Summary:
-${orderSummary}
+${summary}
 
-💰 Subtotal: ₦${getTotal().toLocaleString()}
-🚚 Delivery Fee: ₦${deliveryFee.toLocaleString()}
-💎 Grand Total: ₦${totalAmount.toLocaleString()}
+Subtotal: ₦${getTotal().toLocaleString()}
+Delivery: ₦${deliveryFee.toLocaleString()}
+Total: ₦${total.toLocaleString()}
 
-👤 Customer:
-${customerInfo.name || "N/A"}
-${customerInfo.phone || "N/A"}
-${customerInfo.email || "—"}
-${customerInfo.address || "N/A"}
+Customer:
+${customerInfo.name || "—"}
+${customerInfo.phone || "—"}
+${customerInfo.address || "—"}
 
-🏦 Bank Transfer:
+Bank:
 ${BANK_DETAILS.accountName}
 ${BANK_DETAILS.accountNumber}
 ${BANK_DETAILS.bankName}
 
-Send payment proof to confirm order.
-
-Friends’ Lounge – Making friends & building communities`
+Send payment proof to confirm.`
     );
 
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, "_blank");
@@ -91,82 +84,84 @@ Friends’ Lounge – Making friends & building communities`
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[1000] bg-black/30 backdrop-blur-lg"
+        className="fixed inset-0 z-[9998] bg-black/40 backdrop-blur-md"
         onClick={close}
       />
 
       {/* Modal */}
       <motion.div
-        initial={{ scale: 0.94, y: 20, opacity: 0 }}
-        animate={{ scale: 1, y: 0, opacity: 1 }}
-        exit={{ scale: 0.94, y: 20, opacity: 0 }}
-        transition={{
-          type: "spring",
-          stiffness: 450,
-          damping: 30,
-          mass: 0.75,
-        }}
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-        w-full max-w-[480px] bg-black/35 backdrop-blur-2xl border 
-        border-white/20 rounded-lg shadow-xl overflow-hidden flex flex-col 
-        max-h-[88vh] z-[1001]"
+        initial={{ y: 30, scale: 0.95, opacity: 0 }}
+        animate={{ y: 0, scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 28 }}
+        className="
+        fixed z-[9999]
+        inset-x-4
+        top-1/2 -translate-y-1/2
+        sm:left-1/2 sm:-translate-x-1/2
+        w-auto sm:w-full sm:max-w-[480px]
+        bg-black/40 backdrop-blur-2xl
+        border border-white/20
+        rounded-lg shadow-2xl
+        max-h-[82vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* IMAGE HEADER */}
-        <div className="relative w-full h-50">
-
-          {/* Full width image */}
+        {/* Header */}
+        <div className="relative h-50">
           <img
             src={ChipsImage}
-            alt="Food"
             className="absolute inset-0 w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-black/60" />
 
-          {/* Dark overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-
-          {/* Floating logo */}
-          <div className="absolute inset-0 flex items-center justify-left left-4 z-10">
+          <div className="absolute inset-0 flex items-center left-4">
             <img
               src={Logo}
-              alt="Friends Lounge"
-              className="w-24 md:w-28 object-contain drop-shadow-2xl animate-floatSlow"
+              className="w-20 drop-shadow-xl animate-floatSlow"
             />
           </div>
         </div>
 
         {/* Close */}
-        <button
+        <motion.button
+          whileTap={{ scale: 0.9 }}
           onClick={close}
-          className="absolute top-3 right-3 z-20 text-white/80 hover:text-white"
+          className="absolute top-3 right-3 
+          w-9 h-9 rounded-full 
+          bg-black/60 border border-white/20
+          flex items-center justify-center text-white"
         >
-          <FaTimes size={20} />
-        </button>
+          <FaTimes size={14} />
+        </motion.button>
 
-        {/* CONTENT */}
-        <div className="flex-1 px-6 pt-5 pb-8 overflow-y-auto">
-          <h3 className="text-2xl font-bold text-white mb-1">Order Food</h3>
-          <p className="text-gray-400 text-sm mb-6">Mbaise-wide Delivery</p>
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto px-5 pt-4 pb-6">
+          <h3 className="text-xl font-bold text-white mb-1">
+            Order Food
+          </h3>
+          <p className="text-gray-400 text-sm mb-4">
+            Mbaise-wide delivery
+          </p>
 
-          {/* MENU */}
-          <div className="space-y-4 mb-6">
+          {/* Menu */}
+          <div className="space-y-3 mb-5">
             {foodMenu.map((item) => {
               const qty =
                 cart.find((i) => i.id === item.id)?.quantity || 0;
+
               return (
                 <div
                   key={item.id}
-                  className="bg-white/10 border border-white/15 rounded-xl p-4 flex justify-between items-center"
+                  className="bg-white/10 border border-white/15 
+                  rounded-xl p-4 flex justify-between items-center"
                 >
                   <div>
-                    <h5 className="font-semibold text-white text-sm">
+                    <h5 className="text-white text-sm font-medium">
                       {item.name}
                     </h5>
                     <p className="text-xs text-gray-400">
                       {item.desc}
                     </p>
-                    <p className="text-sm font-medium text-red-400">
+                    <p className="text-sm text-red-400">
                       ₦{item.price.toLocaleString()}
                     </p>
                   </div>
@@ -174,8 +169,10 @@ Friends’ Lounge – Making friends & building communities`
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => updateQuantity(item.id, -1)}
-                      disabled={qty === 0}
-                      className="w-7 h-7 rounded-full bg-white/15 disabled:opacity-40"
+                      disabled={!qty}
+                      className="w-8 h-8 rounded-full bg-white/15
+                      flex items-center justify-center
+                      disabled:opacity-40"
                     >
                       <FaMinus size={12} />
                     </button>
@@ -186,7 +183,8 @@ Friends’ Lounge – Making friends & building communities`
 
                     <button
                       onClick={() => addToCart(item)}
-                      className="w-7 h-7 rounded-full bg-red-600"
+                      className="w-8 h-8 rounded-full bg-red-600
+                      flex items-center justify-center"
                     >
                       <FaPlus size={12} />
                     </button>
@@ -196,22 +194,23 @@ Friends’ Lounge – Making friends & building communities`
             })}
           </div>
 
-          {/* SUMMARY */}
+          {/* Summary */}
           {cart.length > 0 && (
-            <div className="bg-white/5 border border-white/10 rounded-xl p-5 space-y-4">
+            <div className="bg-white/5 border border-white/10 
+            rounded-xl p-5 space-y-4">
 
-              <h4 className="text-white font-semibold">Your Order</h4>
+              <h4 className="text-white font-semibold">
+                Your Order
+              </h4>
 
-              {cart.map((item) => (
+              {cart.map((i) => (
                 <div
-                  key={item.id}
+                  key={i.id}
                   className="flex justify-between text-sm text-gray-300"
                 >
+                  <span>{i.name} × {i.quantity}</span>
                   <span>
-                    {item.name} × {item.quantity}
-                  </span>
-                  <span>
-                    ₦{(item.price * item.quantity).toLocaleString()}
+                    ₦{(i.price * i.quantity).toLocaleString()}
                   </span>
                 </div>
               ))}
@@ -221,56 +220,51 @@ Friends’ Lounge – Making friends & building communities`
                 <span>₦{deliveryFee.toLocaleString()}</span>
               </div>
 
-              <div className="border-t border-white/10 pt-3 flex justify-between text-white font-semibold">
+              <div className="border-t border-white/10 pt-3 
+              flex justify-between text-white font-semibold">
                 <span>Total</span>
                 <span className="text-red-400">
                   ₦{(getTotal() + deliveryFee).toLocaleString()}
                 </span>
               </div>
 
-              {/* CUSTOMER */}
+              {/* Customer */}
               <div className="space-y-3">
                 <input
                   placeholder="Full Name"
                   value={customerInfo.name}
                   onChange={(e) =>
-                    setCustomerInfo({
-                      ...customerInfo,
-                      name: e.target.value,
-                    })
+                    setCustomerInfo({ ...customerInfo, name: e.target.value })
                   }
-                  className="w-full bg-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="input"
                 />
 
                 <input
                   placeholder="Phone"
                   value={customerInfo.phone}
                   onChange={(e) =>
-                    setCustomerInfo({
-                      ...customerInfo,
-                      phone: e.target.value,
-                    })
+                    setCustomerInfo({ ...customerInfo, phone: e.target.value })
                   }
-                  className="w-full bg-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="input"
                 />
 
                 <textarea
                   placeholder="Delivery Address"
                   value={customerInfo.address}
                   onChange={(e) =>
-                    setCustomerInfo({
-                      ...customerInfo,
-                      address: e.target.value,
-                    })
+                    setCustomerInfo({ ...customerInfo, address: e.target.value })
                   }
-                  className="w-full bg-white/10 rounded-xl px-4 py-3 text-white text-sm h-16"
+                  className="input h-16 resize-none"
                 />
               </div>
 
-              {/* PAY */}
+              {/* Pay */}
               <button
                 onClick={handleWhatsAppPayment}
-                className="w-full mt-4 py-4 rounded-xl bg-green-600 flex items-center justify-center gap-2 text-white text-sm"
+                className="w-full mt-3 py-3 
+                rounded-xl bg-green-600
+                flex items-center justify-center gap-2
+                text-white text-sm"
               >
                 <FaWhatsapp />
                 Proceed to Payment
@@ -279,15 +273,23 @@ Friends’ Lounge – Making friends & building communities`
           )}
         </div>
 
-        {/* Floating animation */}
         <style>{`
-          @keyframes floatSlow {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-7px); }
-            100% { transform: translateY(0px); }
+          .input{
+            width:100%;
+            padding:12px;
+            border-radius:12px;
+            background:rgba(255,255,255,.1);
+            border:1px solid rgba(255,255,255,.15);
+            color:white;
+            font-size:14px;
           }
-          .animate-floatSlow {
-            animation: floatSlow 4.5s ease-in-out infinite;
+
+          @keyframes floatSlow{
+            0%,100%{transform:translateY(0)}
+            50%{transform:translateY(-6px)}
+          }
+          .animate-floatSlow{
+            animation:floatSlow 4s ease-in-out infinite
           }
         `}</style>
       </motion.div>

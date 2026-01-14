@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Users, Clock } from "lucide-react";
 import Logo from "@/assets/images/friends-logo.webp";
-import EventsImage from "@/assets/images/events.webp";
+import EventsImage from "@/assets/images/events.jpg";
 
 const eventTypes = [
   "Wedding Reception",
@@ -29,28 +29,28 @@ export default function BookEvent({ isOpen, onClose }) {
     message: "",
   });
 
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+  const handleChange = (e) =>
+    setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const message = `
+    const msg = `
 NEW EVENT BOOKING @ Friends' Lounge
 
-👤 Name: ${form.name}
-📞 Phone: ${form.phone}
-✉️ Email: ${form.email || "—"}
-🎉 Event: ${form.eventType}
-👥 Guests: ${form.guests}
-📅 Date: ${form.date}
-🕒 Time: ${form.time}
-${form.message ? `\n💬 Message:\n${form.message}` : ""}
-    `.trim();
+Name: ${form.name}
+Phone: ${form.phone}
+Email: ${form.email || "—"}
+Event: ${form.eventType}
+Guests: ${form.guests}
+Date: ${form.date}
+Time: ${form.time}
+
+${form.message || ""}
+`.trim();
 
     window.open(
-      `https://wa.me/2347066064379?text=${encodeURIComponent(message)}`,
+      `https://wa.me/2347066064379?text=${encodeURIComponent(msg)}`,
       "_blank"
     );
     onClose();
@@ -65,102 +65,92 @@ ${form.message ? `\n💬 Message:\n${form.message}` : ""}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[9998] bg-black/30 backdrop-blur-lg"
+            className="fixed inset-0 z-[9998] bg-black/40 backdrop-blur-md"
             onClick={onClose}
           />
 
           {/* Modal */}
           <motion.div
-            initial={{ scale: 0.94, y: 20, opacity: 0 }}
-            animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.94, y: 20, opacity: 0 }}
-            transition={{
-              type: "spring",
-              stiffness: 450,
-              damping: 30,
-              mass: 0.75,
-            }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-            w-full max-w-[480px] bg-black/35 backdrop-blur-2xl 
-            border border-white/20 rounded-lg shadow-xl overflow-hidden 
-            flex flex-col max-h-[88vh] z-[9999]"
+            initial={{ y: 30, scale: 0.95, opacity: 0 }}
+            animate={{ y: 0, scale: 1, opacity: 1 }}
+            exit={{ y: 30, scale: 0.95, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 400, damping: 28 }}
+            className="
+            fixed z-[9999] 
+            inset-x-4 sm:inset-x-auto
+            top-1/2 -translate-y-1/2 
+            sm:left-1/2 sm:-translate-x-1/2
+            w-auto sm:w-full sm:max-w-[480px]
+            bg-black/40 backdrop-blur-2xl 
+            border border-white/20 
+            rounded-lg shadow-2xl 
+            overflow-hidden flex flex-col 
+            max-h-[82vh]"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* IMAGE HEADER */}
-            <div className="relative w-full h-24 flex-shrink-0">
-
+            {/* Header */}
+            <div className="relative h-32">
               <img
                 src={EventsImage}
-                alt="Events"
                 className="absolute inset-0 w-full h-full object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-
-              {/* Floating logo */}
-              <div className="absolute inset-0 flex items-center justify-left left-6 z-10">
+              <div className="absolute inset-0 flex items-center left-4">
                 <img
                   src={Logo}
-                  alt="Friends Lounge"
-                  className="w-28 md:w-32 object-contain drop-shadow-2xl animate-floatSlow"
+                  className="w-24 drop-shadow-2xl animate-floatSlow"
                 />
               </div>
             </div>
 
             {/* Close */}
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={onClose}
-              className="absolute top-3 right-3 z-20 text-white/80 hover:text-white"
+              className="absolute top-3 right-3 
+              w-10 h-10 rounded-full 
+              bg-black/60 border border-white/20
+              flex items-center justify-center
+              text-white"
             >
-              <X size={22} strokeWidth={2.5} />
-            </button>
+              <X size={18} />
+            </motion.button>
 
-            {/* SCROLL AREA */}
-            <div className="flex-1 overflow-y-auto px-6 pt-5 pb-8 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
-
-              <h2 className="text-2xl font-bold text-white mb-1">
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto px-5 pt-4 pb-6">
+              <h2 className="text-xl font-bold text-white">
                 Book Your Event
               </h2>
-              <p className="text-gray-400 text-sm mb-6">
-                Let's make it unforgettable
+              <p className="text-gray-400 text-sm mb-4">
+                Let’s make it unforgettable
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <input
                   required
                   name="name"
-                  placeholder="Full Name *"
+                  placeholder="Full Name"
                   value={form.name}
                   onChange={handleChange}
-                  className="w-full px-5 py-3.5 bg-white/10 border border-white/15 rounded-xl 
-                  text-white placeholder-gray-400 focus:border-red-500/50 
-                  focus:bg-white/15 outline-none transition-all duration-300 text-sm"
+                  className="input"
                 />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input
                     required
                     name="phone"
-                    type="tel"
-                    placeholder="Phone (WhatsApp) *"
+                    placeholder="Phone"
                     value={form.phone}
                     onChange={handleChange}
-                    className="w-full px-5 py-3.5 bg-white/10 border border-white/15 
-                    rounded-xl text-white placeholder-gray-400 focus:border-red-500/50 
-                    focus:bg-white/15 outline-none transition-all duration-300 text-sm"
+                    className="input"
                   />
-
                   <input
                     name="email"
-                    type="email"
                     placeholder="Email (optional)"
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full px-5 py-3.5 bg-white/10 border border-white/15 
-                    rounded-xl text-white placeholder-gray-400 focus:border-red-500/50 
-                    focus:bg-white/15 outline-none transition-all duration-300 text-sm"
+                    className="input"
                   />
                 </div>
 
@@ -169,64 +159,22 @@ ${form.message ? `\n💬 Message:\n${form.message}` : ""}
                   name="eventType"
                   value={form.eventType}
                   onChange={handleChange}
-                  className="w-full px-5 py-3.5 bg-white/10 border border-white/15 
-                  rounded-xl text-white focus:border-red-500/50 focus:bg-white/15 
-                  outline-none transition-all duration-300 appearance-none text-sm"
+                  className="input"
                 >
-                  <option value="">Event Type *</option>
-                  {eventTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
+                  <option value="">Event Type</option>
+                  {eventTypes.map((t) => (
+                    <option key={t}>{t}</option>
                   ))}
                 </select>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="relative">
-                    <Calendar
-                      className="absolute left-4 top-1/2 -translate-y-1/2 
-                      text-gray-400"
-                      size={16}
-                    />
-                    <input
-                      required
-                      name="date"
-                      type="date"
-                      value={form.date}
-                      onChange={handleChange}
-                      className="w-full pl-11 pr-5 py-3.5 bg-white/10 border 
-                      border-white/15 rounded-xl text-white focus:border-red-500/50 
-                      focus:bg-white/15 outline-none transition-all duration-300 text-sm"
-                    />
-                  </div>
-
-                  <div className="relative">
-                    <Users
-                      className="absolute left-4 top-1/2 -translate-y-1/2 
-                      text-gray-400"
-                      size={16}
-                    />
-                    <input
-                      required
-                      name="guests"
-                      type="number"
-                      min="20"
-                      placeholder="Guests *"
-                      value={form.guests}
-                      onChange={handleChange}
-                      className="w-full pl-11 pr-5 py-3.5 bg-white/10 border 
-                      border-white/15 rounded-xl text-white placeholder-gray-400 
-                      focus:border-red-500/50 focus:bg-white/15 outline-none 
-                      transition-all duration-300 text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div className="relative">
-                  <Clock
-                    className="absolute left-4 top-1/2 -translate-y-1/2 
-                    text-gray-400"
-                    size={16}
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    required
+                    name="date"
+                    type="date"
+                    value={form.date}
+                    onChange={handleChange}
+                    className="input"
                   />
                   <input
                     required
@@ -234,62 +182,56 @@ ${form.message ? `\n💬 Message:\n${form.message}` : ""}
                     type="time"
                     value={form.time}
                     onChange={handleChange}
-                    className="w-full pl-11 pr-5 py-3.5 bg-white/10 border 
-                    border-white/15 rounded-xl text-white focus:border-red-500/50 
-                    focus:bg-white/15 outline-none transition-all duration-300 text-sm"
+                    className="input"
                   />
                 </div>
 
-                <textarea
-                  name="message"
-                  placeholder="Special requests (optional)"
-                  value={form.message}
+                <input
+                  required
+                  name="guests"
+                  type="number"
+                  min="20"
+                  placeholder="Guests"
+                  value={form.guests}
                   onChange={handleChange}
-                  rows={3}
-                  className="w-full px-5 py-3.5 bg-white/10 border border-white/15 
-                  rounded-xl text-white placeholder-gray-400 focus:border-red-500/50 
-                  focus:bg-white/15 outline-none transition-all duration-300 resize-none text-sm"
+                  className="input"
                 />
 
-                <div className="mt-6 p-4 bg-white/5 border border-white/10 rounded-xl 
-                text-xs text-gray-300 space-y-2">
-                  <p className="text-red-400 font-medium flex items-center gap-1.5">
-                    <span className="text-sm">★</span> From ₦500,000
-                  </p>
-                  <p>• 50% deposit to secure date</p>
-                  <p>• Chairs, tables, sound, security & cleaning included</p>
-                  <p className="text-green-400 mt-2">
-                    Team will contact you within 30 mins
-                  </p>
-                </div>
+                <textarea
+                  name="message"
+                  rows="3"
+                  placeholder="Special requests"
+                  value={form.message}
+                  onChange={handleChange}
+                  className="input resize-none"
+                />
 
                 <motion.button
-                  whileHover={{ scale: 1.015 }}
-                  whileTap={{ scale: 0.985 }}
-                  type="submit"
-                  className="w-full mt-6 py-4 bg-gradient-to-r 
-                  from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 
-                  rounded-xl font-medium text-white tracking-wide 
-                  shadow-lg shadow-red-900/20 transition-all duration-300 text-sm"
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full py-3 rounded-xl 
+                  bg-red-600 text-white text-sm"
                 >
                   Send via WhatsApp
                 </motion.button>
-
               </form>
             </div>
 
-            {/* Floating animation */}
             <style>{`
-              @keyframes floatSlow {
-                0% { transform: translateY(0px); }
-                50% { transform: translateY(-7px); }
-                100% { transform: translateY(0px); }
+              .input{
+                width:100%;
+                padding:12px;
+                border-radius:12px;
+                background:rgba(255,255,255,.1);
+                border:1px solid rgba(255,255,255,.15);
+                color:white;
+                font-size:14px;
               }
-              .animate-floatSlow {
-                animation: floatSlow 4.5s ease-in-out infinite;
+              @keyframes floatSlow{
+                0%,100%{transform:translateY(0)}
+                50%{transform:translateY(-6px)}
               }
+              .animate-floatSlow{animation:floatSlow 4s ease-in-out infinite}
             `}</style>
-
           </motion.div>
         </>
       )}
