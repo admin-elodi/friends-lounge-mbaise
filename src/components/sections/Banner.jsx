@@ -1,203 +1,239 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
+import { Maximize2, Minimize2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import boatImage from "@/assets/images/boat.jpg";
+import boatBg from "@/assets/images/boat.jpg";
 
 export default function Banner({
-  sponsor = "Friends' Ads – Amplify Your Brand",
-  headline = "Showcase Your Brand To Mbaise & The World",
+  slogan = "YOUR BRAND NAME HERE",
   subline = "Community • Culture • Real Engagement",
+  tagline = "Amplify Your Brand Across Mbaise",
+  cta = "EXPLORE FULL PAGE FEATURE",
   logoText = "Your Logo",
+  flyerImage = "",
   link = "/advertise",
-  flyerImage = ""
 }) {
-  const [flyerOpen, setFlyerOpen] = useState(false);
+  const [showVisual, setShowVisual] = useState(false);
+  const [viewMode, setViewMode] = useState("fit");
 
-  const particles = useMemo(
-    () =>
-      [...Array(8)].map(() => ({
-        top: Math.random() * 100,
-        left: Math.random() * 100,
-        delay: Math.random() * 6,
-      })),
-    []
-  );
+  const toggleVisual = () => setShowVisual(v => !v);
+  const toggleViewMode = () =>
+    setViewMode(v => (v === "fit" ? "full" : "fit"));
+
+  const particles = useMemo(() => {
+    return [...Array(12)].map(() => ({
+      top: Math.random() * 100,
+      left: Math.random() * 100,
+      delay: Math.random() * 6,
+    }));
+  }, []);
 
   useEffect(() => {
-    const esc = (e) => {
-      if (e.key === "Escape") {
-        setFlyerOpen(false);
-      }
+    const handleKey = e => {
+      if (e.key === "Escape") setShowVisual(false);
     };
-    window.addEventListener("keydown", esc);
-    return () => window.removeEventListener("keydown", esc);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
   return (
-    <>
-      {/* TRUE FULL SCREEN MOBILE BANNER */}
+    <div className="w-full">
+      {/* MINIMALIST LABEL */}
+      <div className="w-screen -ml-4 md:ml-0 md:w-[700px] text-center py-1.5
+                      bg-black/60 backdrop-blur-sm
+                      border-t border-emerald-500/40 shadow-sm">
+        <p className="text-[10px] md:text-xs uppercase tracking-[0.25em]
+                      text-emerald-300/90 font-medium bg-white/3 px-2 py-0.5 rounded inline-block">
+          Friends' Ads • Amplify Your Brand
+        </p>
+      </div>
+
+      {/* MINIMALIST MAIN BANNER - BOAT SHINES */}
       <div
         className="
-          w-[400px] h-fit py-2 relative z-10 mx-0 px-0
-          md:w-[700px] md:mx-auto md:px-0
-          min-h-[96px] md:min-h-[170px]
-          bg-gradient-to-r from-black/80 via-neutral-900/70 to-black/80
-          backdrop-blur-md border border-white/5
-          flex items-center overflow-hidden
-          border-t-4 border-b-4 border-red-600/50
-          shadow-xl shadow-black/50
-          animate-heavy-bob
-          !m-0
+          relative group overflow-hidden
+          w-screen -ml-4 md:w-[700px] md:ml-0
+          border-b border-emerald-500/50
+          shadow-md shadow-emerald-500/20
+          cursor-pointer transition-all duration-400 select-none
+          min-h-[95px] md:min-h-[140px]
+          flex items-center animate-heavy-bob
         "
+        style={{
+          backgroundImage: `url(${boatBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
-        {/* FULL WIDTH BOAT TEXTURE */}
-        <div className="absolute inset-0 w-screen left-0 -ml-4 md:ml-0 md:w-[700px] md:-ml-0">
-          <img
-            src={boatImage}
-            className="w-full h-full object-cover opacity-20"
-            alt="Imo River canoe texture"
-          />
-        </div>
-
-        {/* MINIMAL OVERLAY */}
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm w-screen left-0 -ml-4 md:ml-0 md:w-[700px] md:-ml-0" />
+        {/* LIGHT OVERLAY - MAX BOAT VISIBILITY */}
+        <div className="absolute inset-0 bg-black/30" />
 
         {/* SUBTLE PARTICLES */}
-        {particles.map((p, i) => (
-          <span
-            key={i}
-            className="absolute w-1.5 h-1.5 bg-red-400/40 rounded-full animate-float backdrop-blur-sm"
-            style={{
-              top: `${p.top}%`,
-              left: `${p.left}%`,
-              animationDelay: `${p.delay}s`,
-            }}
-          />
-        ))}
+        <div className="absolute inset-0 pointer-events-none">
+          {particles.map((p, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-emerald-400/70 rounded-full animate-float"
+              style={{
+                top: `${p.top}%`,
+                left: `${p.left}%`,
+                animationDelay: `${p.delay}s`,
+              }}
+            />
+          ))}
+        </div>
 
-        {/* CONTENT */}
-        <div className="relative w-full text-center px-3 md:px-10 space-y-1.5 z-20 flex-1">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-red-300 bg-white/3 px-2 py-0.5 rounded-sm backdrop-blur-sm inline-block">
-            {sponsor}
-          </p>
-
-          <h2 className="text-[13px] md:text-xl text-white font-light drop-shadow-sm">
-            Your Brand Name Here
+        {/* MINIMALIST CONTENT */}
+        <div className="
+          relative w-full h-full
+          bg-black/15
+          py-3 md:py-4 text-center
+          transition-all duration-400 hover:scale-[1.01]
+          flex flex-col justify-center items-center
+          px-6 space-y-1
+        ">
+          <h2 className="text-lg md:text-2xl font-bold tracking-wide
+                         text-emerald-200/95 drop-shadow-md">
+            {slogan}
           </h2>
 
-          <p className="text-[9px] uppercase tracking-widest text-gray-200">
-            {headline}
-          </p>
-          
-          <p className="text-[9px] uppercase tracking-widest text-gray-300">
-            Banner • Footer • Feature Page
-          </p>
-
-          <p className="text-[11px] md:text-sm text-gray-200">
+          <p className="text-[11px] md:text-sm
+                        text-white/90 font-medium tracking-wide">
             {subline}
           </p>
 
-          
+          <p className="text-[10px] md:text-base
+                        text-emerald-100/90 font-normal tracking-tight">
+            {tagline}
+          </p>
 
-          {/* MINIMAL GLASS BUTTON */}
+          <span className="
+            opacity-100 md:opacity-0
+            md:group-hover:opacity-100
+            transition-all duration-500 ease-out
+            text-emerald-200/95 font-medium
+            text-[10px] tracking-wider uppercase
+          ">
+            {cta}
+          </span>
+
           <button
-            onClick={() => {
-              console.log("View Flyer clicked");
-              setFlyerOpen(true);
-            }}
+            onClick={toggleVisual}
             className="
-              mt-2 text-[10px] md:text-sm font-medium
-              bg-white/5 backdrop-blur-sm border border-red-500/40
-              px-6 py-[5px] md:px-8 md:py-1.5 rounded-xl
-              text-red-200 hover:text-white hover:bg-white/10 hover:border-red-400/60
-              transition-all duration-300 shadow-lg hover:shadow-red-500/20
-              hover:scale-[1.02]
+              text-emerald-200/95 hover:text-emerald-100 font-semibold text-sm md:text-base
+              tracking-wide uppercase
+              border border-emerald-400/50 hover:border-emerald-300/70
+              rounded-lg px-5 py-1.5 md:px-7 md:py-2
+              bg-black/40 hover:bg-emerald-900/20
+              shadow-lg shadow-emerald-500/20 hover:shadow-xl hover:shadow-emerald-400/30
+              hover:scale-[1.02] active:scale-[0.98]
+              transition-all duration-300
             "
           >
-            View Event Flyer
+            View Campaign
           </button>
         </div>
 
-        {/* MINIMALIST LOGO */}
+        {/* FIXED LOGO - PERFECT CENTER BOTH VIEWS */}
         <Link to={link}>
-          <div className="absolute left-1 md:left-6 top-1/2 -translate-y-1/2 z-20">
-            <div className="relative w-14 h-14 md:w-24 md:h-24">
-              <div className="absolute inset-0 bg-emerald-400/20 rounded-full blur-sm" />
-              <div className="absolute inset-0 bg-black/90 backdrop-blur-sm border-2 border-red-600/60 rounded-full" />
-              <div
-                className="
-                  absolute inset-0 flex items-center justify-center
-                  text-[8.5px] md:text-xs text-gray-100 font-medium
-                  tracking-[0.2em] md:tracking-widest leading-[0.9]
-                "
-              >
+          <div className="absolute top-1/2 -translate-y-1/2 left-2 md:left-4 z-10">
+            <div className="relative w-20 h-20 md:w-28 md:h-28">
+              <div className="absolute inset-0
+                              bg-black/70 backdrop-blur-md
+                              border border-emerald-500/40 rounded-xl
+                              shadow-md shadow-emerald-500/30" />
+              
+              <div className="
+                absolute top-0 left-0 w-full h-full
+                bg-black/90 backdrop-blur-sm rounded-xl
+                flex items-center justify-center px-1 md:px-2
+                text-[8px] md:text-[13px] lg:text-sm
+                font-semibold text-emerald-200/95
+                tracking-[0.12em] md:tracking-[0.18em] lg:tracking-[0.25em]
+                leading-none md:leading-[1.1] lg:leading-tight
+                pt-0.5 md:pt-1
+              ">
                 {logoText}
               </div>
             </div>
           </div>
         </Link>
+
+        {/* CLEAN MINIMAL MODAL */}
+        {showVisual && (
+          <div
+            className="fixed inset-0 z-50
+                       flex items-center justify-center
+                       bg-black/95 backdrop-blur-sm"
+            onClick={toggleVisual}
+          >
+            <div
+              className="relative w-full h-full p-6
+                         flex items-center justify-center"
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                onClick={toggleVisual}
+                className="
+                  absolute top-6 right-6
+                  text-emerald-300 hover:text-emerald-100
+                  text-3xl font-light z-20
+                  bg-black/70 backdrop-blur-md border border-emerald-500/40
+                  rounded-xl p-2.5 shadow-xl shadow-emerald-500/30
+                  hover:shadow-2xl hover:shadow-emerald-400/40
+                  transition-all duration-300 hover:scale-105
+                "
+              >
+                ×
+              </button>
+
+              <button
+                onClick={toggleViewMode}
+                className="
+                  absolute top-6 left-6
+                  text-emerald-300 hover:text-emerald-100
+                  text-xl z-20
+                  bg-black/70 backdrop-blur-md border border-emerald-500/40
+                  rounded-xl p-2 shadow-xl shadow-emerald-500/30
+                  hover:shadow-2xl hover:shadow-emerald-400/40
+                  transition-all duration-300 hover:scale-105
+                "
+              >
+                {viewMode === "fit" ? <Maximize2 /> : <Minimize2 />}
+              </button>
+
+              <img
+                src={flyerImage}
+                alt="Full Page Brand Feature"
+                className={`w-full h-full ${
+                  viewMode === "fit" ? "object-contain" : "object-cover"
+                }
+                rounded-2xl shadow-2xl shadow-emerald-500/30
+                border border-emerald-500/30 backdrop-blur-sm
+                hover:shadow-emerald-400/20 hover:shadow-xl`}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* CLEAN FLYER MODAL */}
-      {flyerOpen && (
-        <div
-          className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[110] flex flex-col items-center justify-center p-4"
-          onClick={() => setFlyerOpen(false)}
-        >
-          <button
-            onClick={() => setFlyerOpen(false)}
-            className="
-              absolute top-6 left-6 z-40
-              flex items-center gap-2 px-5 py-2.5
-              bg-black/70 backdrop-blur-md text-white text-sm font-medium
-              rounded-xl border border-white/20 shadow-xl
-              hover:bg-white/10 hover:border-red-400/40 transition-all duration-200
-              hover:scale-[1.05]
-            "
-          >
-            <ArrowLeft size={18} /> Back to Banner
-          </button>
-
-          {flyerImage ? (
-            <img
-              src={flyerImage}
-              className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border-2 border-white/20 backdrop-blur-sm"
-              alt="Event Flyer"
-            />
-          ) : (
-            <div className="text-center text-white max-w-lg px-6 space-y-4 backdrop-blur-sm bg-black/50 rounded-2xl border border-white/10 py-10">
-              <h2 className="text-2xl md:text-4xl font-bold text-emerald-300 drop-shadow-lg">
-                Flyer Preview Area
-              </h2>
-              <p className="text-lg md:text-xl text-gray-100 leading-relaxed">
-                This full-screen area displays your complete event flyer for maximum impact and visibility across Friends Lounge.
-              </p>
-              <p className="text-base md:text-lg text-gray-200">
-                Seen by thousands throughout Mbaise and beyond.
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* CLEAN ANIMATIONS */}
+      {/* MINIMALIST ANIMATIONS */}
       <style>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
+          0%,100%{transform:translateY(0)}
+          50%{transform:translateY(-10px)}
         }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
+        .animate-float{
+          animation:float 6s ease-in-out infinite
         }
 
-        @keyframes heavyBob {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-14px); }
+        @keyframes heavyBob{
+          0%,100%{transform:translateY(0)}
+          50%{transform:translateY(-16px)}
         }
-        .animate-heavy-bob {
-          animation: heavyBob 4.2s ease-in-out infinite;
+        .animate-heavy-bob{
+          animation:heavyBob 4.2s ease-in-out infinite
         }
       `}</style>
-    </>
+    </div>
   );
 }

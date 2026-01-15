@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, Search } from "lucide-react";
 import Logo from "@/assets/images/friends-logo.webp";
-import palmsVideo from "@/assets/videos/palms.mp4";  
+import palmsVideo from "@/assets/videos/palm.mp4";  
 import Banner from "@/components/sections/Banner";
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import BookEvent from "@/features/BookEvent";
@@ -40,9 +40,9 @@ export default function Header() {
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
-          style={{
-            filter: "grayscale(100%) brightness(1.4) contrast(1.1)"
-          }}
+          // style={{
+          //   filter: "grayscale(100%) brightness(1.4) contrast(1.1)"
+          // }}
         >
           <source src={palmsVideo} type="video/mp4" />
           Your browser does not support the video tag.
