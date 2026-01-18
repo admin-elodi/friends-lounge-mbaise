@@ -6,7 +6,7 @@ import Footer from '@/components/common/Footer';
 
 // Lazy load pages to split bundles and reduce initial load
 const Home = lazy(() => import('@/pages/Home'));
-const Programs = lazy(() => import('@/pages/Programs'));
+const BrandHub = lazy(() => import('@/pages/BrandHub'));
 const Friends = lazy(() => import('@/pages/Friends'));
 const Mbaise = lazy(() => import('@/pages/Mbaise'));
 const Projects = lazy(() => import('@/pages/Projects'));
@@ -35,7 +35,7 @@ function App() {
           >
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/programs" element={<Programs />} />
+              <Route path="/brand-hub" element={<BrandHub />} />
               <Route path="/friends" element={<Friends />} />
               <Route path="/mbaise" element={<Mbaise />} />
               <Route path="/projects" element={<Projects />} />

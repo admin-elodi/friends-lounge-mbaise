@@ -126,7 +126,7 @@ export default function Projects() {
     <div className="relative min-h-screen text-white overflow-x-hidden">
 
       {/* PAGE BACKGROUND – STARTS BELOW NAVBAR */}
-      <div className="absolute inset-x-0 top-[120px] bottom-0 -z-10 pointer-events-none">
+      <div className="absolute inset-x-0 top-0 bottom-0 -z-10 pointer-events-none">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-15"
           style={{ backgroundImage: "url('/mbaise-archive.jpg')" }}
@@ -137,11 +137,28 @@ export default function Projects() {
       {/* PAGE CONTENT */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-16">
 
-        {/* HEADER */}
-        <div className="text-center mb-20">
-          <h1 className=" md:text-2xl text-black tracking-widest">
+        {/* HEADER (VERTICALLY CENTERED + ANIMATED) */}
+        <div className="flex flex-col items-center justify-center text-center mb-20">
+
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ 
+              opacity: 1, 
+              y: 0,
+              scale: [1, 1.05, 1] 
+            }}
+            transition={{ 
+              duration: 1.2,
+              ease: "easeOut",
+              repeat: Infinity,
+              repeatDelay: 4
+            }}
+            className="md:text-2xl text-white tracking-widest flex items-center gap-3"
+          >
+            <HandCoins className="text-green-500" />
             UDO TRANSPARENCY ARCHIVE
-          </h1>
+          </motion.h1>
+
           <p className="mt-12 text-gray-400 max-w-2xl mx-auto">
             Honoring contributors • Tracking ongoing projects • Preserving history
           </p>

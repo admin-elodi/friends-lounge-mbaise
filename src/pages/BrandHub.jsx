@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from "react"; 
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -9,8 +9,7 @@ import futureImg from "@/assets/images/sunset.jpg";
 
 import bgVideo from "@/assets/videos/abigbo-dance.mp4";
 
-const Programs = () => {
-
+const BrandHub = () => {
   const portals = [
     {
       img: livestreamImg,
@@ -64,62 +63,44 @@ const Programs = () => {
         autoPlay
         loop
         muted
-        className="absolute inset-0 w-full h-full 
-        object-cover brightness-110 
-        grayscale z-0"
+        className="absolute inset-0 w-full h-full object-cover brightness-110 grayscale z-0"
       />
 
       {/* Dark unify overlay */}
       <div className="absolute inset-0 bg-black/40 z-[1]" />
 
-      {/* Mute */}
+      {/* Mute Button */}
       <button
         onClick={toggleMute}
-        className="absolute top-6 right-6 z-30 
-        w-10 h-10 bg-black/50 text-white 
-        rounded-full border border-white/20"
+        className="absolute top-6 right-6 z-30 w-10 h-10 bg-black/50 text-white rounded-full border border-white/20"
       >
         {isMuted ? "🔇" : "🔊"}
       </button>
 
       {/* Header */}
       <motion.div
-          initial={{ opacity: 0, y: -60 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute top-10 left-1/2 
-          -translate-x-1/2 text-center z-20 space-y-1"
-        >
-          <h1
-            className="
-              text-lg md:text-3xl font-black 
-              tracking-widest text-white 
-              whitespace-nowrap
-            "
-          >
-            EVENT EXPERIENCE HUB
-          </h1>
+        initial={{ opacity: 0, y: -60 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="absolute top-5 left-1/2 -translate-x-1/2 text-center z-20 space-y-2"
+      >
+        <h1 className="text-lg md:text-2xl font-semibold tracking-widest text-white whitespace-nowrap">
+          Brand Experience Hub
+        </h1>
 
-          <p
-            className="
-              text-[11px] md:text-lg 
-              text-red-400 font-bold 
-              tracking-[0.25em] 
-              whitespace-nowrap
-            "
-          >
-            POWERED BY FRIENDS LOUNGE MBAISE
-          </p>
-        </motion.div>
+       
 
+        {/* 🔥 3rd Point – Strategic Slogan */}
+        <p className="text-[10px] md:text-sm text-white max-w-xl mx-auto leading-relaxed"> 
+          <span className="text-yellow-200 font-semibold">Point 3</span> of Friends' Ad 3 point ad system 
+          where your brand's visibility lives inside Mbaise
+        </p>
+      </motion.div>
 
-      {/* Grid */}
+      {/* Grid - Portals with Igbo-inspired border */}
       <div
-        className="relative z-10 pt-40 pb-20 
-        px-4 max-w-6xl mx-auto 
-        grid grid-cols-1 md:grid-cols-2 gap-10"
+        className="relative z-10 pt-44 pb-20 px-4 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10"
         style={{ perspective: "1200px" }}
       >
-
         {portals.map((p, i) => (
           <motion.div
             key={i}
@@ -136,42 +117,45 @@ const Programs = () => {
             <Link to={p.link}>
               <div
                 className="
-                relative overflow-hidden 
-                rounded-2xl 
-                bg-white/5 
-                backdrop-blur-xl 
-                border border-white/10
-                shadow-[inset_0_2px_8px_rgba(255,255,255,0.05),
-                        inset_0_-4px_12px_rgba(0,0,0,0.6)]
+                  relative overflow-hidden rounded-2xl 
+                  bg-white/5 backdrop-blur-xl 
+                  border border-white/10
+                  shadow-[inset_0_2px_8px_rgba(255,255,255,0.05),inset_0_-4px_12px_rgba(0,0,0,0.6)]
                 "
                 style={{ transformStyle: "preserve-3d" }}
               >
-
-                {/* IGBO PATTERN BORDER */}
+                {/* Igbotic Pattern Border */}
                 <div
                   className="absolute inset-0 pointer-events-none rounded-2xl"
                   style={{
                     backgroundImage: `
                       repeating-linear-gradient(
                         45deg,
-                        rgba(220,38,38,0.35) 0px,
-                        rgba(220,38,38,0.35) 2px,
-                        transparent 2px,
-                        transparent 8px
+                        rgba(220,38,38,0.5) 0px,
+                        rgba(220,38,38,0.5) 3px,
+                        transparent 3px,
+                        transparent 12px
                       ),
                       repeating-linear-gradient(
                         -45deg,
-                        rgba(255,255,255,0.15) 0px,
-                        rgba(255,255,255,0.15) 1px,
+                        rgba(255,255,255,0.25) 0px,
+                        rgba(255,255,255,0.25) 2px,
+                        transparent 2px,
+                        transparent 10px
+                      ),
+                      repeating-linear-gradient(
+                        0deg,
+                        rgba(200,20,20,0.2) 0px,
+                        rgba(200,20,20,0.2) 1px,
                         transparent 1px,
-                        transparent 6px
+                        transparent 8px
                       )
                     `,
-                    maskImage:
-                      "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                    WebkitMaskImage:
-                      "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                    padding: "3px",
+                    backgroundSize: "100% 100%",
+                    maskImage: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                    WebkitMaskComposite: "source-out",
+                    maskComposite: "exclude",
+                    padding: "4px",
                   }}
                 />
 
@@ -179,51 +163,33 @@ const Programs = () => {
                 <img
                   src={p.img}
                   className="w-full h-96 object-cover grayscale opacity-60"
-                  alt="event portal"
+                  alt="brand portal"
                 />
 
                 {/* Emboss overlay */}
                 <div
-                  className="absolute inset-0 
-                  bg-gradient-to-br 
-                  from-white/5 
-                  via-transparent 
-                  to-black/40"
+                  className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/40 border-b-2 border-yellow-200"
                 />
 
                 {/* Content */}
-                <div
-                  className="absolute bottom-0 p-8 
-                  translate-z-[30px]"
-                >
-                  <h2
-                    className="text-2xl font-black 
-                    text-white tracking-wide"
-                  >
+                <div className="absolute bottom-0 p-8 translate-z-[30px]">
+                  <h2 className="text-2xl font-black text-white tracking-wide">
                     {p.title}
                   </h2>
 
-                  <p
-                    className="mt-2 text-red-400 
-                    font-bold"
-                  >
+                  <p className="mt-2 text-red-400 font-bold">
                     {p.subtitle}
                   </p>
 
-                  <p
-                    className="mt-3 text-gray-300"
-                  >
+                  <p className="mt-3 text-gray-300">
                     {p.desc}
                   </p>
 
                   <div
                     className="
-                    mt-5 inline-block 
-                    px-8 py-3 
-                    bg-gradient-to-r 
-                    from-red-600 to-red-500 
-                    text-white font-bold 
-                    rounded-full shadow-lg"
+                      mt-5 inline-block px-8 py-3 
+                      bg-gradient-to-r from-red-600 to-red-500 
+                      text-white font-bold rounded-full shadow-lg"
                   >
                     {p.cta}
                   </div>
@@ -231,10 +197,7 @@ const Programs = () => {
 
                 {/* Top light edge */}
                 <div
-                  className="absolute inset-0 
-                  pointer-events-none 
-                  rounded-2xl 
-                  shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                  className="absolute inset-0 pointer-events-none rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
                 />
               </div>
             </Link>
@@ -245,4 +208,4 @@ const Programs = () => {
   );
 };
 
-export default Programs;
+export default BrandHub;

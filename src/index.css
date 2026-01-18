@@ -1,16 +1,76 @@
 @import "tailwindcss";
 
-/* Add custom CSS from here if needed */
-/* Global CSS addition for smooth scrolling (add to your index.css or global styles) */
+/* ────────────────────────────────────────────────────────────────
+   PERFECTED SMOOTH SCROLLING & PERFORMANCE TWEAKS
+   ──────────────────────────────────────────────────────────────── */
+
+/* Enable native smooth scrolling for anchor links */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem;           /* Prevents content hiding under fixed header */
 }
 
-/* Ensure body doesn't interfere with smooth scroll */
+/* Core smoothness & mobile momentum (very important) */
 body {
-  overscroll-behavior: none; /* Prevents rubber-banding on mobile */
+  -webkit-overflow-scrolling: touch;  /* iOS momentum scrolling */
+  overscroll-behavior: none;          /* No rubber-band / pull-to-refresh interference */
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;                 /* Prevents horizontal jank */
 }
 
+/* ---------------------------------------------------------------
+   GPU ACCELERATION (SAFE VERSION)
+   ---------------------------------------------------------------
+   NOTE:
+   We REMOVED transform from html, body, #root, main
+   because it breaks position: fixed (your modal issue)
+---------------------------------------------------------------- */
+
+/* Safe acceleration targets */
+section,
+article,
+div,
+motion.div,
+.framer-motion-component {
+  will-change: transform, opacity;
+  transform: translateZ(0);           /* Hardware acceleration trigger */
+  backface-visibility: hidden;        /* Reduces flickering on Safari/iOS */
+}
+
+/* DO NOT transform these (keeps modals fixed correctly) */
+html,
+body,
+#root,
+main {
+  will-change: auto;
+  transform: none;
+  backface-visibility: visible;
+}
+
+/* Extra anti-jank for long scroll containers (modals, pages, etc.) */
+.overflow-y-auto,
+.overflow-auto,
+[style*="overflow-y"],
+.scroll-container {
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+}
+
+/* Remove tap highlight on mobile (cleaner feel) */
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+/* Optional: Smoother font rendering (very subtle but noticeable) */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Your existing custom classes (untouched) */
 .igbo-font {
   font-family: "Cinzel", serif;
   letter-spacing: 0.08em;
@@ -27,5 +87,3 @@ body {
   transform: scale(1.02);
   transition: 0.25s ease;
 } */
-
-

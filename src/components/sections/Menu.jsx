@@ -1,473 +1,483 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import happyWeekend from "@/assets/images/happy-weekend.webp";
-import egusi from "@/assets/images/food/egusi.webp";
-import nkwobi from "@/assets/images/food/nkwobi.webp";
+import chefsBg from "@/assets/images/friends-staff.webp";
+import chipsImg from "@/assets/images/chips.webp";
+import beerImg from "@/assets/images/beer.webp";
 
 export default function Menu() {
-  const slides = [happyWeekend, egusi, nkwobi];
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [activeMenu, setActiveMenu] = useState(null);
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setCurrentSlide((p) => (p + 1) % slides.length);
-    }, 3500);
-    return () => clearInterval(id);
-  }, [slides.length]);
-
-  /* 🔐 DATA LOCKED */
-  const menu = { 
+  const menu = {
     drinks: {
-      title: "Friends' Lounge Drinks Menu",
+      title: "Drinks Menu",
       categories: [
         {
-          title: "WATER",
+          title: "Water",
           items: [
-            { name: "Layton Soda Water", price: "₦750", desc: "Served crisp and chilled to awaken the palate" },
-            { name: "Cway", price: "", desc: "Pure and refreshing, the perfect table companion" },
+            { name: "Layton Soda Water", price: "₦750", desc: "Crisp and chilled" },
+            { name: "Cway", price: "", desc: "Pure and refreshing" },
           ],
         },
         {
-          title: "SOFT DRINKS",
+          title: "Soft Drinks",
           items: [
-            { name: "Schweppes", price: "₦1,200", desc: "Citrus tonic served cold for a clean, refined taste" },
-            { name: "Coke", price: "₦1,200", desc: "Served chilled with ice, the classic refreshment for every table" },
-            { name: "Fanta", price: "₦ 1,200", desc: "Bright orange soda poured in crystal glassware with flair" },
+            { name: "Schweppes", price: "₦1,200", desc: "Citrus tonic cold" },
+            { name: "Coke", price: "₦1,200", desc: "Chilled classic refreshment" },
+            { name: "Fanta", price: "₦1,200", desc: "Bright orange soda" },
           ],
         },
         {
-          title: "FRUIT JUICE",
+          title: "Fruit Juice",
           items: [
-            { name: "Chivita Active", price: "₦3500", desc: "Tropical juice blend rich in vitamins andflavour" },
-            { name: "Chivita Exotic", price: "₦3500", desc: "A smooth tropical mix served chilled in tall glassware" },
+            { name: "Chivita Active", price: "₦3,500", desc: "Tropical vitamin blend" },
+            { name: "Chivita Exotic", price: "₦3,500", desc: "Smooth tropical mix" },
           ],
         },
         {
-          title: "DAIRY",
+          title: "Dairy",
           items: [
-            { name: "Hollandia Yoghurt", price: "₦ 4500", desc: "Creamy and chilled, the perfect finish to any meal" },
-            { name: "Vita Milk", price: "₦3500", desc: "Soy-based malt drink served cold and silky" },
+            { name: "Hollandia Yoghurt", price: "₦4,500", desc: "Creamy and chilled" },
+            { name: "Vita Milk", price: "₦3,500", desc: "Silky soy malt" },
           ],
         },
         {
-          title: "BEER / CIDERS",
+          title: "Beer / Ciders",
           items: [
-            { name: "Heineken", price: "₦ 2,000", desc: "Crisp lager with a clean, dry finish" },
-            { name: "Budweiser", price: "₦2,000", desc: "Premium lager served cold with a golden pour" },
-            { name: "Legend Stout", price: "₦2,500", desc: "Full-bodied stout with deep roastedflavour" },
-            { name: "Trophy", price: "₦2,000", desc: "Smooth lager brewed for easy enjoyment" },
-            { name: "Star", price: "₦2,000", desc: "Bright golden beer with a refreshing sparkle" },
-            { name: "StarRadler", price: "₦2,000", desc: "Citrus beer mix with a light, fruity edge" },
-            { name: "Castle Lite", price: "₦2,000", desc: "Malt-rich lager, bold and proudly local" },
-            { name: "Origin Beer", price: "₦2,000", desc: "Herbal beer with bold African roots and a bittersweet kick" },
-            { name: "Life", price: "₦2,000", desc: "Crisp lager brewed to celebrate life’s finest friendships" },
-            { name: "Hero", price: "₦2,000", desc: "Bold, refreshing lager that lifts the spirit of every gathering" },
-            { name: "Desperados", price: "₦2,500", desc: "Tequila-flavoured beer with a daring, tropical twist" },
-            { name: "Flying Fish", price: "₦2,000", desc: "Light fruity lager that glides smoothly over the tongue" },
-            { name: "Gulder", price: "₦2,000", desc: "Bold lager with a rich, bitter edge" },
-            { name: "33 Export", price: "₦2,000", desc: "Mild, clean lager brewed for balance" },
-            { name: "Tiger", price: "₦2,000", desc: "Smooth Asian-style lager served cold and clean" },
-            { name: "Smirnoff Ice", price: "₦2,500", desc: "Sweet citrus-flavoured malt drink served icy cold" },
-            { name: "Small Stout", price: "₦2,000", desc: "Dark, full-bodied stout with roasted maltflavour" },
-            { name: "Medium Stout", price: "₦2,500", desc: "Rich, smooth stout with hints of cocoa and coffee." },
+            { name: "Heineken", price: "₦2,000", desc: "Crisp clean finish" },
+            { name: "Budweiser", price: "₦2,000", desc: "Premium golden pour" },
+            { name: "Legend Stout", price: "₦2,500", desc: "Full roasted flavour" },
+            { name: "Trophy", price: "₦2,000", desc: "Smooth easy enjoyment" },
+            { name: "Star", price: "₦2,000", desc: "Bright refreshing sparkle" },
+            { name: "StarRadler", price: "₦2,000", desc: "Light citrus mix" },
+            { name: "Castle Lite", price: "₦2,000", desc: "Bold malt lager" },
+            { name: "Origin Beer", price: "₦2,000", desc: "Herbal African roots" },
+            { name: "Life", price: "₦2,000", desc: "Crisp celebratory lager" },
+            { name: "Hero", price: "₦2,000", desc: "Bold refreshing spirit" },
+            { name: "Desperados", price: "₦2,500", desc: "Tequila tropical twist" },
+            { name: "Flying Fish", price: "₦2,000", desc: "Light fruity glide" },
+            { name: "Gulder", price: "₦2,000", desc: "Rich bitter edge" },
+            { name: "33 Export", price: "₦2,000", desc: "Mild clean balance" },
+            { name: "Tiger", price: "₦2,000", desc: "Smooth Asian style" },
+            { name: "Smirnoff Ice", price: "₦2,500", desc: "Sweet citrus malt" },
+            { name: "Small Stout", price: "₦2,000", desc: "Dark roasted malt" },
+            { name: "Medium Stout", price: "₦2,500", desc: "Rich cocoa hints" },
           ],
         },
         {
-          title: "ENERGY DRINKS",
+          title: "Energy Drinks",
           items: [
-            { name: "Red Bull", price: "₦2,000", desc: "Premium energy blend served icy cold" },
-            { name: "Bullet", price: "₦2,500", desc: "Sharp-tasting energy boost served cool" },
-            { name: "Fearless", price: "₦1,500", desc: "Tropical energy blend served cold for instant charge" },
-            { name: "Power Horse", price: "₦2,500", desc: "Smooth, sweet energy boost to power your night" },
-            { name: "Smirnoff Double Black", price: "₦2,500", desc: "Intense energy malt blend with vodka finish" },
+            { name: "Red Bull", price: "₦2,000", desc: "Premium icy blend" },
+            { name: "Bullet", price: "₦2,500", desc: "Sharp cool boost" },
+            { name: "Fearless", price: "₦1,500", desc: "Tropical instant charge" },
+            { name: "Power Horse", price: "₦2,500", desc: "Smooth sweet power" },
+            { name: "Smirnoff Double Black", price: "₦2,500", desc: "Intense vodka finish" },
           ],
         },
         {
-          title: "SPIRITS",
+          title: "Spirits",
           items: [
-            { name: "Origin Bitters", price: "₦3,000", desc: "Herbal spirit infused with African roots and boldflavour" },
-            { name: "Smirnoff Vodka", price: "₦2,500", desc: "Crystal-clear vodka with a clean, smooth finish" },
-            { name: "Jameson", price: "₦120,000", desc: "Triple-distilled Irish whiskey, soft and rich on the tongue" },
-            { name: "Glenfiddich", price: "₦350,000", desc: "Aged single malt whisky with honeyed oak notes" },
-            { name: "Hennessy", price: "₦350,000", desc: "Legendary cognac, smooth and deeply aromatic" },
-            { name: "Casamigos", price: "₦350,000", desc: "Ultra-smooth tequila with a hint of vanilla." },
-            { name: "Baileys", price: "₦80,000", desc: "Creamy Irish liqueur with chocolate undertones" },
-            { name: "MartellVs", price: "₦350,000", desc: "Classic French cognac with fruit and spice notes" },
-            { name: "Martel Blue Swift", price: "₦350,000", desc: "Cognac finished inbourbon casks for smooth warmth" },
-            { name: "Jagermiester", price: "₦55,000", desc: "German herballiqueur with bold, earthy tones" },
-            { name: "Chivas", price: "₦80,000", desc: "Premium blended Scotch with honey and spice aroma" },
-            { name: "American Honey", price: "₦55,000", desc: "Bourbon infused with pure wild honey" },
-            { name: "Campari", price: "₦ 55,000", desc: "Italian aperitif with bittersweet citrus flavor" },
-            { name: "Voga Italian", price: "₦35,000", desc: "Sleek Italian spirit with crisp, refreshing taste" },
-            { name: "Bajan Estate", price: "₦100,000", desc: "Caribbean rum rich in molasses and island spice" },
-            { name: "The Whistler Irish Honey", price: "₦50,000", desc: "Sweet honeyliqueur with Irish whiskey base" },
-            { name: "The Whistler Irish Cream", price: "₦35,000", desc: "Smooth cream liqueur with vanilla tones" },
-            { name: "The Whistler Irish Whisky", price: "₦75,000", desc: "Fine Irish whiskey, mellow and aromatic" },
+            { name: "Origin Bitters", price: "₦3,000", desc: "Herbal bold flavour" },
+            { name: "Smirnoff Vodka", price: "₦2,500", desc: "Clean smooth finish" },
+            { name: "Jameson", price: "₦120,000", desc: "Soft rich whiskey" },
+            { name: "Glenfiddich", price: "₦350,000", desc: "Honeyed oak notes" },
+            { name: "Hennessy", price: "₦350,000", desc: "Smooth aromatic cognac" },
+            { name: "Casamigos", price: "₦350,000", desc: "Ultra-smooth vanilla hint" },
+            { name: "Baileys", price: "₦80,000", desc: "Creamy chocolate liqueur" },
+            { name: "MartellVs", price: "₦350,000", desc: "Fruit spice cognac" },
+            { name: "Martel Blue Swift", price: "₦350,000", desc: "Smooth bourbon warmth" },
+            { name: "Jagermiester", price: "₦55,000", desc: "Bold earthy liqueur" },
+            { name: "Chivas", price: "₦80,000", desc: "Honey spice blend" },
+            { name: "American Honey", price: "₦55,000", desc: "Wild honey bourbon" },
+            { name: "Campari", price: "₦55,000", desc: "Bittersweet citrus aperitif" },
+            { name: "Voga Italian", price: "₦35,000", desc: "Crisp refreshing spirit" },
+            { name: "Bajan Estate", price: "₦100,000", desc: "Rich island rum" },
+            { name: "The Whistler Irish Honey", price: "₦50,000", desc: "Sweet honey liqueur" },
+            { name: "The Whistler Irish Cream", price: "₦35,000", desc: "Smooth vanilla cream" },
+            { name: "The Whistler Irish Whisky", price: "₦75,000", desc: "Mellow aromatic whisky" },
           ],
         },
         {
-          title: "WINES",
+          title: "Wines",
           items: [
-            { name: "ValdelHort", price: "₦100,000", desc: "Spanish red wine with fruity aroma and smooth finish" },
-            { name: "Baron Romero", price: "₦20,000", desc: "Balanced red wine with notes of plum and oak" },
-            { name: "Primitivo Puglia", price: "₦20,000", desc: "Italian wine rich in blackberry and spice" },
-            { name: "Four Cousins", price: "₦20,000", desc: "Light, semi-sweet South Africanfavourite" },
-            { name: "Mulled Wine", price: "₦20,000", desc: "Warm spiced wine perfect for cozy evenings" },
-            { name: "Edwards", price: "₦35,000", desc: "Refined red with soft tannins and dark fruit tone" },
-            { name: "Allenico", price: "₦20,000", desc: "Deep-bodied red withchocolatey undertones" },
-            { name: "Carlo Rossi", price: "₦20,000", desc: "American classic with sweet, rich fruitiness" },
-            { name: "Martini Rose", price: "₦20,000", desc: "Sparkling rosé withfloral aroma and gentle bubbles" },
-            { name: "Chamdor", price: "₦20,000", desc: "Non-alcoholic sparkling drink, sweet and elegant" },
-            { name: "ProseccoTavernello", price: "₦20,000", desc: "A taste of the fine life at the lounge" },
-            { name: "Terre De Priori", price: "₦25,000", desc: "Another sparkling testimony" },
-            { name: "TerreForti (Anglianico)", price: "35,000", desc: "" },
+            { name: "ValdelHort", price: "₦100,000", desc: "Fruity smooth red" },
+            { name: "Baron Romero", price: "₦20,000", desc: "Balanced plum oak" },
+            { name: "Primitivo Puglia", price: "₦20,000", desc: "Blackberry spice rich" },
+            { name: "Four Cousins", price: "₦20,000", desc: "Light semi-sweet favourite" },
+            { name: "Mulled Wine", price: "₦20,000", desc: "Warm spiced cozy" },
+            { name: "Edwards", price: "₦35,000", desc: "Soft dark tannins" },
+            { name: "Allenico", price: "₦20,000", desc: "Deep chocolate undertones" },
+            { name: "Carlo Rossi", price: "₦20,000", desc: "Sweet rich fruitiness" },
+            { name: "Martini Rose", price: "₦20,000", desc: "Floral gentle bubbles" },
+            { name: "Chamdor", price: "₦20,000", desc: "Sweet elegant sparkling" },
+            { name: "ProseccoTavernello", price: "₦20,000", desc: "Fine life taste" },
+            { name: "Terre De Priori", price: "₦25,000", desc: "Sparkling testimony" },
+            { name: "TerreForti (Anglianico)", price: "₦35,000", desc: "Deep bodied red" },
           ],
         },
         {
-          title: "COCKTAILS",
+          title: "Cocktails",
           items: [
-            { name: "Mojito", price: "₦11,500", desc: "Fresh mint and lime stirred in sparkling sweetness" },
-            { name: "Margarita", price: "₦12.,000", desc: "Tequila and citrus fusion with salted rim flair" },
-            { name: "Cosmopolitan", price: "₦10,500", desc: "Classy pink blend of vodka, lime, and cranberry" },
-            { name: "Chapman", price: "₦7,000", desc: "Nigerianfavourite with citrus, bitters, and grenadine" },
-            { name: "Zoboinfused Cocktail", price: "₦9,500", desc: "Native hibiscus twist on classic cocktail" },
-            { name: "Pina Colada", price: "₦13,000", desc: "Tropical coconut and pineapple blend that screams vacation" },
-            { name: "Gin and Tonic", price: "₦8,500", desc: "Timeless mix of crisp gin and tonic bubbles" },
-            { name: "Moscow Mule", price: "₦14,000", desc: "Vodka, lime, andginger beer in icy copper charm" },
-            { name: "Bramble", price: "₦10,000", desc: "Gin-based cocktail with blackberry sweetness" },
-            { name: "Gimlet", price: "₦5,000", desc: "Smooth gin and lime combo with elegant simplicity" },
-            { name: "Espresso Martini", price: "₦12,500", desc: "Bold coffee-vodka mix for smooth late-night energy" },
-            { name: "Sex on the Beach", price: "₦13,500", desc: "Bold and beautiful" },
-            { name: "Sea Drink", price: "₦9,500", desc: "Bold coffee-vodka mix for smooth late-night energy" },
+            { name: "Mojito", price: "₦11,500", desc: "Fresh mint lime" },
+            { name: "Margarita", price: "₦12,000", desc: "Tequila citrus fusion" },
+            { name: "Cosmopolitan", price: "₦10,500", desc: "Pink vodka blend" },
+            { name: "Chapman", price: "₦7,000", desc: "Citrus bitters favourite" },
+            { name: "Zoboinfused Cocktail", price: "₦9,500", desc: "Hibiscus native twist" },
+            { name: "Pina Colada", price: "₦13,000", desc: "Tropical coconut blend" },
+            { name: "Gin and Tonic", price: "₦8,500", desc: "Crisp bubbly classic" },
+            { name: "Moscow Mule", price: "₦14,000", desc: "Ginger beer charm" },
+            { name: "Bramble", price: "₦10,000", desc: "Blackberry gin sweetness" },
+            { name: "Gimlet", price: "₦5,000", desc: "Smooth lime combo" },
+            { name: "Espresso Martini", price: "₦12,500", desc: "Bold coffee kick" },
+            { name: "Sex on the Beach", price: "₦13,500", desc: "Bold beautiful mix" },
+            { name: "Sea Drink", price: "₦9,500", desc: "Smooth late-night energy" },
           ],
         },
         {
-          title: "SHORTS",
+          title: "Shorts",
           items: [
-            { name: "Tequila", price: "₦4,500", desc: "Quick, fiery shot with citrus salt kick" },
-            { name: "Jagerbomb", price: "₦6,500", desc: "Jägermeister dropped into energy drink for instant buzz" },
-            { name: "Pickle Black", price: "₦5,000", desc: "Vodka shot mixed with briny pickle twist" },
-            { name: "Kamikaze", price: "₦4,000", desc: "Vodka, triple sec, and lime shot — sharp and satisfying" },
+            { name: "Tequila", price: "₦4,500", desc: "Fiery citrus kick" },
+            { name: "Jagerbomb", price: "₦6,500", desc: "Instant buzz drop" },
+            { name: "Pickle Black", price: "₦5,000", desc: "Briny vodka twist" },
+            { name: "Kamikaze", price: "₦4,000", desc: "Sharp lime shot" },
           ],
         },
         {
-          title: "TRADITIONAL WINE",
+          title: "Traditional Wine",
           items: [
-            { name: "Palm Wine", price: "", desc: "" },
+            { name: "Palm Wine", price: "", desc: "Fresh tapped natural" },
           ],
         },
         {
-          title: "CIGARETTES",
+          title: "Cigarettes",
           items: [
-            { name: "Dorchester", price: "₦2,500", desc: "Classic full-bodied cigarette — clean burn, steady finish" },
-            { name: "Benson & Hedges", price: "₦2,500", desc: "Smooth and refined — balanced strength with a mellow draw" },
-            { name: "Rothmans", price: "₦3,000", desc: "Rich tobacco flavor — bold, confident, and premium" },
-            { name: "Benson Switch.", price: "₦3,500", desc: "Smooth menthol burst — cool inhale with a crisp finish" },
-            { name: "Oris", price: "₦2,500", desc: "Light and straightforward — easy smoke with a gentle aftertaste" },
+            { name: "Dorchester", price: "₦2,500", desc: "Clean steady finish" },
+            { name: "Benson & Hedges", price: "₦2,500", desc: "Smooth balanced draw" },
+            { name: "Rothmans", price: "₦3,000", desc: "Rich bold tobacco" },
+            { name: "Benson Switch.", price: "₦3,500", desc: "Cool menthol burst" },
+            { name: "Oris", price: "₦2,500", desc: "Light gentle aftertaste" },
           ],
         },
       ],
     },
+
     food: {
-      title: "Friends' Lounge Food Menu",
+      title: "Food Menu",
       categories: [
         {
-          title: "SOUPS",
+          title: "Soups",
           items: [
-            { name: "Afang Soup", price: "₦5,000", desc: "Vegetable and waterleaf soup rich in crayfishflavour" },
-            { name: "Egusi Soup", price: "₦4,500", desc: "Ground melon soup with assorted meat" },
-            { name: "Vegetable Soup", price: "₦6,000", desc: "Green leaf soup seasoned with palm oil and spice" },
-            { name: "Native Soup", price: "₦4,000", desc: "Rich broth with assorted meat and herbs" },
-            { name: "Okra Soup", price: "₦4,000", desc: "Seafood blend cooked in spicy native sauce" },
-            { name: "Oha Soup", price: "₦4,000", desc: "Traditional oha leaves cooked in palm-rich broth" },
-            { name: "Ogbono Soup", price: "₦4,000", desc: "Smooth draw soup made from wild mango seed" },
-            { name: "FishermanOkro Soup", price: "₦25,000", desc: "Okro-based seafood soup cooked in rich native stock" },
-            { name: "Bitterleaf Soup", price: "₦4,000", desc: "Traditionalbitterleaf soup with assorted meat and thickened broth" },
+            { name: "Afang Soup", price: "₦5,000", desc: "Rich crayfish vegetable" },
+            { name: "Egusi Soup", price: "₦4,500", desc: "Assorted meat melon" },
+            { name: "Vegetable Soup", price: "₦6,000", desc: "Spicy green leaf" },
+            { name: "Native Soup", price: "₦4,000", desc: "Herbs assorted meat" },
+            { name: "Okra Soup", price: "₦4,000", desc: "Seafood spicy native" },
+            { name: "Oha Soup", price: "₦4,000", desc: "Palm rich broth" },
+            { name: "Ogbono Soup", price: "₦4,000", desc: "Smooth wild seed" },
+            { name: "Fisherman Okro Soup", price: "₦25,000", desc: "Rich seafood stock" },
+            { name: "Bitterleaf Soup", price: "₦4,000", desc: "Thickened assorted meat" },
           ],
         },
         {
-          title: "SWALLOW",
+          title: "Swallow",
           items: [
-            { name: "Eba", price: "₦1,000", desc: "Classicgarri swallow — smooth, firm, and comforting" },
-            { name: "Fufu", price: "₦1,500", desc: "Soft fermented cassava swallow — stretchy and satisfying" },
-            { name: "Oat", price: "₦2,000", desc: "Healthy oat swallow — light, filling, and nourishing" },
-            { name: "Semo", price: "₦2,000", desc: "Fine semolina swallow — silky texture with a clean finish" },
-            { name: "Pounded Yam", price: "₦2,000", desc: "Fluffy yam delicacy — smooth, elastic, and premium" },
+            { name: "Eba", price: "₦1,000", desc: "Smooth firm garri" },
+            { name: "Fufu", price: "₦1,500", desc: "Soft stretchy cassava" },
+            { name: "Oat", price: "₦2,000", desc: "Light nourishing healthy" },
+            { name: "Semo", price: "₦2,000", desc: "Silky fine semolina" },
+            { name: "Pounded Yam", price: "₦2,000", desc: "Fluffy elastic premium" },
           ],
         },
         {
-          title: "PROTEINS",
+          title: "Proteins",
           items: [
-            { name: "Turkey", price: "₦6,000", desc: "Juicy turkey cuts — well seasoned and tender" },
-            { name: "Chicken", price: "₦6,000", desc: "Classic chicken portions — flavorful and hearty" },
-            { name: "Beef", price: "₦6,000", desc: "Soft beef chunks — richly cooked and satisfying" },
-            { name: "Dry Fish", price: "₦6,000", desc: "Smoked dry fish — bold aroma with deep flavor" },
-            { name: "Goat Meat", price: "₦6,000", desc: "Traditional goat meat — rich, chewy, and flavorful" },
-            { name: "Bush Dog", price: "₦6,000", desc: "Local delicacy — smoky, bold, and earthy" },
-            { name: "Cow Tail", price: "₦8,000", desc: "Slow-cooked cow tail — gelatinous and deeply rich" },
-            { name: "Cow Leg", price: "₦8,000", desc: "Hearty cow leg cuts — thick, nourishing, and filling" },
-            { name: "Ice Fish (Full Size)", price: "₦8,000", desc: "Whole ice fish — tender flesh with a clean taste" },
-            { name: "BBQ Full Chicken", price: "₦35,000", desc: "Whole charcoal-grilled chicken — smoky, juicy, and bold" },
-            { name: "BBQ Catfish (Medium)", price: "₦30,000", desc: "Grilled catfish — spicy, smoky, and succulent" },
-            { name: "BBQ Catfish (Large)", price: "₦35,000", desc: "Large whole catfish — deeply marinated and flame-grilled" },
-            { name: "Suya Stick", price: "₦5,000", desc: "Spiced grilled meat — hot, smoky, and addictive" },
+            { name: "Turkey", price: "₦6,000", desc: "Tender seasoned cuts" },
+            { name: "Chicken", price: "₦6,000", desc: "Flavorful hearty portions" },
+            { name: "Beef", price: "₦6,000", desc: "Rich soft chunks" },
+            { name: "Dry Fish", price: "₦6,000", desc: "Smoked deep aroma" },
+            { name: "Goat Meat", price: "₦6,000", desc: "Chewy bold flavour" },
+            { name: "Bush Dog", price: "₦6,000", desc: "Smoky earthy delicacy" },
+            { name: "Cow Tail", price: "₦8,000", desc: "Gelatinous rich slow-cooked" },
+            { name: "Cow Leg", price: "₦8,000", desc: "Hearty thick nourishing" },
+            { name: "Ice Fish (Full Size)", price: "₦8,000", desc: "Tender clean whole" },
+            { name: "BBQ Full Chicken", price: "₦35,000", desc: "Smoky juicy whole" },
+            { name: "BBQ Catfish (Medium)", price: "₦30,000", desc: "Spicy succulent grilled" },
+            { name: "BBQ Catfish (Large)", price: "₦35,000", desc: "Deep marinated whole" },
+            { name: "Suya Stick", price: "₦5,000", desc: "Spiced hot smoky" },
           ],
         },
         {
-          title: "RICE DISHES",
+          title: "Rice Dishes",
           items: [
-            { name: "Coconut Rice", price: "₦6,000", desc: "Fragrant rice cooked in creamy coconut milk" },
-            { name: "Fried Rice", price: "₦4,000", desc: "Classic stir-fried rice with vegetables" },
-            { name: "Jollof Rice", price: "₦4,000", desc: "Smoky tomato rice — Nigerian favorite" },
-            { name: "White Rice", price: "₦2,500", desc: "Plain steamed rice — light and versatile" },
-            { name: "White Rice & Stew", price: "₦4,500", desc: "Steamed rice served with rich red stew" },
-            { name: "Velvet Rice", price: "₦5,000", desc: "Soft textured rice — smooth, rich, and comforting" },
-            { name: "Oriental Rice", price: "₦25,000", desc: "Exotic rice blend with Asian-style flavors" },
-            { name: "Mexican Rice", price: "₦25,000", desc: "Spicy rice with bold Mexican spices" },
-            { name: "Pineapple Rice", price: "₦25,000", desc: "Sweet-savory rice infused with pineapple" },
-            { name: "Jambalaya Rice", price: "₦25,000", desc: "Smoky Creole-style rice packed with flavor" },
-            { name: "Chinese Rice", price: "₦25,000", desc: "Wok-tossed rice with oriental seasoning" },
-            { name: "Smoky Jollof Rice", price: "₦5,000", desc: "Fire-touched jollof with deep smoky notes" },
-            { name: "Native Rice", price: "₦5,000", desc: "Traditional rice cooked in palm oil and spices" },
-            { name: "Special Friend Rice", price: "₦15,000", desc: "Premium mixed rice — rich, loaded, and indulgent" },
-            { name: "Special Fried Rice", price: "₦15,000", desc: "Extra-loaded fried rice with premium ingredients" },
-            { name: "Goat Meat Rice", price: "₦10,000", desc: "Rich rice cooked with tender goat meat" },
+            { name: "Coconut Rice", price: "₦6,000", desc: "Creamy fragrant coconut" },
+            { name: "Fried Rice", price: "₦4,000", desc: "Vegetable stir-fried classic" },
+            { name: "Jollof Rice", price: "₦4,000", desc: "Smoky tomato favourite" },
+            { name: "White Rice", price: "₦2,500", desc: "Light plain steamed" },
+            { name: "White Rice & Stew", price: "₦4,500", desc: "Rich red stew" },
+            { name: "Velvet Rice", price: "₦5,000", desc: "Soft rich comforting" },
+            { name: "Oriental Rice", price: "₦25,000", desc: "Asian style exotic" },
+            { name: "Mexican Rice", price: "₦25,000", desc: "Spicy bold Mexican" },
+            { name: "Pineapple Rice", price: "₦25,000", desc: "Sweet-savory pineapple" },
+            { name: "Jambalaya Rice", price: "₦25,000", desc: "Smoky Creole packed" },
+            { name: "Chinese Rice", price: "₦25,000", desc: "Oriental wok-tossed" },
+            { name: "Smoky Jollof Rice", price: "₦5,000", desc: "Deep fire-touched" },
+            { name: "Native Rice", price: "₦5,000", desc: "Palm oil spices" },
+            { name: "Special Friend Rice", price: "₦15,000", desc: "Rich loaded premium" },
+            { name: "Special Fried Rice", price: "₦15,000", desc: "Extra-loaded premium" },
+            { name: "Goat Meat Rice", price: "₦10,000", desc: "Tender goat rich" },
           ],
         },
         {
-          title: "CHICKEN DISHES",
+          title: "Chicken Dishes",
           items: [
-            { name: "Chicken & Chips (Full Option)", price: "₦10,000", desc: "Fried chicken served with crispy chips" },
-            { name: "Full Grilled Chicken & Chips", price: "₦35,000", desc: "Whole grilled chicken with golden fries" },
-            { name: "Full Chicken Pepper Soup", price: "₦35,000", desc: "Whole chicken simmered in spicy broth" },
-            { name: "Peppered Chicken", price: "₦6,000", desc: "Spicy sautéed chicken — hot and flavorful" },
-            { name: "ChickenSuya", price: "₦5,000", desc: "Chicken tossed insuya spice — smoky and spicy" },
+            { name: "Chicken & Chips (Full Option)", price: "₦10,000", desc: "Fried chicken crispy" },
+            { name: "Full Grilled Chicken & Chips", price: "₦35,000", desc: "Whole grilled golden" },
+            { name: "Full Chicken Pepper Soup", price: "₦35,000", desc: "Whole spicy simmered" },
+            { name: "Peppered Chicken", price: "₦6,000", desc: "Spicy sautéed hot" },
+            { name: "Chicken Suya", price: "₦5,000", desc: "Suya spiced tossed" },
           ],
         },
         {
-          title: "BREAKFAST",
+          title: "Breakfast",
           items: [
-            { name: "Pap &MoiMoi", price: "₦7,000", desc: "Warm pap served with soft bean cake" },
-            { name: "Fried Plantain, Egg & Oat", price: "₦7,000", desc: "Golden plantain, eggs, and hearty oats" },
-            { name: "Yam & Egg Sauce", price: "₦6,000", desc: "Boiled yam served with rich egg sauce" },
-            { name: "Yam &Ugba Sauce", price: "₦7,000", desc: "Yam paired with oil-bean delicacy" },
-            { name: "Rice & Beans", price: "₦6,000", desc: "Classic rice and beans combo" },
-            { name: "Pancake & Tea/Coffee", price: "₦4,000", desc: "Fluffy pancakes with hot beverage" },
-            { name: "EnglishBreakfast", price: "₦5,000", desc: "Eggs, toast, sausage — filling and classic" },
-            { name: "Gizdodo", price: "₦10,000", desc: "Peppered gizzard with ripe plantain" },
+            { name: "Pap & MoiMoi", price: "₦7,000", desc: "Warm pap beans" },
+            { name: "Fried Plantain, Egg & Oat", price: "₦7,000", desc: "Golden plantain eggs" },
+            { name: "Yam & Egg Sauce", price: "₦6,000", desc: "Boiled yam sauce" },
+            { name: "Yam & Ugba Sauce", price: "₦7,000", desc: "Yam oil-bean delicacy" },
+            { name: "Rice & Beans", price: "₦6,000", desc: "Classic rice beans" },
+            { name: "Pancake & Tea/Coffee", price: "₦4,000", desc: "Fluffy pancakes beverage" },
+            { name: "English Breakfast", price: "₦5,000", desc: "Eggs toast sausage" },
+            { name: "Gizdodo", price: "₦10,000", desc: "Peppered gizzard plantain" },
           ],
         },
         {
-          title: "SPECIAL SAUCES",
+          title: "Special Sauces",
           items: [
-            { name: "Shredded Beef/Chicken Sauce", price: "₦10,000", desc: "Rich protein sauce — thick and flavorful" },
-            { name: "Egg Sauce", price: "₦3,000", desc: "Fried egg sauce with pepper and onions" },
-            { name: "Stew Sauce", price: "₦2,500", desc: "Classic Nigerian red stew" },
-            { name: "Fish Sauce", price: "₦10,000", desc: "Savory fish-based sauce — deeply seasoned" },
-            { name: "Cabbage Sauce", price: "₦10,000", desc: "Light cabbage stir-fry with rich flavors" },
-            { name: "Garden Egg Sauce", price: "₦10,000", desc: "Traditional garden-egg sauce — earthy and rich" },
-            { name: "Chicken Curry Sauce", price: "₦10,000", desc: "Creamy curry chicken sauce" },
-            { name: "Pepper Sauce", price: "₦5,000", desc: "Hot blended pepper — sharp and bold" },
-            { name: "Vegetable Sauce (Manure Sauce)", price: "₦10,000", desc: "Mixed vegetable sauce — thick and nourishing" },
+            { name: "Shredded Beef/Chicken Sauce", price: "₦10,000", desc: "Rich protein thick" },
+            { name: "Egg Sauce", price: "₦3,000", desc: "Fried egg pepper" },
+            { name: "Stew Sauce", price: "₦2,500", desc: "Classic red stew" },
+            { name: "Fish Sauce", price: "₦10,000", desc: "Savory fish seasoned" },
+            { name: "Cabbage Sauce", price: "₦10,000", desc: "Light cabbage stir-fry" },
+            { name: "Garden Egg Sauce", price: "₦10,000", desc: "Earthy garden-egg rich" },
+            { name: "Chicken Curry Sauce", price: "₦10,000", desc: "Creamy curry chicken" },
+            { name: "Pepper Sauce", price: "₦5,000", desc: "Hot blended pepper" },
+            { name: "Vegetable Sauce (Manure Sauce)", price: "₦10,000", desc: "Mixed vegetable thick" },
           ],
         },
         {
-          title: "PORRIDGE DISHES",
+          title: "Porridge Dishes",
           items: [
-            { name: "Yam Porridge", price: "₦5,000", desc: "Palm-oil yam porridge with vegetables" },
-            { name: "Plantain Porridge", price: "₦7,000", desc: "Soft plantain cooked in savory broth" },
-            { name: "Porridge Beans", price: "₦5,000", desc: "Slow-cooked beans — filling and hearty" },
+            { name: "Yam Porridge", price: "₦5,000", desc: "Palm-oil yam vegetables" },
+            { name: "Plantain Porridge", price: "₦7,000", desc: "Soft plantain savory" },
+            { name: "Porridge Beans", price: "₦5,000", desc: "Slow-cooked hearty beans" },
           ],
         },
         {
-          title: "PASTA DISHES",
+          title: "Pasta Dishes",
           items: [
-            { name: "Spicy Spaghetti", price: "₦5,000", desc: "Hot spaghetti cooked with peppered sauce" },
-            { name: "Spicy Noodles & Eggs", price: "₦4,000", desc: "Quick noodles tossed with eggs and spice" },
+            { name: "Spicy Spaghetti", price: "₦5,000", desc: "Hot peppered spaghetti" },
+            { name: "Spicy Noodles & Eggs", price: "₦4,000", desc: "Quick egg noodles" },
           ],
         },
         {
-          title: "SNACKS",
+          title: "Snacks",
           items: [
-            { name: "Meat Pie", price: "₦2,000", desc: "Buttery pastry with savory filling" },
-            { name: "Cup Cake", price: "₦1,500", desc: "Soft baked cake — light and sweet" },
-            { name: "FishRoll", price: "₦1,500", desc: "Crispy pastry with fish filling" },
-            { name: "TastyFesta", price: "₦3,000", desc: "Crunchy corn snack — fun and filling" },
-            { name: "Popcorn", price: "₦1,500", desc: "Freshly popped buttery corn" },
-            { name: "YamMarita", price: "₦3,000", desc: "Fried yam cubes tossed in pepper sauce" },
+            { name: "Meat Pie", price: "₦2,000", desc: "Buttery savory filling" },
+            { name: "Cup Cake", price: "₦1,500", desc: "Soft baked sweet" },
+            { name: "Fish Roll", price: "₦1,500", desc: "Crispy fish filling" },
+            { name: "Tasty Festa", price: "₦3,000", desc: "Crunchy corn snack" },
+            { name: "Popcorn", price: "₦1,500", desc: "Fresh buttery corn" },
+            { name: "Yam Marita", price: "₦3,000", desc: "Fried yam pepper" },
           ],
         },
         {
-          title: "PEPPER SOUP",
+          title: "Pepper Soup",
           items: [
-            { name: "Full Chicken Pepper Soup", price: "₦35,000", desc: "Whole chicken simmered in spicy broth" },
-            { name: "Catfish Pepper Soup (Large)", price: "₦40,000", desc: "Large catfish cooked in hot native spice" },
-            { name: "Goat Meat Pepper Soup", price: "₦6,000", desc: "Goat meat in aromatic pepper soup" },
-            { name: "Chicken Pepper Soup", price: "₦6,000", desc: "Chicken pieces cooked in hot broth" },
-            { name: "Assorted Pepper Soup", price: "₦6,000", desc: "Mixed meats in spicy soup base" },
+            { name: "Full Chicken Pepper Soup", price: "₦35,000", desc: "Whole spicy simmered" },
+            { name: "Catfish Pepper Soup (Large)", price: "₦40,000", desc: "Large catfish hot" },
+            { name: "Goat Meat Pepper Soup", price: "₦6,000", desc: "Goat aromatic spicy" },
+            { name: "Chicken Pepper Soup", price: "₦6,000", desc: "Chicken hot broth" },
+            { name: "Assorted Pepper Soup", price: "₦6,000", desc: "Mixed meats spicy" },
           ],
         },
         {
-          title: "NATIVE FOOD",
+          title: "Native Food",
           items: [
-            { name: "Goat Head (IsiEwu)", price: "₦20,000", desc: "Spiced goat head delicacy — bold and traditional" },
-            { name: "Nkwobi", price: "₦8,000", desc: "Cow foot mixed with spicy palm oil sauce" },
+            { name: "Goat Head (IsiEwu)", price: "₦20,000", desc: "Spiced goat head" },
+            { name: "Nkwobi", price: "₦8,000", desc: "Cow foot spicy" },
           ],
         },
         {
-          title: "SALADS",
+          title: "Salads",
           items: [
-            { name: "Chicken Salad", price: "₦5,000", desc: "Fresh salad with seasoned chicken" },
-            { name: "Vegetable Salad", price: "₦3,000", desc: "Fresh mixed vegetables with dressing" },
-            { name: "Coleslaw", price: "₦2,000", desc: "Creamy cabbage and carrot salad" },
+            { name: "Chicken Salad", price: "₦5,000", desc: "Fresh seasoned chicken" },
+            { name: "Vegetable Salad", price: "₦3,000", desc: "Mixed vegetables dressing" },
+            { name: "Coleslaw", price: "₦2,000", desc: "Creamy cabbage carrot" },
           ],
         },
         {
-          title: "SPECIAL ORDERS",
+          title: "Special Orders",
           items: [
-            { name: "Ekpankukwo", price: "₦10,000", desc: "Traditional grated cocoyam delicacy" },
-            { name: "Plantain Porridge", price: "₦10,000", desc: "Specially prepared plantain porridge" },
-            { name: "Ukwa & Dry Fish", price: "₦12,000", desc: "Breadfruit cooked with dry fish" },
-            { name: "Porridge Beans", price: "₦5,000", desc: "Thick and well-seasoned beans" },
-            { name: "Farm House Porridge", price: "₦10,000", desc: "Hearty countryside-style porridge" },
-            { name: "SpaghettiCarbonara", price: "₦15,000", desc: "Creamy pasta with rich sauce" },
-            { name: "Spaghetti Alfredo", price: "₦15,000", desc: "White sauce pasta — smooth and creamy" },
-            { name: "Spaghetti Bolognese", price: "₦15,000", desc: "Tomato-meat pasta sauce" },
-            { name: "Standard Spaghetti", price: "₦5,000", desc: "Classic spaghetti — simple and satisfying" },
+            { name: "Ekpankukwo", price: "₦10,000", desc: "Grated cocoyam traditional" },
+            { name: "Plantain Porridge", price: "₦10,000", desc: "Special plantain porridge" },
+            { name: "Ukwa & Dry Fish", price: "₦12,000", desc: "Breadfruit dry fish" },
+            { name: "Porridge Beans", price: "₦5,000", desc: "Thick seasoned beans" },
+            { name: "Farm House Porridge", price: "₦10,000", desc: "Hearty countryside style" },
+            { name: "Spaghetti Carbonara", price: "₦15,000", desc: "Creamy rich sauce" },
+            { name: "Spaghetti Alfredo", price: "₦15,000", desc: "White smooth pasta" },
+            { name: "Spaghetti Bolognese", price: "₦15,000", desc: "Tomato meat sauce" },
+            { name: "Standard Spaghetti", price: "₦5,000", desc: "Classic simple spaghetti" },
           ],
         },
         {
-          title: "SHAWARMA",
+          title: "Shawarma",
           items: [
-            { name: "StandardShawarma", price: "₦4,000", desc: "Classic wrap with meat and sauce" },
-            { name: "SpecialShawarma", price: "₦6,000", desc: "Extra filling with richer sauce" },
-            { name: "ExtraShawarma", price: "₦10,000", desc: "Fully loaded wrap — big, bold, and indulgent" },
+            { name: "Standard Shawarma", price: "₦4,000", desc: "Classic meat wrap" },
+            { name: "Special Shawarma", price: "₦6,000", desc: "Extra filling rich" },
+            { name: "Extra Shawarma", price: "₦10,000", desc: "Fully loaded bold" },
           ],
         },
       ],
     },
   };
-  
-  /* 🔐 END DATA */
 
   return (
-    <section className="relative h-[600px] overflow-hidden bg-black text-white">
-      {/* SLIDES */}
-      <div className="absolute inset-0">
-        {slides.map((s, i) => (
-          <div
-            key={i}
-            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[1500ms] ${
-              i === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-            style={{ backgroundImage: `url(${s})` }}
-          />
-        ))}
-        <div className="absolute inset-0 bg-black/70" />
-      </div>
+    <section
+      className="relative min-h-[650px] text-white overflow-hidden border-t border-white"
+      style={{
+        backgroundImage: `url(${chefsBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Subtle dark overlay */}
+      <div className="absolute inset-0 bg-black/40" />
 
-      {/* CTA */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-end pb-20">
-        <h2 className="mb-6 text-3xl font-semibold tracking-widest">
-          Explore Our Menu
+      {/* Hero CTA */}
+      <div className="relative z-10 flex flex-col items-center justify-end h-full pb-16 md:pb-24 px-4">
+        <h2 className="mb-8 mt-4 text-xl md:text-3xl font-light font-serif tracking-widest text-center drop-shadow-2xl">
+          Explore our Menu
         </h2>
-        <div className="flex gap-6">
-          <button onClick={() => setActiveMenu("food")} className="menu-btn">
+
+        <div className="flex flex-row gap-4 sm:gap-6">
+          <button
+            onClick={() => setActiveMenu("food")}
+            className="px-6 py-2 text-xs md:text-sm bg-transparent border-2 border-amber-400/70 text-amber-100 font-light rounded-full hover:bg-amber-900/30 hover:border-amber-300 hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+          >
             Food Menu
           </button>
-          <button onClick={() => setActiveMenu("drinks")} className="menu-btn">
+
+          <button
+            onClick={() => setActiveMenu("drinks")}
+            className="px-6 py-2 text-xs md:text-sm bg-transparent border-2 border-amber-400/70 text-amber-100 font-light rounded-full hover:bg-amber-900/30 hover:border-amber-300 hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+          >
             Drinks Menu
           </button>
         </div>
       </div>
 
-      {/* MODAL */}
+      {/* Glassmorphic Elegant Modal – beautiful digital scroll unfurl */}
       <AnimatePresence>
         {activeMenu && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80"
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/75 backdrop-blur-sm"
           >
             <motion.div
-              initial={{ y: -40, opacity: 0, scale: 0.97 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: -40, opacity: 0, scale: 0.97 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
-              className="relative max-h-[85vh] w-[92%] max-w-6xl overflow-y-auto bg-gray-900/90 p-8 shadow-2xl"
+              initial={{
+                opacity: 0,
+                scaleX: 0.1,          // starts very narrow like rolled scroll
+                scaleY: 0.7,
+                y: 60,
+              }}
+              animate={{
+                opacity: 1,
+                scaleX: 1,            // beautifully unfurls horizontally
+                scaleY: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scaleX: 0.1,
+                scaleY: 0.7,
+                y: 60,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 140,       // gentle, sweet bounce
+                damping: 16,          // smooth & controlled
+                mass: 1.1,
+                duration: 0.7,        // slightly longer for elegant unfurl
+              }}
+              className="relative w-[90%] max-w-5xl max-h-[88vh] overflow-y-auto 
+                         bg-black/30 backdrop-blur-2xl border border-white/10 rounded-2xl 
+                         shadow-2xl shadow-black/50 overflow-hidden"
             >
-              <button
-                onClick={() => setActiveMenu(null)}
-                className="absolute right-4 top-4 text-white/70 hover:text-white"
-              >
-                <X size={26} />
-              </button>
-
-              <h2 className="mb-8 text-center text-xl font-semibold">
-                {menu[activeMenu].title}
-              </h2>
-
-              <div className="grid gap-8 md:grid-cols-2">
-                {menu[activeMenu].categories.map((cat, i) => (
-                  <div key={i}>
-                    <h3 className="mb-4 text-sky-400 tracking-wider">
-                      {cat.title}
-                    </h3>
-
-                    <ul className="space-y-4">
-                      {cat.items.map((it, j) => (
-                        <li
-                          key={j}
-                          className="border-b border-white/10 pb-3"
-                        >
-                          <div className="flex justify-between gap-4">
-                            <span className="font-medium">
-                              {it.name}
-                            </span>
-                            <span className="font-bold text-yellow-100">
-                              {it.price}
-                            </span>
-                          </div>
-
-                          {it.desc && (
-                            <p className="mt-1 text-xs italic text-gray-400">
-                              {it.desc}
-                            </p>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+              {/* Header Image */}
+              <div className="relative">
+                <img
+                  src={activeMenu === "food" ? chipsImg : beerImg}
+                  alt="Menu Showcase"
+                  className="w-full h-18 md:h-18 object-cover brightness-110 contrast-125 saturate-125"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                <h2 className="absolute bottom-4 left-1/2 -translate-x-1/2 text-2xl md:text-3xl font-light font-serif text-white tracking-wider text-center drop-shadow-xl whitespace-nowrap">
+                  {activeMenu === "food" ? "Food Menu" : "Drinks Menu"}
+                </h2>
               </div>
 
-              <p className="mt-10 text-center text-sm italic text-white/60">
-                A 10% service charge is applied
-                <br />
-                Prices include VAT
-                <br />
-                All meals are freshly prepared
-              </p>
+              {/* Close Button */}
+              <button
+                onClick={() => setActiveMenu(null)}
+                className="absolute top-3 right-3 text-white/80 hover:text-white bg-black/50 rounded-full p-2 backdrop-blur-md transition-all hover:scale-110 z-10"
+              >
+                <X size={22} />
+              </button>
+
+              {/* Content */}
+              <div className="p-6 md:p-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {menu[activeMenu].categories.map((cat, i) => (
+                    <div key={i} className="space-y-5">
+                      <h3 className="text-xl md:text-2xl font-light text-amber-300 tracking-wide border-b border-amber-500/30 pb-2">
+                        {cat.title}
+                      </h3>
+
+                      <div className="space-y-4">
+                        {cat.items.map((it, j) => (
+                          <div
+                            key={j}
+                            className="flex justify-between items-start gap-4 py-2 border-b border-white/5 last:border-none hover:bg-white/5 rounded transition-colors"
+                          >
+                            <div className="flex-1">
+                              <p className="text-white font-medium text-base md:text-lg">{it.name}</p>
+                              <p className="text-xs md:text-sm text-gray-400 italic mt-1">
+                                {it.desc}
+                              </p>
+                            </div>
+                            <span className="text-amber-300 font-light text-base md:text-lg whitespace-nowrap">
+                              {it.price || "—"}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Footer Note */}
+                <div className="mt-10 text-center text-sm text-gray-500 italic">
+                  <p>10% service charge applied • Prices include VAT</p>
+                  <p>All meals are freshly prepared with love</p>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      <style jsx>{`
-        .menu-btn {
-          padding: 0.75rem 2rem;
-          border: 1px solid rgba(255,255,255,0.25);
-          background: rgba(255,255,255,0.1);
-          transition: all 0.3s ease;
-        }
-        .menu-btn:hover {
-          background: rgba(255,255,255,0.25);
-        }
-      `}</style>
     </section>
   );
 }

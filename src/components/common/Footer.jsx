@@ -16,7 +16,7 @@ import trees from "@/assets/images/palms.jpg";
 
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import { TableBookingModal } from "@/features/TableBookingModal";
-import BookEvent from "@/features/BookEvent"; 
+import BookEvent from "@/features/BookEvent";
 
 const DropdownCard = ({ children, className = "", onClick }) => (
   <motion.div
@@ -40,28 +40,31 @@ const Card = ({ children, className = "" }) => (
   </motion.div>
 );
 
-const events = [
-  { title: "Udo Day 2025", date: "Dec 26 • Nkwo Udo", highlight: "₦1M Sponsor for Unity", desc: "Celebrate culture, food, and community." },
-  { title: "Heritage Food Fair", date: "Monthly", highlight: "Taste of Mbaise", desc: "Curated local dishes." },
+// Neutral cycling messages (retained from your current version)
+const neutralMessages = [
+  {
+    title: "Book Your Event",
+    highlight: "Birthdays • Weddings • Receptions • More",
+    desc: "Book event & it slides across this section too",
+  },
+  {
+    title: "Create Lasting Moments",
+    highlight: "Perfect Venue for Any Celebration",
+    desc: "From intimate gatherings to grand occasions display the memories here",
+  },
 ];
 
 const Footer = () => {
   const navigate = useNavigate();
 
-  const [currentEvent, setCurrentEvent] = useState(0);
+  const [currentMessage, setCurrentMessage] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedExp, setSelectedExp] = useState(null);
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [isBooking, setIsBooking] = useState(false);
   const [booked, setBooked] = useState(false);
-
   const [bookEventOpen, setBookEventOpen] = useState(false);
-
-  const [daysLeft, setDaysLeft] = useState(0);
-  const [hoursLeft, setHoursLeft] = useState(0);
-  const [minutesLeft, setMinutesLeft] = useState(0);
-  const [secondsLeft, setSecondsLeft] = useState(0);
 
   const {
     isOpen: foodModalOpen,
@@ -79,24 +82,12 @@ const Footer = () => {
     deliveryFee
   } = useFoodOrder();
 
+  // Auto-slide for neutral messages
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentEvent((prev) => (prev + 1) % events.length);
-    }, 4000);
+      setCurrentMessage((prev) => (prev + 1) % neutralMessages.length);
+    }, 6000);
     return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const target = new Date("December 26, 2025 00:00:00").getTime();
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const difference = target - now;
-      setDaysLeft(Math.max(0, Math.ceil(difference / (1000 * 60 * 60 * 24))));
-      setHoursLeft(Math.max(0, Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))));
-      setMinutesLeft(Math.max(0, Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))));
-      setSecondsLeft(Math.max(0, Math.floor((difference % (1000 * 60)) / 1000)));
-    }, 1000);
-    return () => clearInterval(timer);
   }, []);
 
   const openModal = () => setModalOpen(true);
@@ -117,6 +108,10 @@ const Footer = () => {
         closeModal();
       }, 2500);
     }, 1000);
+  };
+
+  const handleAmplifyClick = () => {
+    navigate("/brand-hub");
   };
 
   return (
@@ -143,19 +138,19 @@ const Footer = () => {
                 <div className="relative h-36 overflow-hidden rounded-xl bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-white/10">
                   <AnimatePresence mode="wait">
                     <motion.div
-                      key={currentEvent}
+                      key={currentMessage}
                       initial={{ opacity: 0, x: 100 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -100 }}
                       className="absolute inset-0 p-4 flex flex-col justify-between"
                     >
                       <div>
-                        <h4 className="text-lg font-bold text-white">{events[currentEvent].title}</h4>
-                        <p className="text-sm text-red-400 mt-1">{events[currentEvent].date}</p>
-                        <p className="text-xs text-gray-300 mt-1">{events[currentEvent].desc}</p>
+                        <h4 className="text-lg font-bold text-white">{neutralMessages[currentMessage].title}</h4>
+                        <p className="text-sm text-red-400 mt-1">{neutralMessages[currentMessage].highlight}</p>
+                        <p className="text-xs text-gray-300 mt-1">{neutralMessages[currentMessage].desc}</p>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium text-red-400">{events[currentEvent].highlight}</span>
+                        <span className="text-xs font-medium text-red-400">Available Now</span>
                         <span className="text-2xl font-black text-red-500">→</span>
                       </div>
                     </motion.div>
@@ -163,11 +158,11 @@ const Footer = () => {
                 </div>
 
                 <div className="flex justify-center space-x-2 mt-2">
-                  {events.map((_, i) => (
+                  {neutralMessages.map((_, i) => (
                     <button
                       key={i}
-                      onClick={() => setCurrentEvent(i)}
-                      className={`w-2 h-2 rounded-full transition-all ${i === currentEvent ? "bg-red-500 w-6" : "bg-white/30"}`}
+                      onClick={() => setCurrentMessage(i)}
+                      className={`w-2 h-2 rounded-full transition-all ${i === currentMessage ? "bg-red-500 w-6" : "bg-white/30"}`}
                     />
                   ))}
                 </div>
@@ -235,11 +230,11 @@ const Footer = () => {
                 </div>
               </DropdownCard>
 
-              {/* 🔥 NEUTRAL AD SLOT */}
-              <Link to="/advertise" className="block">
+              {/* 🔥 NEUTRAL AD SLOT – Point 2 of 3-point system */}
+              <div className="block mt-6">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="relative mt-6 p-6 bg-gradient-to-br 
+                  className="relative p-6 bg-gradient-to-br 
                   from-black via-gray-900 to-black 
                   backdrop-blur-md border border-red-500/40 
                   shadow-lg overflow-hidden group cursor-pointer"
@@ -248,17 +243,17 @@ const Footer = () => {
 
                   <div className="relative z-10 text-center space-y-2">
                     <p className="text-xs uppercase tracking-widest text-red-400 font-light">
-                      Sponsored Space
+                      Friends' Ad – Point 2
                     </p>
 
                     <div className="w-14 h-14 mx-auto rounded-full 
                     border border-red-500/60 flex items-center 
-                    justify-center text-red-500 font-black">
-                      LOGO
+                    justify-center text-red-500 font-black md:text-[9px]">
+                      Your Logo
                     </div>
 
-                    <h3 className="text-xl font-bold text-white tracking-widest animate-softPulse">
-                      YOUR BRAND HERE
+                    <h3 className="text-lg md:text-[15px] font-bold text-white tracking-widest animate-softPulse">
+                      YOUR BRAND NAME HERE
                     </h3>
 
                     <p className="text-xs text-gray-200 italic">
@@ -272,17 +267,18 @@ const Footer = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      onClick={handleAmplifyClick}
                       className="mt-3 px-5 py-2 rounded-[10px] 
                       bg-gradient-to-r from-red-600 to-red-500 
                       text-white text-sm font-bold tracking-wider 
                       hover:from-red-500 hover:to-red-400 
                       transition-all shadow-lg"
                     >
-                      Advertise With Us
+                      Amplify Your Brand
                     </motion.button>
                   </div>
                 </motion.div>
-              </Link>
+              </div>
             </motion.div>
           </Card>
 
@@ -425,8 +421,6 @@ const Footer = () => {
         .animate-glowText { animation: glowText 5s ease-in-out infinite; }
         @keyframes softPulse { 0%,100%{text-shadow:0 0 8px rgba(220,38,38,.4)} 50%{text-shadow:0 0 14px rgba(220,38,38,.8)} }
         .animate-softPulse { animation: softPulse 4s infinite; }
-        @keyframes float { 0%{transform:translateY(0)} 50%{transform:translateY(-10px)} 100%{transform:translateY(0)} }
-        .animate-float { animation: float 3s ease-in-out infinite; }
       `}</style>
     </footer>
   );
