@@ -364,14 +364,14 @@ export default function Menu() {
         <div className="relative flex flex-row gap-4 sm:gap-6 bg-black/50 px-6 py-5 rounded-xl backdrop-blur-md border border-white/10 shadow-lg">
           <button
             onClick={() => setActiveMenu("food")}
-            className="px-8 py-3 text-sm md:text-base bg-red-600/40 border-2 border-amber-400/70 text-amber-100 font-light rounded-full hover:bg-amber-900/30 hover:border-amber-300 hover:scale-105 transition-all duration-300 backdrop-blur-sm relative z-10"
+            className="px-6 py-3 text-sm md:text-[15px] bg-red-600/40 border-2 border-amber-400/70 text-amber-100 font-light rounded-full hover:bg-amber-900/30 hover:border-amber-300 hover:scale-105 transition-all duration-300 backdrop-blur-sm relative z-10"
           >
             Food Menu
           </button>
 
           <button
             onClick={() => setActiveMenu("drinks")}
-            className="px-8 py-3 text-sm md:text-base bg-red-600/40 border-2 border-amber-400/70 text-amber-100 font-light rounded-full hover:bg-amber-900/30 hover:border-amber-300 hover:scale-105 transition-all duration-300 backdrop-blur-sm relative z-10"
+            className="px-6 py-3 text-sm md:text-[15px] bg-red-600/40 border-2 border-amber-400/70 text-amber-100 font-light rounded-full hover:bg-amber-900/30 hover:border-amber-300 hover:scale-105 transition-all duration-300 backdrop-blur-sm relative z-10"
           >
             Drinks Menu
           </button>
