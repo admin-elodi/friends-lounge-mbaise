@@ -1,10 +1,9 @@
-// src/features/BookEvent.jsx
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { createPortal } from "react-dom";
 import Logo from "@/assets/images/friends-logo.webp";
-import EventsImage from "@/assets/images/events.jpg";
+import ClockImage from "@/assets/images/clock.webp";
 
 const eventTypes = [
   "Wedding Reception",
@@ -36,6 +35,17 @@ export default function BookEvent({ isOpen, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (
+      !form.name ||
+      !form.phone ||
+      !form.eventType ||
+      !form.guests ||
+      !form.date ||
+      !form.time
+    ) {
+      return alert("Please fill all required fields");
+    }
+
     const msg = `
 NEW EVENT BOOKING @ Friends' Lounge
 
@@ -65,69 +75,88 @@ ${form.message || ""}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[9998] bg-black/40 backdrop-blur-md"
+        className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-md"
         onClick={onClose}
       />
 
       {/* CENTER WRAPPER */}
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
 
         {/* Modal */}
         <motion.div
           initial={{ y: 30, scale: 0.95, opacity: 0 }}
           animate={{ y: 0, scale: 1, opacity: 1 }}
-          exit={{ y: 30, scale: 0.95, opacity: 0 }}
           transition={{ type: "spring", stiffness: 400, damping: 28 }}
           className="
-            pointer-events-auto
             w-full max-w-[480px]
-            bg-black/40 backdrop-blur-2xl 
-            border border-white/20 
-            rounded-lg shadow-2xl 
-            overflow-hidden flex flex-col 
-            max-h-[82vh]"
+            rounded-xl shadow-2xl
+            relative overflow-hidden
+            border-1 border-white
+          "
+          style={{
+            backgroundImage: `url(${ClockImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header */}
-          <div className="relative h-32">
-            <img
-              src={EventsImage}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-black/75" />
 
-            <div className="absolute inset-0 flex items-center left-4">
-              <img
-                src={Logo}
-                className="w-24 drop-shadow-2xl animate-floatSlow"
-              />
-            </div>
-          </div>
-
-          {/* Close */}
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={onClose}
-            className="absolute top-3 right-3 
-            w-10 h-10 rounded-full 
-            bg-black/60 border border-white/20
-            flex items-center justify-center
-            text-white"
+          {/* SCROLL CONTAINER */}
+          <div
+            className="
+              relative z-10
+              max-h-[85vh]
+              overflow-y-auto
+              px-5 py-6
+            "
           >
-            <X size={18} />
-          </motion.button>
+            {/* Header Row */}
+            <div className="flex items-center justify-between mb-6">
 
-          {/* Content */}
-          <div className="flex-1 overflow-y-auto px-5 pt-4 pb-6">
-            <h2 className="text-xl font-bold text-white">
-              Book Your Event
-            </h2>
-            <p className="text-gray-400 text-sm mb-4">
-              Let’s make it unforgettable
-            </p>
+              {/* Logo - left – now rotates like in FoodOrderModal */}
+              <motion.img
+                src={Logo}
+                className="w-20"
+                animate={{ rotate: [0, 360] }}
+                transition={{
+                  duration: 20,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Text - right */}
+              <div className="text-right">
+                <h2 className="text-xl font-bold text-white">
+                  Book Your Event
+                </h2>
+                <p className="text-gray-300 text-sm">
+                  Let’s make it unforgettable
+                </p>
+              </div>
+            </div>
+
+            {/* Close */}
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={onClose}
+              className="
+                absolute top-1 right-4
+                w-10 h-10 rounded-full 
+                bg-black/60 border border-white/20
+                flex items-center justify-center
+                text-white z-20
+              "
+            >
+              <X size={18} />
+            </motion.button>
+
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-4 pb-8"
+            >
               <input
                 required
                 name="name"
@@ -155,16 +184,23 @@ ${form.message || ""}
                 />
               </div>
 
+              {/* EVENT TYPE (BLACK BG) */}
               <select
                 required
                 name="eventType"
                 value={form.eventType}
                 onChange={handleChange}
-                className="input"
+                className="input bg-black text-white"
               >
                 <option value="">Event Type</option>
                 {eventTypes.map((t) => (
-                  <option key={t}>{t}</option>
+                  <option
+                    key={t}
+                    value={t}
+                    className="bg-black text-white"
+                  >
+                    {t}
+                  </option>
                 ))}
               </select>
 
@@ -207,10 +243,14 @@ ${form.message || ""}
                 className="input resize-none"
               />
 
+              {/* CTA */}
               <motion.button
                 whileTap={{ scale: 0.97 }}
-                className="w-full py-3 rounded-xl 
-                bg-red-600 text-white text-sm"
+                className="
+                  w-full py-3 rounded-xl 
+                  bg-red-600 hover:bg-red-700
+                  text-white text-sm font-semibold
+                "
               >
                 Send via WhatsApp
               </motion.button>
@@ -222,16 +262,14 @@ ${form.message || ""}
               width:100%;
               padding:12px;
               border-radius:12px;
-              background:rgba(255,255,255,.1);
-              border:1px solid rgba(255,255,255,.15);
+              background:rgba(255,255,255,.12);
+              border:1px solid rgba(255,255,255,.2);
               color:white;
               font-size:14px;
             }
-            @keyframes floatSlow{
-              0%,100%{transform:translateY(0)}
-              50%{transform:translateY(-6px)}
+            .input::placeholder{
+              color:rgba(255,255,255,.6);
             }
-            .animate-floatSlow{animation:floatSlow 4s ease-in-out infinite}
           `}</style>
         </motion.div>
       </div>

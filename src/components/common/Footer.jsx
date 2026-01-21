@@ -252,7 +252,7 @@ const Footer = () => {
                       Your Logo
                     </div>
 
-                    <h3 className="text-lg md:text-[15px] font-bold text-white tracking-widest animate-softPulse">
+                    <h3 className="text-[10px] md:text-[10px] font-bold text-white tracking-widest animate-softPulse">
                       YOUR BRAND NAME HERE
                     </h3>
 

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react"; 
+import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -15,7 +15,8 @@ const BrandHub = () => {
       img: livestreamImg,
       title: "Event Livestream Portal",
       subtitle: "Broadcast your event live",
-      desc: "Brands can livestream ceremonies, festivals & conferences through Friends Lounge.",
+      desc:
+        "Brands can livestream ceremonies, festivals & conferences through Friends Lounge.",
       cta: "STREAM EVENT",
       link: "/advertise",
     },
@@ -23,7 +24,8 @@ const BrandHub = () => {
       img: whatsappImg,
       title: "Community Contact Hub",
       subtitle: "Direct WhatsApp access",
-      desc: "Connect audiences directly to event organisers or committee leadership.",
+      desc:
+        "Connect audiences directly to event organisers or committee leadership.",
       cta: "OPEN CHAT",
       link: "/advertise",
     },
@@ -31,7 +33,8 @@ const BrandHub = () => {
       img: supportImg,
       title: "Support & Sponsorship",
       subtitle: "Fund the vision",
-      desc: "Donations, sponsorships & material support for community events.",
+      desc:
+        "Donations, sponsorships & material support for community events.",
       cta: "SUPPORT EVENT",
       link: "/advertise",
     },
@@ -39,7 +42,8 @@ const BrandHub = () => {
       img: futureImg,
       title: "Future Vision Portal",
       subtitle: "Thinking beyond today",
-      desc: "Reverse-engineer future editions and long-term event impact.",
+      desc:
+        "Reverse-engineer future editions and long-term event impact.",
       cta: "EXPLORE FUTURE",
       link: "/advertise",
     },
@@ -66,39 +70,74 @@ const BrandHub = () => {
         className="absolute inset-0 w-full h-full object-cover brightness-110 grayscale z-0"
       />
 
-      {/* Dark unify overlay */}
-      <div className="absolute inset-0 bg-black/40 z-[1]" />
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/50 z-[1]" />
 
       {/* Mute Button */}
       <button
         onClick={toggleMute}
-        className="absolute top-6 right-6 z-30 w-10 h-10 bg-black/50 text-white rounded-full border border-white/20"
+        className="
+          absolute top-6 right-6 z-30 
+          w-10 h-10 bg-black/60 
+          text-white rounded-full 
+          border border-white/20
+          hover:scale-105 transition
+        "
       >
         {isMuted ? "🔇" : "🔊"}
       </button>
 
-      {/* Header */}
+      {/* HEADER – now in normal flow (not overlaying cards) */}
       <motion.div
-        initial={{ opacity: 0, y: -60 }}
+        initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="absolute top-5 left-1/2 -translate-x-1/2 text-center z-20 space-y-2"
+        className="
+          relative z-20 
+          pt-16 pb-10 
+          text-center space-y-3
+        "
       >
-        <h1 className="text-lg md:text-2xl font-semibold tracking-widest text-white whitespace-nowrap">
+        <h1 className="
+          text-lg md:text-3xl 
+          font-bold tracking-widest 
+          text-white
+        ">
           Brand Experience Hub
         </h1>
 
-       
+        <p className="
+          text-[10px] md:text-sm 
+          text-gray-200 
+          max-w-xl mx-auto 
+          leading-relaxed
+        ">
+          <span className="text-yellow-300 font-bold">
+            POINT 3
+          </span>{" "}
+          of Friends’ 3-Point Ad System —
+          <span className="block mt-1">
+            where your brand stops advertising
+            and starts living inside Mbaise.
+          </span>
+        </p>
 
-        {/* 🔥 3rd Point – Strategic Slogan */}
-        <p className="text-[10px] md:text-sm text-white max-w-xl mx-auto leading-relaxed"> 
-          <span className="text-yellow-200 font-semibold">Point 3</span> of Friends' Ad 3 point ad system 
-          where your brand's visibility lives inside Mbaise
+        <p className="
+          text-[9px] md:text-xs 
+          text-gray-400 tracking-wide
+        ">
+          Real culture • Real people • Real influence
         </p>
       </motion.div>
 
-      {/* Grid - Portals with Igbo-inspired border */}
+      {/* GRID – cards now start BELOW header */}
       <div
-        className="relative z-10 pt-44 pb-20 px-4 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10"
+        className="
+          relative z-10 
+          px-4 pb-20 
+          max-w-6xl mx-auto 
+          grid grid-cols-1 md:grid-cols-2 
+          gap-10
+        "
         style={{ perspective: "1200px" }}
       >
         {portals.map((p, i) => (
@@ -120,11 +159,12 @@ const BrandHub = () => {
                   relative overflow-hidden rounded-2xl 
                   bg-white/5 backdrop-blur-xl 
                   border border-white/10
-                  shadow-[inset_0_2px_8px_rgba(255,255,255,0.05),inset_0_-4px_12px_rgba(0,0,0,0.6)]
+                  shadow-[inset_0_2px_8px_rgba(255,255,255,0.05),
+                          inset_0_-4px_12px_rgba(0,0,0,0.6)]
                 "
                 style={{ transformStyle: "preserve-3d" }}
               >
-                {/* Igbotic Pattern Border */}
+                {/* Pattern Border */}
                 <div
                   className="absolute inset-0 pointer-events-none rounded-2xl"
                   style={{
@@ -142,17 +182,11 @@ const BrandHub = () => {
                         rgba(255,255,255,0.25) 2px,
                         transparent 2px,
                         transparent 10px
-                      ),
-                      repeating-linear-gradient(
-                        0deg,
-                        rgba(200,20,20,0.2) 0px,
-                        rgba(200,20,20,0.2) 1px,
-                        transparent 1px,
-                        transparent 8px
                       )
                     `,
                     backgroundSize: "100% 100%",
-                    maskImage: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                    maskImage:
+                      "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
                     WebkitMaskComposite: "source-out",
                     maskComposite: "exclude",
                     padding: "4px",
@@ -162,42 +196,75 @@ const BrandHub = () => {
                 {/* Image */}
                 <img
                   src={p.img}
-                  className="w-full h-96 object-cover grayscale opacity-60"
+                  className="
+                    w-full h-96 
+                    object-cover 
+                    grayscale opacity-60
+                  "
                   alt="brand portal"
                 />
 
-                {/* Emboss overlay */}
+                {/* Overlay */}
                 <div
-                  className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/40 border-b-2 border-yellow-200"
+                  className="
+                    absolute inset-0 
+                    bg-gradient-to-t 
+                    from-black/80 
+                    via-black/40 
+                    to-transparent
+                    border-b-2 border-yellow-200
+                  "
                 />
 
                 {/* Content */}
-                <div className="absolute bottom-0 p-8 translate-z-[30px]">
-                  <h2 className="text-2xl font-black text-white tracking-wide">
+                <div className="
+                  absolute bottom-0 
+                  p-8 translate-z-[30px]
+                ">
+                  <h2 className="
+                    text-2xl font-black 
+                    text-white tracking-wide
+                  ">
                     {p.title}
                   </h2>
 
-                  <p className="mt-2 text-red-400 font-bold">
+                  <p className="
+                    mt-2 text-red-400 
+                    font-bold
+                  ">
                     {p.subtitle}
                   </p>
 
-                  <p className="mt-3 text-gray-300">
+                  <p className="
+                    mt-3 text-gray-300
+                  ">
                     {p.desc}
                   </p>
 
                   <div
                     className="
-                      mt-5 inline-block px-8 py-3 
-                      bg-gradient-to-r from-red-600 to-red-500 
-                      text-white font-bold rounded-full shadow-lg"
+                      mt-5 inline-block 
+                      px-8 py-3 
+                      bg-gradient-to-r 
+                      from-red-600 to-red-500 
+                      text-white font-bold 
+                      rounded-full 
+                      shadow-lg
+                      hover:scale-105 transition
+                    "
                   >
                     {p.cta}
                   </div>
                 </div>
 
-                {/* Top light edge */}
+                {/* Light edge */}
                 <div
-                  className="absolute inset-0 pointer-events-none rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                  className="
+                    absolute inset-0 
+                    pointer-events-none 
+                    rounded-2xl 
+                    shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
+                  "
                 />
               </div>
             </Link>

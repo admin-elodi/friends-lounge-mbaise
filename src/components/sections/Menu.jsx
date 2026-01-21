@@ -352,7 +352,7 @@ export default function Menu() {
       }}
     >
       {/* Subtle dark overlay */}
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-black/20" />
 
       {/* Hero CTA */}
       <div className="relative z-10 flex flex-col items-center justify-end h-full pb-16 md:pb-24 px-4">
@@ -360,20 +360,24 @@ export default function Menu() {
           Explore our Menu
         </h2>
 
-        <div className="flex flex-row gap-4 sm:gap-6">
+        {/* Buttons container */}
+        <div className="relative flex flex-row gap-4 sm:gap-6 bg-black/50 px-6 py-5 rounded-xl backdrop-blur-md border border-white/10 shadow-lg">
           <button
             onClick={() => setActiveMenu("food")}
-            className="px-6 py-2 text-xs md:text-sm bg-transparent border-2 border-amber-400/70 text-amber-100 font-light rounded-full hover:bg-amber-900/30 hover:border-amber-300 hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+            className="px-8 py-3 text-sm md:text-base bg-red-600/40 border-2 border-amber-400/70 text-amber-100 font-light rounded-full hover:bg-amber-900/30 hover:border-amber-300 hover:scale-105 transition-all duration-300 backdrop-blur-sm relative z-10"
           >
             Food Menu
           </button>
 
           <button
             onClick={() => setActiveMenu("drinks")}
-            className="px-6 py-2 text-xs md:text-sm bg-transparent border-2 border-amber-400/70 text-amber-100 font-light rounded-full hover:bg-amber-900/30 hover:border-amber-300 hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+            className="px-8 py-3 text-sm md:text-base bg-red-600/40 border-2 border-amber-400/70 text-amber-100 font-light rounded-full hover:bg-amber-900/30 hover:border-amber-300 hover:scale-105 transition-all duration-300 backdrop-blur-sm relative z-10"
           >
             Drinks Menu
           </button>
+
+          {/* Cool glowing support line at the bottom */}
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-400/60 to-transparent rounded-full shadow-[0_0_20px_#fbbf24] animate-pulse-slow pointer-events-none" />
         </div>
       </div>
 
@@ -384,7 +388,7 @@ export default function Menu() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/75 backdrop-blur-sm"
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60"
           >
             <motion.div
               initial={{
@@ -407,10 +411,10 @@ export default function Menu() {
               }}
               transition={{
                 type: "spring",
-                stiffness: 140,       // gentle, sweet bounce
-                damping: 16,          // smooth & controlled
+                stiffness: 100,       // reduced power – gentler
+                damping: 20,          // smoother, less snappy
                 mass: 1.1,
-                duration: 0.7,        // slightly longer for elegant unfurl
+                duration: 0.85,       // slightly longer for elegance
               }}
               className="relative w-[90%] max-w-5xl max-h-[88vh] overflow-y-auto 
                          bg-black/30 backdrop-blur-2xl border border-white/10 rounded-2xl 

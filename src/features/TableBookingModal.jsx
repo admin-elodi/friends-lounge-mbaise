@@ -11,163 +11,252 @@ import {
   FaChevronUp,
   FaWhatsapp,
 } from "react-icons/fa";
+
+import beerBg from "@/assets/images/beer.webp";
 import Logo from "@/assets/images/friends-logo.webp";
-import CaneImage from "@/assets/images/cane.png";
+
+/* ================= CONFIG ================= */
 
 const enquiryPhoneNumber = "+2347066064379";
+
+const BANK = {
+  name: "Just Friends Investment Limited",
+  bank: "Guarantee Trust Bank",
+  account: "3001586851",
+};
+
+/* ================= TABLE DATA ================= */
 
 const eventTables = [
   {
     id: "heritage",
     name: "Mbaise Heritage Table",
-    description: "Ancient flavours, timeless pride",
+    caption: "Event & Hangout Table • For 4 persons",
     icon: <FaLeaf />,
-    price: "₦38,000",
+    price: 43000,
+    menu: [
+      { item: "Oha Soup", qty: 1, price: 4000 },
+      { item: "Bitterleaf Soup", qty: 1, price: 4000 },
+      { item: "Pounded Yam", qty: 2, price: 4000 },
+      { item: "Fufu", qty: 2, price: 3000 },
+      { item: "Goat Meat", qty: 2, price: 12000 },
+      { item: "Cow Leg", qty: 1, price: 8000 },
+      { item: "Beverage Bundle", qty: 1, price: 5000 },
+      { item: "Bottled Water", qty: 4, price: 3000 },
+    ],
   },
   {
     id: "birthday",
-    name: "Birthday Royalty Table",
-    description: "Celebrate like Igbo royalty",
+    name: "Birthday Table",
+    caption: "Event & Hangout Table • For 4 persons",
     icon: <FaBirthdayCake />,
-    price: "₦45,000",
+    price: 46000,
+    menu: [
+      { item: "Jollof Rice", qty: 2, price: 8000 },
+      { item: "Fried Rice", qty: 2, price: 8000 },
+      { item: "Peppered Chicken", qty: 2, price: 12000 },
+      { item: "Suya Stick", qty: 2, price: 10000 },
+      { item: "Beverage Bundle", qty: 1, price: 5000 },
+      { item: "Bottled Water", qty: 4, price: 3000 },
+    ],
   },
   {
-    id: "wedding",
-    name: "Igba Nkwụ Special",
-    description: "For love & legacy",
+    id: "igba",
+    name: "Igba Nkwu Special",
+    caption: "Event & Hangout Table • For 4 persons",
     icon: <FaRing />,
-    price: "₦42,000",
+    price: 44500,
+    menu: [
+      { item: "Egusi Soup", qty: 1, price: 4500 },
+      { item: "Vegetable Soup", qty: 1, price: 6000 },
+      { item: "Pounded Yam", qty: 2, price: 4000 },
+      { item: "Semo", qty: 2, price: 4000 },
+      { item: "Turkey", qty: 2, price: 12000 },
+      { item: "Dry Fish", qty: 1, price: 6000 },
+      { item: "Beverage Bundle", qty: 1, price: 5000 },
+      { item: "Bottled Water", qty: 4, price: 3000 },
+    ],
   },
 ];
+
+/* ================= COMPONENT ================= */
 
 export const TableBookingModal = ({ isOpen, onClose }) => {
   const [expandedId, setExpandedId] = useState(null);
   const [units, setUnits] = useState(1);
-  const [hostName, setHostName] = useState("");
+  const [customerName, setCustomerName] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
   if (!isOpen) return null;
 
+  const selected = eventTables.find(
+    (t) => t.id === expandedId
+  );
+
+  const total =
+    selected && selected.price * units;
+
   const handleClose = () => {
     onClose();
     setExpandedId(null);
     setUnits(1);
-    setHostName("");
+    setCustomerName("");
     setDate("");
     setTime("");
   };
 
-  const selected = eventTables.find((t) => t.id === expandedId);
-
-  const total =
-    selected &&
-    units * parseInt(selected.price.replace(/\D/g, ""), 10);
-
   const openWhatsApp = () => {
-    if (!hostName || !date || !time) {
+    if (!customerName || !date || !time) {
       alert("Please complete all fields");
       return;
     }
 
+    const menuList = selected.menu
+      .map(
+        (m) =>
+          `• ${m.item} (${m.qty})`
+      )
+      .join("\n");
+
     const msg = encodeURIComponent(
       `TABLE BOOKING – FRIENDS LOUNGE
 
-Host: ${hostName}
-Date: ${date}
-Time: ${time}
+Customer Name:
+${customerName}
 
-Package: ${units} × ${selected.name}
-Total: ₦${total.toLocaleString()}
+Date:
+${date}
 
-Send payment proof to confirm.`
+Time:
+${time}
+
+Table:
+${selected.name}
+
+MENU
+${menuList}
+
+Units:
+${units}
+
+TOTAL PAYABLE:
+₦${total.toLocaleString()}
+
+PAY TO:
+Bank: ${BANK.bank}
+Account Name: ${BANK.name}
+Account Number: ${BANK.account}
+
+➡ Send payment proof here to confirm booking`
     );
 
     window.open(
-      `https://wa.me/${enquiryPhoneNumber.replace(/\D/g, "")}?text=${msg}`,
+      `https://wa.me/${enquiryPhoneNumber.replace(
+        /\D/g,
+        ""
+      )}?text=${msg}`,
       "_blank"
     );
+
     handleClose();
   };
 
   return createPortal(
     <>
-      {/* Backdrop */}
+      {/* BACKDROP */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="fixed inset-0 z-[9998] bg-black/40 backdrop-blur-md"
+        className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-md"
         onClick={handleClose}
       />
 
-      {/* Modal */}
+      {/* MODAL */}
       <motion.div
         initial={{ y: 30, scale: 0.95, opacity: 0 }}
         animate={{ y: 0, scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 400, damping: 28 }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 26,
+        }}
         className="
         fixed z-[9999]
         inset-x-4
         top-1/2 -translate-y-1/2
         sm:left-1/2 sm:-translate-x-1/2
         w-auto sm:w-full sm:max-w-[480px]
-        bg-black/40 backdrop-blur-2xl
-        border border-white/20
-        rounded-lg shadow-2xl
+        bg-black/60 backdrop-blur-2xl
+        border-1 border-white
+        rounded-xl shadow-2xl
         max-h-[82vh] flex flex-col overflow-hidden"
+        style={{
+          backgroundImage: `url(${beerBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="relative h-25">
-          <img
-            src={CaneImage}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/60" />
+        {/* OVERLAY */}
+        <div className="absolute inset-0 bg-black/70" />
 
-          <div className="absolute inset-0 flex items-center left-4">
-            <img
-              src={Logo}
-              className="w-20 drop-shadow-xl animate-floatSlow"
-            />
-          </div>
+        {/* HEADER - BOPPING LOGO */}
+        <div className="relative h-24 z-10">
+          <motion.img
+            src={Logo}
+            className="w-20 absolute left-4 top-4"
+            animate={{ y: [0, -6, 0] }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
         </div>
 
-        {/* Close */}
-        <motion.button
-          whileTap={{ scale: 0.9 }}
+        {/* CLOSE */}
+        <button
           onClick={handleClose}
-          className="absolute top-3 right-3 
+          className="absolute top-4 right-4 
           w-9 h-9 rounded-full 
           bg-black/60 border border-white/20
-          flex items-center justify-center text-white"
+          flex items-center justify-center text-white z-20"
         >
           <FaTimes size={14} />
-        </motion.button>
+        </button>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto px-5 pt-4 pb-6">
+        {/* CONTENT */}
+        <div className="relative z-10 flex-1 overflow-y-auto px-5 pb-6">
+
           <h3 className="text-xl font-bold text-white mb-1">
             Premium Tables
           </h3>
+
           <p className="text-gray-400 text-sm mb-4">
-            Mbaise hospitality
+            Event & Hangout Tables • For 4 persons
           </p>
 
           <div className="space-y-3">
             {eventTables.map((table) => {
-              const open = expandedId === table.id;
+              const open =
+                expandedId === table.id;
 
               return (
                 <div key={table.id}>
                   <button
                     onClick={() =>
-                      setExpandedId(open ? null : table.id)
+                      setExpandedId(
+                        open ? null : table.id
+                      )
                     }
                     className={`w-full p-4 rounded-xl text-left
                     bg-white/10 border border-white/15
                     flex justify-between items-center
-                    ${open && "border-red-500/40"}`}
+                    ${
+                      open &&
+                      "border-red-500/40"
+                    }`}
                   >
                     <div className="flex gap-3">
                       <div className="text-red-400">
@@ -178,34 +267,63 @@ Send payment proof to confirm.`
                           {table.name}
                         </p>
                         <p className="text-xs text-gray-400">
-                          {table.description}
+                          {table.caption}
                         </p>
                       </div>
                     </div>
 
                     <div className="text-right">
                       <p className="text-red-400 text-sm font-bold">
-                        {table.price}
+                        ₦
+                        {table.price.toLocaleString()}
                       </p>
-                      {open ? <FaChevronUp /> : <FaChevronDown />}
+                      {open ? (
+                        <FaChevronUp />
+                      ) : (
+                        <FaChevronDown />
+                      )}
                     </div>
                   </button>
 
                   <AnimatePresence>
                     {open && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
+                        initial={{
+                          height: 0,
+                          opacity: 0,
+                        }}
+                        animate={{
+                          height: "auto",
+                          opacity: 1,
+                        }}
+                        exit={{
+                          height: 0,
+                          opacity: 0,
+                        }}
                         className="overflow-hidden"
                       >
-                        <div className="mt-3 bg-white/5 rounded-xl p-4 space-y-3">
+                        <div className="mt-3 bg-white/5 rounded-xl p-4 space-y-4">
 
+                          {/* MENU */}
+                          <ul className="text-gray-200 text-sm space-y-2">
+                            {table.menu.map(
+                              (m, i) => (
+                                <li key={i}>
+                                  • {m.item} (
+                                  {m.qty})
+                                </li>
+                              )
+                            )}
+                          </ul>
+
+                          {/* FORM */}
                           <input
-                            placeholder="Host name"
-                            value={hostName}
+                            placeholder="Customer Name"
+                            value={customerName}
                             onChange={(e) =>
-                              setHostName(e.target.value)
+                              setCustomerName(
+                                e.target.value
+                              )
                             }
                             className="input"
                           />
@@ -214,7 +332,9 @@ Send payment proof to confirm.`
                             type="date"
                             value={date}
                             onChange={(e) =>
-                              setDate(e.target.value)
+                              setDate(
+                                e.target.value
+                              )
                             }
                             className="input"
                           />
@@ -223,7 +343,9 @@ Send payment proof to confirm.`
                             type="time"
                             value={time}
                             onChange={(e) =>
-                              setTime(e.target.value)
+                              setTime(
+                                e.target.value
+                              )
                             }
                             className="input"
                           />
@@ -231,10 +353,13 @@ Send payment proof to confirm.`
                           <input
                             type="number"
                             min="1"
-                            max="6"
                             value={units}
                             onChange={(e) =>
-                              setUnits(e.target.value)
+                              setUnits(
+                                Number(
+                                  e.target.value
+                                )
+                              )
                             }
                             className="input"
                           />
@@ -242,12 +367,15 @@ Send payment proof to confirm.`
                           <div className="flex justify-between text-sm text-gray-300">
                             <span>Total</span>
                             <span className="text-green-400">
-                              ₦{total?.toLocaleString()}
+                              ₦
+                              {total?.toLocaleString()}
                             </span>
                           </div>
 
                           <button
-                            onClick={openWhatsApp}
+                            onClick={
+                              openWhatsApp
+                            }
                             className="w-full py-3 
                             bg-green-600 hover:bg-green-500
                             rounded-xl text-white
@@ -274,14 +402,6 @@ Send payment proof to confirm.`
             border:1px solid rgba(255,255,255,.15);
             color:white;
             font-size:14px;
-          }
-
-          @keyframes floatSlow{
-            0%,100%{transform:translateY(0)}
-            50%{transform:translateY(-6px)}
-          }
-          .animate-floatSlow{
-            animation:floatSlow 4s ease-in-out infinite
           }
         `}</style>
       </motion.div>

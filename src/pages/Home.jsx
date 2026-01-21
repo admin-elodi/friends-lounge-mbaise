@@ -1,7 +1,7 @@
 import React from "react";
-
 import Hero from "@/components/sections/Hero";
 import Menu from "@/components/sections/Menu";
+import Facilities from "@/components/sections/Facilities";
 import MicroStats from "@/components/sections/MicroStats";
 
 const Home = () => {
@@ -9,6 +9,7 @@ const Home = () => {
   
   const showHero = true;
   const showMenu = true;
+  const showFacilities = true;
   const showMicroStats = false;
   
 
@@ -17,6 +18,7 @@ const Home = () => {
       
       {showHero && <Hero />}
       {showMenu && <Menu />}
+      {showFacilities && <Facilities />}
       {showMicroStats && <MicroStats />}
     
     </div>
