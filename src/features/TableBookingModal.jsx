@@ -201,16 +201,16 @@ Account Number: ${BANK.account}
         {/* OVERLAY */}
         <div className="absolute inset-0 bg-black/70" />
 
-        {/* HEADER - BOPPING LOGO */}
+        {/* HEADER - BOPPING LOGO – now matches FoodOrderModal rotation */}
         <div className="relative h-24 z-10">
           <motion.img
             src={Logo}
             className="w-20 absolute left-4 top-4"
-            animate={{ y: [0, -6, 0] }}
+            animate={{ rotate: [0, 360] }}
             transition={{
-              duration: 2.5,
+              duration: 20,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: "linear",
             }}
           />
         </div>

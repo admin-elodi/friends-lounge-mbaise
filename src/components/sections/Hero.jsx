@@ -99,7 +99,7 @@ const Hero = () => {
 
   return (
     <section
-      className="relative w-full overflow-hidden"
+      className="relative w-full overflow-hidden z-10"  // ← ADDED z-10 so Hero sits below modals
       style={{ height: `calc(${vh * 100}px)` }}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -175,7 +175,7 @@ const Hero = () => {
       {/* MUTE BUTTON */}
       <button
         onClick={toggleMute}
-        className="absolute bottom-6 right-6 p-4 bg-black/50 backdrop-blur-md rounded-full hover:bg-black/70 transition z-20"
+        className="absolute bottom-6 right-6 text-white p-4 bg-black/50 backdrop-blur-md rounded-full hover:bg-black/70 transition z-20"
         aria-label={isMuted ? "Unmute" : "Mute"}
       >
         {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}

@@ -166,7 +166,7 @@ Bank: ${BANK_DETAILS.bankName}
             <motion.div
               className="
                 w-full max-w-md max-h-[90vh] overflow-hidden
-                rounded-2xl shadow-2xl border border-white/20
+                rounded-2xl shadow-2xl border-1 border-white
                 bg-gradient-to-br from-black/90 via-black/80 to-gray-900/90
                 backdrop-blur-xl relative
                 mt-6

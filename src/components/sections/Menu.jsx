@@ -344,7 +344,7 @@ export default function Menu() {
 
   return (
     <section
-      className="relative min-h-[650px] text-white overflow-hidden border-t border-white"
+      className="relative min-h-[650px] z-30 text-white overflow-hidden border-t border-white"
       style={{
         backgroundImage: `url(${chefsBg})`,
         backgroundSize: "cover",
@@ -381,14 +381,14 @@ export default function Menu() {
         </div>
       </div>
 
-      {/* Glassmorphic Elegant Modal – beautiful digital scroll unfurl */}
+      {/* Glassmorphic Elegant Modal – now with higher z-index to float above Hero */}
       <AnimatePresence>
         {activeMenu && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60"
+            className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60"  // ← RAISED to 99999 – now always on top
           >
             <motion.div
               initial={{
@@ -446,7 +446,7 @@ export default function Menu() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {menu[activeMenu].categories.map((cat, i) => (
                     <div key={i} className="space-y-5">
-                      <h3 className="text-xl md:text-2xl font-light text-amber-300 tracking-wide border-b border-amber-500/30 pb-2">
+                      <h3 className="text-xl md:text-xl font-light text-amber-300 tracking-wide border-b border-amber-500/30 pb-2">
                         {cat.title}
                       </h3>
 

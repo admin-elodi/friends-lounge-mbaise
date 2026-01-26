@@ -1,6 +1,8 @@
+// src/pages/BrandHub.jsx
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 import livestreamImg from "@/assets/images/local-fridge.jpg";
 import whatsappImg from "@/assets/images/palmwine.jpg";
@@ -14,7 +16,7 @@ const BrandHub = () => {
     {
       img: livestreamImg,
       title: "Event Livestream Portal",
-      subtitle: "Broadcast your event live",
+      subtitle: "Broadcast your campaign live",
       desc:
         "Brands can livestream ceremonies, festivals & conferences through Friends Lounge.",
       cta: "STREAM EVENT",
@@ -66,206 +68,147 @@ const BrandHub = () => {
         src={bgVideo}
         autoPlay
         loop
-        muted
-        className="absolute inset-0 w-full h-full object-cover brightness-110 grayscale z-0"
+        muted={isMuted}
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover brightness-75 contrast-125 grayscale-[0.4] z-0"
       />
 
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/50 z-[1]" />
+      {/* Enhanced vignette + dark overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/80 z-[1]" />
 
       {/* Mute Button */}
       <button
         onClick={toggleMute}
         className="
           absolute top-6 right-6 z-30 
-          w-10 h-10 bg-black/60 
-          text-white rounded-full 
-          border border-white/20
-          hover:scale-105 transition
+          w-11 h-11 rounded-full bg-black/70 backdrop-blur-md
+          border border-white/20 text-white flex items-center justify-center
+          hover:scale-110 hover:bg-red-900/40 transition-all duration-300
+          shadow-lg shadow-black/50 group
         "
+        title={isMuted ? "Unmute video" : "Mute video"}
       >
         {isMuted ? "🔇" : "🔊"}
+        <span className="absolute -bottom-8 text-xs text-white/70 opacity-0 group-hover:opacity-100 transition-opacity">
+          {isMuted ? "Sound On" : "Sound Off"}
+        </span>
       </button>
 
-      {/* HEADER – now in normal flow (not overlaying cards) */}
+      {/* HEADER – minimalist, balanced intro */}
       <motion.div
-        initial={{ opacity: 0, y: -40 }}
+        initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        className="
-          relative z-20 
-          pt-16 pb-10 
-          text-center space-y-3
-        "
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="relative z-20 pt-24 pb-20 text-center space-y-6 px-6"
       >
-        <h1 className="
-          text-lg md:text-3xl 
-          font-bold tracking-widest 
-          text-white
-        ">
+        <h1 className="text-xl md:text-4xl font-semibold tracking-tight text-white drop-shadow-xl">
           Brand Experience Hub
         </h1>
 
-        <p className="
-          text-[10px] md:text-sm 
-          text-gray-200 
-          max-w-xl mx-auto 
-          leading-relaxed
-        ">
-          <span className="text-yellow-300 font-bold">
-            POINT 3
-          </span>{" "}
-          of Friends’ 3-Point Ad System —
-          <span className="block mt-1">
-            where your brand stops advertising
-            and starts living inside Mbaise.
-          </span>
+        <p className="text-base md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light">
+          Point 3 of Friends’ Ads 3-Point Ad System
         </p>
 
-        <p className="
-          text-[9px] md:text-xs 
-          text-gray-400 tracking-wide
-        ">
-          Real culture • Real people • Real influence
+        <p className="text-sm md:text-lg text-yellow-100 font-medium tracking-wide uppercase">
+          Where your brand lives inside Mbaise
         </p>
       </motion.div>
 
-      {/* GRID – cards now start BELOW header */}
+      {/* CARDS GRID – original layout, stretched wide */}
       <div
         className="
           relative z-10 
-          px-4 pb-20 
-          max-w-6xl mx-auto 
+          px-4 md:px-2 lg:px-4 pb-24 
+          max-w-full md:max-w-[98vw] mx-auto 
           grid grid-cols-1 md:grid-cols-2 
-          gap-10
+          gap-6 md:gap-8
         "
-        style={{ perspective: "1200px" }}
+        style={{ perspective: "1400px" }}
       >
         {portals.map((p, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, y: 80, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: i * 0.15 }}
+            initial={{ opacity: 0, y: 80, rotateX: 10 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ delay: i * 0.15, duration: 0.9, ease: "easeOut" }}
             whileHover={{
-              scale: 1.05,
-              rotateX: -2,
-              rotateY: 2,
+              scale: 1.06,
+              rotateX: 0,
+              rotateY: 3,
+              transition: { duration: 0.4 },
             }}
-            className="transform-gpu"
+            className="group relative transform-gpu"
           >
-            <Link to={p.link}>
+            <Link to={p.link} className="block h-full">
               <div
                 className="
-                  relative overflow-hidden rounded-2xl 
-                  bg-white/5 backdrop-blur-xl 
-                  border border-white/10
-                  shadow-[inset_0_2px_8px_rgba(255,255,255,0.05),
-                          inset_0_-4px_12px_rgba(0,0,0,0.6)]
+                  relative h-full rounded-2xl overflow-hidden
+                  bg-gradient-to-br from-black/40 to-black/60  // ← Lighter tones: reduced opacity for brighter feel
+                  backdrop-blur-xl border border-white/20  // ← Lighter border
+                  shadow-[0_8px_32px_rgba(0,0,0,0.3)]  // ← Softer shadow
+                  group-hover:shadow-[0_16px_48px_rgba(255,215,0,0.15)]  // ← Lighter hover shadow
+                  transition-all duration-500
                 "
-                style={{ transformStyle: "preserve-3d" }}
               >
-                {/* Pattern Border */}
+                {/* Animated glowing border on hover – lighter version */}
                 <div
-                  className="absolute inset-0 pointer-events-none rounded-2xl"
-                  style={{
-                    backgroundImage: `
-                      repeating-linear-gradient(
-                        45deg,
-                        rgba(220,38,38,0.5) 0px,
-                        rgba(220,38,38,0.5) 3px,
-                        transparent 3px,
-                        transparent 12px
-                      ),
-                      repeating-linear-gradient(
-                        -45deg,
-                        rgba(255,255,255,0.25) 0px,
-                        rgba(255,255,255,0.25) 2px,
-                        transparent 2px,
-                        transparent 10px
-                      )
-                    `,
-                    backgroundSize: "100% 100%",
-                    maskImage:
-                      "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                    WebkitMaskComposite: "source-out",
-                    maskComposite: "exclude",
-                    padding: "4px",
-                  }}
+                  className="
+                    absolute inset-0 rounded-2xl pointer-events-none opacity-0 
+                    group-hover:opacity-100 transition-opacity duration-500
+                    bg-gradient-to-r from-transparent via-amber-300/20 to-transparent  // ← Lighter glow
+                    shadow-[inset_0_0_30px_rgba(255,215,0,0.3)]  // ← Softer inset shadow
+                  "
                 />
 
                 {/* Image */}
-                <img
-                  src={p.img}
-                  className="
-                    w-full h-96 
-                    object-cover 
-                    grayscale opacity-60
-                  "
-                  alt="brand portal"
-                />
-
-                {/* Overlay */}
-                <div
-                  className="
-                    absolute inset-0 
-                    bg-gradient-to-t 
-                    from-black/80 
-                    via-black/40 
-                    to-transparent
-                    border-b-2 border-yellow-200
-                  "
-                />
+                <div className="relative h-64 md:h-80 overflow-hidden">
+                  <img
+                    src={p.img}
+                    alt={p.title}
+                    className="
+                      w-full h-full object-cover 
+                      grayscale-[0.3] group-hover:grayscale-0  // ← Lighter grayscale for brighter base
+                      transition-all duration-700 ease-out
+                    "
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />  // ← Lighter gradient
+                </div>
 
                 {/* Content */}
-                <div className="
-                  absolute bottom-0 
-                  p-8 translate-z-[30px]
-                ">
+                <div className="p-6 md:p-8 space-y-3">
                   <h2 className="
-                    text-2xl font-black 
-                    text-white tracking-wide
+                    text-xl md:text-2xl font-extrabold 
+                    text-white tracking-tight 
+                    whitespace-nowrap overflow-hidden text-ellipsis
                   ">
                     {p.title}
                   </h2>
 
                   <p className="
-                    mt-2 text-red-400 
-                    font-bold
+                    text-amber-200 font-semibold text-sm md:text-base  // ← Lighter amber for subtitle
+                    whitespace-nowrap overflow-hidden text-ellipsis
                   ">
                     {p.subtitle}
                   </p>
 
                   <p className="
-                    mt-3 text-gray-300
+                    text-gray-200 text-sm leading-relaxed  // ← Lighter gray for desc
+                    line-clamp-3 md:line-clamp-none
                   ">
                     {p.desc}
                   </p>
 
-                  <div
-                    className="
-                      mt-5 inline-block 
-                      px-8 py-3 
-                      bg-gradient-to-r 
-                      from-red-600 to-red-500 
-                      text-white font-bold 
-                      rounded-full 
-                      shadow-lg
-                      hover:scale-105 transition
-                    "
-                  >
+                  {/* CTA Button – minimalist redesign */}
+                  <div className="
+                    mt-6 inline-flex items-center gap-2 
+                    px-6 py-3 bg-transparent border border-amber-300/50 text-amber-100 font-medium rounded-full 
+                    hover:border-amber-300 hover:text-amber-300 hover:bg-amber-900/10
+                    transition-all duration-300
+                  ">
                     {p.cta}
+                    <ArrowRight size={18} />
                   </div>
                 </div>
-
-                {/* Light edge */}
-                <div
-                  className="
-                    absolute inset-0 
-                    pointer-events-none 
-                    rounded-2xl 
-                    shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
-                  "
-                />
               </div>
             </Link>
           </motion.div>

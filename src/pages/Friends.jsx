@@ -5,6 +5,7 @@ import { ArrowRight, Volume2, VolumeX } from "lucide-react";
 
 import islandVideo from "@/assets/videos/island.mp4";
 import inductionImage from "@/assets/images/induction.jpeg";
+import ikengaBg from "@/assets/images/material.jpg"; // ← NEW: imported your Ikenga background image
 
 export default function Friends() {
   const [isMuted, setIsMuted] = useState(true);
@@ -46,8 +47,19 @@ export default function Friends() {
   ];
 
   return (
-    <main className="relative min-h-screen font-montserrat text-gray-900 overflow-x-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-12 py-16 space-y-20">
+    <main 
+      className="relative min-h-screen font-montserrat text-gray-900 overflow-x-hidden"
+      style={{
+        backgroundImage: `url(${ikengaBg})`,           // ← NEW: Ikenga as full-page background
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",                 // optional: keeps bg fixed on scroll
+      }}
+    >
+      {/* Optional subtle dark overlay to improve text readability on top of image */}
+      <div className="absolute inset-0 bg-black/40 z-0" />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-12 py-16 space-y-20">
 
         {/* ================= PAGE CAPTION ================= */}
         <motion.section
@@ -56,7 +68,7 @@ export default function Friends() {
           transition={{ duration: 0.8 }}
           className="text-center space-y-4"
         >
-          <h1 className="text-xl md:text-xl font-bold tracking-tight">
+          <h1 className="text-xl md:text-xl font-bold tracking-tight text-white">
             Honouring Legacy, Friendship & Community Impact
           </h1>
 
@@ -66,18 +78,18 @@ export default function Friends() {
 
           <div className="mt-4 inline-block px-5 py-2 rounded-full 
                           bg-red-50 text-red-600 text-xs md:text-sm font-medium">
-            Legacy. Friendship. Community impact. ✨
+            Legacy. Friendship. Community Impact
           </div>
         </motion.section>
 
         {/* INTRO */}
         <section className="relative rounded-xl overflow-hidden p-8 
                             bg-gradient-to-r from-red-600/10 to-transparent 
-                            border border-red-50/10">
+                            border border-white">
           <h2 className="text-xl md:text-3xl font-bold tracking-tight">
             Friendly Recognitions
           </h2>
-          <p className="mt-3 text-gray-600 text-lg max-w-3xl text-justify">
+          <p className="mt-3 text-white text-lg max-w-3xl text-justify">
             This space celebrates friends of Chief Sir Santome Ibeneche —
             individuals he personally respects and honors for major
             achievements and recognitions.
@@ -123,10 +135,10 @@ export default function Friends() {
                     className="p-8 bg-black/40 backdrop-blur-xl rounded-xl 
                                border border-white/20 text-center shadow-xl"
                   >
-                    <h3 className="text-2xl md:text-3xl font-semibold text-white">
+                    <h3 className="text-[12px] md:text-2xl font-semibold text-white">
                       {item.title}
                     </h3>
-                    <p className="mt-2 text-gray-200 text-sm md:text-base text-justify">
+                    <p className="mt-2 text-gray-200 text-sm md:text-base text-center">
                       {item.name}
                     </p>
                   </motion.div>
