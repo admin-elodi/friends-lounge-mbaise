@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu, X, Search, X as CloseIcon } from "lucide-react";
 
 import Logo from "@/assets/images/friends-logo.webp";
-import palmsVideo from "@/assets/videos/palm.mp4";
+import palmsVideo from "@/assets/videos/pal.mp4";
 
 import Banner from "@/components/sections/Banner";
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
@@ -72,7 +72,7 @@ export default function Header() {
           muted
           playsInline
           preload="auto"
-          style={{ filter: 'grayscale(100%)' }}
+          // style={{ filter: 'grayscale(100%)' }}
           className="absolute inset-0 w-full h-full object-cover"
         >
           <source src={palmsVideo} type="video/mp4" />
@@ -109,10 +109,10 @@ export default function Header() {
 
       {/* DESKTOP NAVIGATION */}
       <nav className="hidden md:flex justify-between items-center px-10 py-4 bg-black/50 backdrop-blur-xl">
-        <ul className="flex gap-10 text-sm tracking-wide text-black font-semibold">
+        <ul className="flex gap-10 text-[15px] tracking-wide text-black font-semibold">
           {navList.map((item) => (
             <li key={item.path} className="relative">
-              <Link to={item.path} className="hover:text-green-400 transition-colors">
+              <Link to={item.path} className="hover:text-white transition-colors">
                 {item.name}
               </Link>
               {item.badge && (

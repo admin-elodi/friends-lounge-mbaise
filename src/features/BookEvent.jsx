@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { createPortal } from "react-dom";
 import Logo from "@/assets/images/friends-logo.webp";
-import ClockImage from "@/assets/images/clock.webp";
+import RafiaTexture from "@/assets/images/rafia.jpg";
+
+/* ---------------- EVENT TYPES ---------------- */
 
 const eventTypes = [
   "Wedding Reception",
@@ -16,6 +18,55 @@ const eventTypes = [
   "Corporate Event",
   "Other",
 ];
+
+/* ---------------- PRICING ---------------- */
+
+const EVENT_SPACE_PRICE = 0; // ₦ — change anytime
+
+/* ---------------- LIVE ANALOG CLOCK ---------------- */
+
+function LiveClockBackground() {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const seconds = time.getSeconds();
+  const minutes = time.getMinutes();
+  const hours = time.getHours() % 12;
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[2]">
+      <div className="relative w-[260px] sm:w-[300px] aspect-square rounded-full bg-white shadow-xl">
+        <div
+          className="absolute w-[6px] h-[65px] bg-black top-1/2 left-1/2 origin-bottom rounded-full"
+          style={{
+            transform: `translate(-50%, -100%) rotate(${hours * 30 + minutes * 0.5}deg)`,
+          }}
+        />
+        <div
+          className="absolute w-[4px] h-[95px] bg-black top-1/2 left-1/2 origin-bottom rounded-full"
+          style={{
+            transform: `translate(-50%, -100%) rotate(${minutes * 6}deg)`,
+          }}
+        />
+        <div
+          className="absolute w-[2px] h-[110px] bg-red-600 top-1/2 left-1/2 origin-bottom"
+          style={{
+            transform: `translate(-50%, -100%) rotate(${seconds * 6}deg)`,
+          }}
+        />
+        <div className="absolute w-3 h-3 bg-black rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- MAIN MODAL ---------------- */
 
 export default function BookEvent({ isOpen, onClose }) {
   const [form, setForm] = useState({
@@ -47,17 +98,36 @@ export default function BookEvent({ isOpen, onClose }) {
     }
 
     const msg = `
-NEW EVENT BOOKING @ Friends' Lounge
+📌 FRIENDS’ LOUNGE MBAISE – EVENT BOOKING REQUEST
 
+CLIENT DETAILS
 Name: ${form.name}
 Phone: ${form.phone}
 Email: ${form.email || "—"}
-Event: ${form.eventType}
+
+EVENT DETAILS
+Event Type: ${form.eventType}
 Guests: ${form.guests}
 Date: ${form.date}
 Time: ${form.time}
 
-${form.message || ""}
+EVENT SPACE FEE
+₦${EVENT_SPACE_PRICE.toLocaleString()}
+
+ADDITIONAL NOTES
+${form.message || "—"}
+
+------------------------------------
+
+💳 PAYMENT INFORMATION
+Account Name: JUST FRIENDS INVESTMENT LTD
+Bank: GUARANTY TRUST BANK
+Account Number: 3001586851
+
+➡ Kindly pay the event space fee and send your **payment evidence** here to confirm booking.
+
+📞 ENQUIRIES & SUPPORT
++234 706 606 4379
 `.trim();
 
     window.open(
@@ -79,178 +149,91 @@ ${form.message || ""}
         onClick={onClose}
       />
 
-      {/* CENTER WRAPPER */}
+      {/* Center wrapper */}
       <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
-
-        {/* Modal */}
         <motion.div
           initial={{ y: 30, scale: 0.95, opacity: 0 }}
           animate={{ y: 0, scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 400, damping: 28 }}
-          className="
-            w-full max-w-[480px]
-            rounded-xl shadow-2xl
-            relative overflow-hidden
-            border-1 border-white
-          "
-          style={{
-            backgroundImage: `url(${ClockImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
+          className="w-full max-w-[480px] rounded-xl border-4 border-red-600 shadow-2xl relative overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Dark overlay */}
-          <div className="absolute inset-0 bg-black/75" />
-
-          {/* SCROLL CONTAINER */}
+          {/* RAFIA BACKGROUND */}
           <div
-            className="
-              relative z-10
-              max-h-[85vh]
-              overflow-y-auto
-              px-5 py-6
-            "
-          >
-            {/* Header Row */}
-            <div className="flex items-center justify-between mb-6">
+            className="absolute inset-0 z-[1]"
+            style={{
+              backgroundImage: `url(${RafiaTexture})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
 
-              {/* Logo - left – now rotates like in FoodOrderModal */}
+          {/* CLOCK */}
+          <LiveClockBackground />
+
+          {/* DARK OVERLAY */}
+          <div className="absolute inset-0 bg-black/65 z-[3]" />
+
+          {/* CONTENT */}
+          <div className="relative z-10 max-h-[85vh] overflow-y-auto px-5 py-6">
+            <div className="flex items-center justify-between mb-6">
               <motion.img
                 src={Logo}
                 className="w-20"
                 animate={{ rotate: [0, 360] }}
-                transition={{
-                  duration: 20,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               />
-
-              {/* Text - right */}
+            
               <div className="text-right">
                 <h2 className="text-xl font-bold text-white">
                   Book Your Event
                 </h2>
                 <p className="text-gray-300 text-sm">
-                  Let’s make it unforgettable
+                  Event space fee: ₦{EVENT_SPACE_PRICE.toLocaleString()}
                 </p>
               </div>
             </div>
 
-            {/* Close */}
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onClose}
-              className="
-                absolute top-1 right-4
-                w-10 h-10 rounded-full 
-                bg-black/60 border border-white/20
-                flex items-center justify-center
-                text-white z-20
-              "
+              className="absolute top-1 right-4 w-10 h-10 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white z-20"
             >
               <X size={18} />
             </motion.button>
+            <div className="text-center text-white">
+              Let's Make it Memorable
+            </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-4 pb-8"
-            >
-              <input
-                required
-                name="name"
-                placeholder="Full Name"
-                value={form.name}
-                onChange={handleChange}
-                className="input"
-              />
+            <form onSubmit={handleSubmit} className="space-y-4 pb-8">
+
+              <input required name="name" placeholder="Full Name" value={form.name} onChange={handleChange} className="input" />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <input
-                  required
-                  name="phone"
-                  placeholder="Phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  className="input"
-                />
-                <input
-                  name="email"
-                  placeholder="Email (optional)"
-                  value={form.email}
-                  onChange={handleChange}
-                  className="input"
-                />
+                <input required name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} className="input" />
+                <input name="email" placeholder="Email (optional)" value={form.email} onChange={handleChange} className="input" />
               </div>
 
-              {/* EVENT TYPE (BLACK BG) */}
-              <select
-                required
-                name="eventType"
-                value={form.eventType}
-                onChange={handleChange}
-                className="input bg-black text-white"
-              >
+              <select required name="eventType" value={form.eventType} onChange={handleChange} className="input bg-black text-white">
                 <option value="">Event Type</option>
                 {eventTypes.map((t) => (
-                  <option
-                    key={t}
-                    value={t}
-                    className="bg-black text-white"
-                  >
-                    {t}
-                  </option>
+                  <option key={t} value={t}>{t}</option>
                 ))}
               </select>
 
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  required
-                  name="date"
-                  type="date"
-                  value={form.date}
-                  onChange={handleChange}
-                  className="input"
-                />
-                <input
-                  required
-                  name="time"
-                  type="time"
-                  value={form.time}
-                  onChange={handleChange}
-                  className="input"
-                />
-              </div>
+              <label className="sm:hidden text-xs text-gray-300">Event Date</label>
+              <input required name="date" type="date" value={form.date} onChange={handleChange} className="input" />
 
-              <input
-                required
-                name="guests"
-                type="number"
-                min="20"
-                placeholder="Guests"
-                value={form.guests}
-                onChange={handleChange}
-                className="input"
-              />
+              <label className="sm:hidden text-xs text-gray-300">Event Time</label>
+              <input required name="time" type="time" value={form.time} onChange={handleChange} className="input" />
 
-              <textarea
-                name="message"
-                rows="3"
-                placeholder="Special requests"
-                value={form.message}
-                onChange={handleChange}
-                className="input resize-none"
-              />
+              <input required name="guests" type="number" min="20" placeholder="Guests" value={form.guests} onChange={handleChange} className="input" />
 
-              {/* CTA */}
+              <textarea name="message" rows="3" placeholder="Special requests" value={form.message} onChange={handleChange} className="input resize-none" />
+
               <motion.button
                 whileTap={{ scale: 0.97 }}
-                className="
-                  w-full py-3 rounded-xl 
-                  bg-red-600 hover:bg-red-700
-                  text-white text-sm font-semibold
-                "
+                className="w-full py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold"
               >
                 Send via WhatsApp
               </motion.button>

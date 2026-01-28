@@ -331,7 +331,7 @@ const Footer = () => {
                 <p className="text-xs text-gray-400 mb-2 font-medium">Explore</p>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <Link to="/friends" className="text-gray-300 hover:text-white transition">Friends</Link>
-                  <Link to="/programs" className="text-gray-300 hover:text-white transition">Programs</Link>
+                  <Link to="/brand-hub" className="text-gray-300 hover:text-white transition">BrandHub</Link>
                   <Link to="/mbaise" className="text-gray-300 hover:text-white transition">Mbaise</Link>
                   <Link to="/projects" className="text-gray-300 hover:text-white transition">Projects</Link>
                 </div>

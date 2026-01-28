@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaPlus, FaMinus, FaTimes, FaWhatsapp } from "react-icons/fa";
 import { createPortal } from "react-dom";
 import Logo from "@/assets/images/friends-logo.webp";
-import ChipsImage from "@/assets/images/food/salad.webp";
+import CookingVideo from "@/assets/videos/despatch.webm";
 
-// 1) Short descriptions (≤ 4 words, single line)
+/* ---------------- MENU ---------------- */
+
 const FOOD_MENU = [
   { id: 1, name: "Ofe Onugbu", price: 2500, desc: "Bitterleaf soup assorted" },
   { id: 2, name: "Abacha & Ugba", price: 1800, desc: "Spicy African salad" },
@@ -34,17 +35,16 @@ const DEFAULT_CUSTOMER_INFO = {
   note: "",
 };
 
+/* ---------------- COMPONENT ---------------- */
+
 export const FoodOrderModal = ({ isOpen, close }) => {
   const [mounted, setMounted] = useState(false);
   const [cart, setCart] = useState([]);
   const [customerInfo, setCustomerInfo] = useState(DEFAULT_CUSTOMER_INFO);
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
-  // Reset when closed
   useEffect(() => {
     if (!isOpen) {
       setCart([]);
@@ -52,6 +52,8 @@ export const FoodOrderModal = ({ isOpen, close }) => {
       setErrors({});
     }
   }, [isOpen]);
+
+  /* ---------------- CART LOGIC ---------------- */
 
   const addToCart = useCallback((item) => {
     setCart((current) => {
@@ -79,22 +81,27 @@ export const FoodOrderModal = ({ isOpen, close }) => {
     () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [cart]
   );
+
   const totalWithDelivery = subtotal + DELIVERY_FEE;
 
-  const validateForm = useCallback(() => {
-    const newErrors = {};
-    if (!customerInfo.name.trim()) newErrors.name = "Full name is required";
-    if (!customerInfo.phone.trim()) newErrors.phone = "Phone number is required";
-    if (!customerInfo.address.trim()) newErrors.address = "Delivery address is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [customerInfo]);
+  /* ---------------- VALIDATION ---------------- */
 
-  const generateWhatsAppMessage = useCallback(() => {
+  const validateForm = () => {
+    const e = {};
+    if (!customerInfo.name.trim()) e.name = "Full name is required";
+    if (!customerInfo.phone.trim()) e.phone = "Phone number is required";
+    if (!customerInfo.address.trim()) e.address = "Delivery address is required";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const generateWhatsAppMessage = () => {
     const orderItems = cart
       .map(
         (item) =>
-          `${item.name} (x${item.quantity}) - ₦${(item.price * item.quantity).toLocaleString()}`
+          `${item.name} (x${item.quantity}) - ₦${(
+            item.price * item.quantity
+          ).toLocaleString()}`
       )
       .join("\n");
 
@@ -120,365 +127,201 @@ Account: ${BANK_DETAILS.accountName}
 Number: ${BANK_DETAILS.accountNumber}
 Bank: ${BANK_DETAILS.bankName}
 
-📱 Send proof of payment here to confirm!`
+📱 Send proof of payment here to confirm!
+📞 ENQUIRIES & SUPPORT
+Phone: +234 706 606 4379
+
+Thank you for choosing Friends' Lounge Mbaise.`
     );
-  }, [cart, customerInfo, subtotal, totalWithDelivery]);
+  };
 
-  const handleWhatsAppPayment = useCallback(() => {
+  const handleWhatsAppPayment = () => {
     if (!validateForm()) return;
-    const message = generateWhatsAppMessage();
-    const url = `https://wa.me/${WHATSAPP_MSISDN}?text=${message}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(
+      `https://wa.me/${WHATSAPP_MSISDN}?text=${generateWhatsAppMessage()}`,
+      "_blank"
+    );
     close();
-  }, [generateWhatsAppMessage, close, validateForm]);
-
-  const handleKeyDown = useCallback(
-    (e) => {
-      if (e.key === "Escape") {
-        e.stopPropagation();
-        close();
-      }
-    },
-    [close]
-  );
+  };
 
   if (!mounted || !isOpen) return null;
 
+  /* ---------------- RENDER ---------------- */
+
   return createPortal(
     <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            className="fixed inset-0 z-[9998] bg-black/70 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={close}
-            aria-hidden="true"
+      <motion.div
+        className="fixed inset-0 z-[9998] bg-black/70 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={close}
+      />
+
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
+        <motion.div
+          className="
+            relative w-full max-w-md max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl
+            /* MULTI-COLORED BORDERS */
+            border-t-4 border-b-4 border-yellow-400
+            border-l-4 border-r-4 border-red-600
+          "
+          initial={{ scale: 0.95, y: 30, opacity: 0 }}
+          animate={{ scale: 1, y: 0, opacity: 1 }}
+          exit={{ scale: 0.95, y: 30, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* VIDEO */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            src={CookingVideo}
+            className="absolute inset-0 w-full h-full object-cover z-0"
           />
 
-          {/* Centering wrapper – ensures modal is always in the middle of the visible screen */}
-          <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center px-4"
-            onKeyDown={handleKeyDown}
-          >
-            <motion.div
-              className="
-                w-full max-w-md max-h-[90vh] overflow-hidden
-                rounded-2xl shadow-2xl border-1 border-white
-                bg-gradient-to-br from-black/90 via-black/80 to-gray-900/90
-                backdrop-blur-xl relative
-                mt-6
-              "
-              style={{
-                backgroundImage: `linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.7)), url(${ChipsImage})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
+          {/* CONTRAST LAYER */}
+          <div className="absolute inset-0 bg-black/55 z-[1]" />
+
+          {/* HEADER */}
+          <div className="relative z-10 px-6 pt-6 pb-4">
+            <motion.img
+              src={Logo}
+              className="w-16 h-16 mb-3 rounded-full"
+              animate={{ rotate: [0, 360] }}
+              transition={{
+                duration: 22,
+                repeat: Infinity,
+                ease: "linear",
               }}
-              initial={{ scale: 0.95, y: 30, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.95, y: 30, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="food-order-title"
-              onClick={(e) => e.stopPropagation()}
+            />
+
+            <button
+              onClick={close}
+              className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/70 border border-white/40 text-white flex items-center justify-center"
             >
-              {/* Header */}
-              <div className="relative z-10 pt-6 px-6 pb-4">
-                {/* Logo */}
-                <motion.img
-                  src={Logo}
-                  alt="Friends Lounge"
-                  className="w-16 h-16 rounded-full mb-4"
-                  animate={{ rotate: [0, 360] }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              <FaTimes />
+            </button>
+
+            <h1 className="text-xl font-bold text-white">Order Food</h1>
+            <p className="text-yellow-300 text-sm">
+              Mbaise-wide delivery • ₦{DELIVERY_FEE.toLocaleString()} delivery fee
+            </p>
+          </div>
+
+          {/* CONTENT */}
+          <div className="relative z-10 max-h-[calc(90vh-140px)] overflow-y-auto px-6 pb-7 space-y-6">
+            {FOOD_MENU.map((item) => {
+              const cartItem = cart.find((c) => c.id === item.id);
+              const quantity = cartItem?.quantity || 0;
+
+              return (
+                <div
+                  key={item.id}
+                  className="bg-black/45 border border-white/20 rounded-xl p-4 flex justify-between items-center"
+                >
+                  <div className="text-left">
+                    <p className="text-white font-semibold text-sm">{item.name}</p>
+                    <p className="text-gray-300 text-xs">{item.desc}</p>
+                    <p className="text-yellow-400 font-bold text-sm">
+                      ₦{item.price.toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => updateQuantity(item.id, -1)}
+                      disabled={quantity === 0}
+                      className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white disabled:opacity-30"
+                    >
+                      <FaMinus size={12} />
+                    </button>
+
+                    <span className="w-6 text-center text-white font-bold">
+                      {quantity}
+                    </span>
+
+                    <button
+                      onClick={() => addToCart(item)}
+                      className="w-9 h-9 rounded-full bg-yellow-400 flex items-center justify-center text-black"
+                    >
+                      <FaPlus size={12} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+
+            {cart.length > 0 && (
+              <div className="space-y-4 pt-6 border-t border-white/20 text-left">
+                <h2 className="text-white font-semibold">Delivery details</h2>
+
+                <input
+                  placeholder="Full Name *"
+                  className="input"
+                  value={customerInfo.name}
+                  onChange={(e) =>
+                    setCustomerInfo({ ...customerInfo, name: e.target.value })
+                  }
+                />
+                <input
+                  placeholder="Phone Number *"
+                  className="input"
+                  value={customerInfo.phone}
+                  onChange={(e) =>
+                    setCustomerInfo({ ...customerInfo, phone: e.target.value })
+                  }
+                />
+                <textarea
+                  placeholder="Delivery Address *"
+                  rows={3}
+                  className="input"
+                  value={customerInfo.address}
+                  onChange={(e) =>
+                    setCustomerInfo({ ...customerInfo, address: e.target.value })
+                  }
                 />
 
-                {/* Close button – now working because prop name matches */}
+                <div className="bg-black/40 rounded-xl p-4 text-sm text-white border border-white/10">
+                  <div className="flex justify-between">
+                    <span>Total (inc. Delivery)</span>
+                    <span className="text-yellow-400 font-bold">
+                      ₦{totalWithDelivery.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
                 <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    close();
-                  }}
-                  aria-label="Close food order modal"
-                  className="
-                    absolute top-4 right-4 z-30
-                    w-10 h-10 rounded-full
-                    bg-black/70 hover:bg-red-600/80 border border-white/40
-                    flex items-center justify-center text-white text-base
-                    transition-all focus:outline-none focus:ring-2 focus:ring-red-400
-                    cursor-pointer
-                  "
+                  onClick={handleWhatsAppPayment}
+                  className="w-full py-3 rounded-xl bg-green-600 hover:bg-green-500 text-white flex items-center justify-center gap-2 font-semibold transition-colors"
                 >
-                  <FaTimes />
+                  <FaWhatsapp /> Proceed on WhatsApp
                 </button>
-
-                <div>
-                  <h1
-                    id="food-order-title"
-                    className="text-xl font-bold text-white mb-1"
-                  >
-                    Order Food
-                  </h1>
-                  <p className="text-yellow-100 text-sm font-medium">
-                    Mbaise-wide delivery • ₦{DELIVERY_FEE.toLocaleString()} delivery fee
-                  </p>
-                </div>
               </div>
-
-              {/* Scrollable Content */}
-              <div className="relative z-10 max-h-[calc(90vh-140px)] overflow-y-auto px-6 pb-7 space-y-6">
-                {/* Guidance text */}
-                <p className="text-center text-sm text-gray-300 italic">
-                  Select your quantities → delivery form appears below
-                </p>
-
-                {/* Menu */}
-                <div className="space-y-4">
-                  <h2 className="text-lg font-semibold text-white/90">Select items</h2>
-                  {FOOD_MENU.map((item) => {
-                    const cartItem = cart.find((c) => c.id === item.id);
-                    const quantity = cartItem?.quantity || 0;
-
-                    return (
-                      <motion.div
-                        key={item.id}
-                        className="
-                          group bg-white/5 hover:bg-white/10 border border-white/20
-                          rounded-2xl p-4 flex items-center gap-4
-                          transition-all hover:shadow-lg
-                        "
-                        whileHover={{ scale: 1.01 }}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-white font-semibold text-sm mb-1 truncate">
-                            {item.name}
-                          </h3>
-                          <p className="text-gray-300 text-xs truncate">
-                            {item.desc}
-                          </p>
-                          <p className="text-yellow-400 font-bold text-sm mt-1">
-                            ₦{item.price.toLocaleString()}
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          <button
-                            type="button"
-                            className="
-                              w-9 h-9 rounded-full bg-white/15 hover:bg-white/25
-                              flex items-center justify-center text-white text-xs
-                              disabled:opacity-30 disabled:cursor-not-allowed
-                              transition-all focus:outline-none focus:ring-2 focus:ring-yellow-300
-                            "
-                            onClick={() => updateQuantity(item.id, -1)}
-                            disabled={quantity === 0}
-                          >
-                            <FaMinus />
-                          </button>
-
-                          <div className="w-6 text-center">
-                            <span className="text-base font-bold text-white">
-                              {quantity}
-                            </span>
-                          </div>
-
-                          <button
-                            type="button"
-                            className="
-                              w-9 h-9 rounded-full bg-yellow-400 hover:bg-yellow-500
-                              flex items-center justify-center text-black text-xs font-bold
-                              transition-all active:scale-95
-                              focus:outline-none focus:ring-2 focus:ring-yellow-300
-                            "
-                            onClick={() => addToCart(item)}
-                          >
-                            <FaPlus />
-                          </button>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-
-                {/* Customer Details */}
-                {cart.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-4 pt-5 border-t border-white/20"
-                  >
-                    <h2 className="text-lg font-semibold text-white/90">
-                      Delivery details
-                    </h2>
-
-                    {/* Name */}
-                    <div>
-                      <input
-                        placeholder="Full Name *"
-                        value={customerInfo.name}
-                        onChange={(e) =>
-                          setCustomerInfo((prev) => ({
-                            ...prev,
-                            name: e.target.value,
-                          }))
-                        }
-                        className={`
-                          w-full px-4 py-3 rounded-xl text-sm
-                          bg-white/10 border text-white placeholder:text-gray-300
-                          focus:outline-none focus:ring-2 focus:ring-yellow-400/50
-                          ${
-                            errors.name
-                              ? "border-red-400"
-                              : "border-white/30"
-                          }
-                        `}
-                      />
-                      {errors.name && (
-                        <p className="text-xs text-red-400 mt-1">{errors.name}</p>
-                      )}
-                    </div>
-
-                    {/* Phone */}
-                    <div>
-                      <input
-                        placeholder="Phone Number *"
-                        value={customerInfo.phone}
-                        onChange={(e) =>
-                          setCustomerInfo((prev) => ({
-                            ...prev,
-                            phone: e.target.value,
-                          }))
-                        }
-                        className={`
-                          w-full px-4 py-3 rounded-xl text-sm
-                          bg-white/10 border text-white placeholder:text-gray-300
-                          focus:outline-none focus:ring-2 focus:ring-yellow-400/50
-                          ${
-                            errors.phone
-                              ? "border-red-400"
-                              : "border-white/30"
-                          }
-                        `}
-                      />
-                      {errors.phone && (
-                        <p className="text-xs text-red-400 mt-1">
-                          {errors.phone}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Address */}
-                    <div>
-                      <textarea
-                        placeholder="Full Delivery Address *"
-                        value={customerInfo.address}
-                        onChange={(e) =>
-                          setCustomerInfo((prev) => ({
-                            ...prev,
-                            address: e.target.value,
-                          }))
-                        }
-                        rows={3}
-                        className={`
-                          w-full px-4 py-3 rounded-xl text-sm resize-none
-                          bg-white/10 border text-white placeholder:text-gray-300
-                          focus:outline-none focus:ring-2 focus:ring-yellow-400/50
-                          ${
-                            errors.address
-                              ? "border-red-400"
-                              : "border-white/30"
-                          }
-                        `}
-                      />
-                      {errors.address && (
-                        <p className="text-xs text-red-400 mt-1">
-                          {errors.address}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Notes */}
-                    <div>
-                      <textarea
-                        placeholder="Extra notes (time, landmark, etc.)"
-                        value={customerInfo.note}
-                        onChange={(e) =>
-                          setCustomerInfo((prev) => ({
-                            ...prev,
-                            note: e.target.value,
-                          }))
-                        }
-                        rows={2}
-                        className="
-                          w-full px-4 py-3 rounded-xl text-sm resize-none
-                          bg-white/10 border border-white/30 text-white placeholder:text-gray-300
-                          focus:outline-none focus:ring-2 focus:ring-yellow-400/50
-                        "
-                      />
-                    </div>
-
-                    {/* Summary */}
-                    <div className="bg-white/5 rounded-xl p-4 space-y-2 border border-white/20">
-                      <h3 className="text-white font-semibold text-sm">
-                        Order summary
-                      </h3>
-
-                      {cart.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex justify-between text-xs text-gray-200"
-                        >
-                          <span>
-                            {item.name} × {item.quantity}
-                          </span>
-                          <span className="font-semibold text-white">
-                            ₦{(item.price * item.quantity).toLocaleString()}
-                          </span>
-                        </div>
-                      ))}
-
-                      <div className="border-t border-white/20 pt-2 space-y-1 text-xs">
-                        <div className="flex justify-between text-gray-300">
-                          <span>Delivery</span>
-                          <span>₦{DELIVERY_FEE.toLocaleString()}</span>
-                        </div>
-                        <div className="flex justify-between text-white font-bold text-sm">
-                          <span>Total</span>
-                          <span className="text-yellow-400 text-base">
-                            ₦{totalWithDelivery.toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* WhatsApp CTA */}
-                    <motion.button
-                      type="button"
-                      className="
-                        w-full py-3 rounded-xl
-                        bg-gradient-to-r from-emerald-500 to-green-600
-                        text-white font-semibold text-sm flex items-center justify-center gap-2
-                        shadow-lg hover:shadow-emerald-500/30 hover:scale-[1.01]
-                        active:scale-[0.98] transition-all
-                        focus:outline-none focus:ring-2 focus:ring-emerald-400/60
-                      "
-                      onClick={handleWhatsAppPayment}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <FaWhatsapp className="text-base" />
-                      Proceed on WhatsApp (₦{totalWithDelivery.toLocaleString()})
-                    </motion.button>
-                  </motion.div>
-                )}
-              </div>
-            </motion.div>
+            )}
           </div>
-        </>
-      )}
+        </motion.div>
+      </div>
+
+      <style>{`
+        .input {
+          width: 100%;
+          padding: 12px;
+          border-radius: 12px;
+          background: rgba(255,255,255,.12);
+          border: 1px solid rgba(255,255,255,.25);
+          color: white;
+          outline: none;
+        }
+        .input:focus {
+          border-color: rgba(250, 204, 21, 0.5);
+        }
+        .input::placeholder {
+          color: rgba(255,255,255,.6);
+        }
+      `}</style>
     </AnimatePresence>,
     document.body
   );

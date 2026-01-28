@@ -153,14 +153,14 @@ export default function Projects() {
               repeat: Infinity,
               repeatDelay: 4
             }}
-            className="md:text-2xl text-white tracking-widest flex items-center gap-3"
+            className="md:text-lg text-white tracking-widest flex items-center gap-3"
           >
             <HandCoins className="text-green-500" />
             UDO TRANSPARENCY ARCHIVE
           </motion.h1>
 
           <p className="mt-12 text-gray-400 max-w-2xl mx-auto">
-            Honoring contributors • Tracking ongoing projects • Preserving history
+            Honoring Udo Philantropists • Tracking Ongoing Projects • Preserving History
           </p>
         </div>
 
