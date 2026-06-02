@@ -20,7 +20,7 @@ const Hero = () => {
       type: "video",
       src: fullHouse,
       text: "Friends' Lounge in Session",
-      poster: staff, // fallback image while loading
+      poster: staff,
     },
     {
       type: "image",
@@ -69,12 +69,11 @@ const Hero = () => {
 
     const interval = setInterval(() => {
       changeSlide("next");
-    }, 8000); // Balanced timing
+    }, 8000);
 
     return () => clearInterval(interval);
   }, [isPaused]);
 
-  // Preload next video if applicable
   useEffect(() => {
     const nextIndex = (currentIndex + 1) % slides.length;
     const nextSlide = slides[nextIndex];
@@ -99,13 +98,12 @@ const Hero = () => {
 
   return (
     <section
-      className="relative w-full overflow-hidden z-10"  // ← ADDED z-10 so Hero sits below modals
+      className="relative w-full overflow-hidden z-0 isolate"
       style={{ height: `calc(${vh * 100}px)` }}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={() => setIsPaused(true)}
     >
-      {/* MEDIA CONTAINER */}
       <div
         className="absolute inset-0 will-change-transform"
         style={{ willChange: "opacity, transform" }}
@@ -133,11 +131,9 @@ const Hero = () => {
           />
         )}
 
-        {/* Cinematic scrim */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />
       </div>
 
-      {/* CAPTION - Moved to TOP */}
       <div className="absolute inset-x-0 top-8 md:top-12 z-10 flex justify-center pointer-events-none">
         <p
           className={`text-base md:text-2xl lg:text-3xl font-semibold text-white tracking-wider text-center px-6
@@ -153,7 +149,6 @@ const Hero = () => {
         </p>
       </div>
 
-      {/* CONTROLS */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-12 md:gap-16 z-20">
         <button
           onClick={() => changeSlide("prev")}
@@ -172,7 +167,6 @@ const Hero = () => {
         </button>
       </div>
 
-      {/* MUTE BUTTON */}
       <button
         onClick={toggleMute}
         className="absolute bottom-6 right-6 text-white p-4 bg-black/50 backdrop-blur-md rounded-full hover:bg-black/70 transition z-20"

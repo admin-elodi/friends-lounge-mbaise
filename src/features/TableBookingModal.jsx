@@ -33,14 +33,15 @@ const eventTables = [
     name: "Mbaise Heritage Table",
     caption: "Event & Hangout Table • For 4 persons",
     icon: <FaLeaf />,
-    price: 43000,
+    // Total sum: 5075+4100+8000+6000+12200+8200+5000+3000 = 51,575
+    price: 51575,
     menu: [
-      { item: "Oha Soup", qty: 1, price: 4000 },
-      { item: "Bitterleaf Soup", qty: 1, price: 4000 },
-      { item: "Pounded Yam", qty: 2, price: 4000 },
-      { item: "Fufu", qty: 2, price: 3000 },
-      { item: "Goat Meat", qty: 2, price: 12000 },
-      { item: "Cow Leg", qty: 1, price: 8000 },
+      { item: "Afang Soup", qty: 1, price: 5075 },
+      { item: "Egusi Soup", qty: 1, price: 4100 },
+      { item: "Pounded Yam", qty: 2, price: 8000 },
+      { item: "Fufu", qty: 2, price: 6000 },
+      { item: "Goat Meat", qty: 2, price: 12200 },
+      { item: "Nkwobi (Cowfoot)", qty: 1, price: 8200 },
       { item: "Beverage Bundle", qty: 1, price: 5000 },
       { item: "Bottled Water", qty: 4, price: 3000 },
     ],
@@ -50,12 +51,13 @@ const eventTables = [
     name: "Birthday Table",
     caption: "Event & Hangout Table • For 4 persons",
     icon: <FaBirthdayCake />,
-    price: 46000,
+    // Total sum: 6100+6100+10300+10150+5000+3000 = 40,650
+    price: 40650,
     menu: [
-      { item: "Jollof Rice", qty: 2, price: 8000 },
-      { item: "Fried Rice", qty: 2, price: 8000 },
-      { item: "Peppered Chicken", qty: 2, price: 12000 },
-      { item: "Suya Stick", qty: 2, price: 10000 },
+      { item: "Jollof Rice", qty: 2, price: 6100 },
+      { item: "Fried Rice", qty: 2, price: 6100 },
+      { item: "Chicken & Chips", qty: 1, price: 10300 },
+      { item: "Suya Sticks", qty: 2, price: 10150 },
       { item: "Beverage Bundle", qty: 1, price: 5000 },
       { item: "Bottled Water", qty: 4, price: 3000 },
     ],
@@ -65,14 +67,15 @@ const eventTables = [
     name: "Igba Nkwu Special",
     caption: "Event & Hangout Table • For 4 persons",
     icon: <FaRing />,
-    price: 44500,
+    // Total sum: 4100+5075+8000+8000+12200+6000+5000+3000 = 51,375
+    price: 51375,
     menu: [
-      { item: "Egusi Soup", qty: 1, price: 4500 },
-      { item: "Vegetable Soup", qty: 1, price: 6000 },
-      { item: "Pounded Yam", qty: 2, price: 4000 },
-      { item: "Semo", qty: 2, price: 4000 },
-      { item: "Turkey", qty: 2, price: 12000 },
-      { item: "Dry Fish", qty: 1, price: 6000 },
+      { item: "Egusi Soup", qty: 1, price: 4100 },
+      { item: "Edikaikong Soup", qty: 1, price: 5075 },
+      { item: "Pounded Yam", qty: 2, price: 8000 },
+      { item: "Semo", qty: 2, price: 8000 },
+      { item: "Peppered Turkey", qty: 2, price: 12200 },
+      { item: "Dry Fish Portions", qty: 1, price: 6000 },
       { item: "Beverage Bundle", qty: 1, price: 5000 },
       { item: "Bottled Water", qty: 4, price: 3000 },
     ],
@@ -102,7 +105,8 @@ export const TableBookingModal = ({ isOpen, onClose }) => {
     setTime("");
   };
 
-  const openWhatsApp = () => {
+  const openWhatsApp = (e) => {
+    e.preventDefault();
     if (!customerName || !date || !time) {
       alert("Please complete all fields");
       return;
@@ -112,8 +116,7 @@ export const TableBookingModal = ({ isOpen, onClose }) => {
       .map((m) => `• ${m.item} (${m.qty})`)
       .join("\n");
 
-    const msg = encodeURIComponent(
-      `TABLE BOOKING – FRIENDS LOUNGE
+    const msg = `TABLE BOOKING – FRIENDS LOUNGE
 
 Customer Name:
 ${customerName}
@@ -142,15 +145,12 @@ Account Name: ${BANK.name}
 Account Number: ${BANK.account}
 
 ➡ Send payment proof here to confirm booking
-📞 ENQUIRIES & SUPPORT
-Phone: +234 706 606 4379
+📞 ENQUIRIES & SUPPORT: +234 706 606 4379
 
-Thank you for choosing Friends’ Lounge Mbaise.
-We look forward to serving your table`
-    );
+Thank you for choosing Friends’ Lounge Mbaise.`;
 
     window.open(
-      `https://wa.me/${enquiryPhoneNumber.replace(/\D/g, "")}?text=${msg}`,
+      `https://wa.me/${enquiryPhoneNumber.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`,
       "_blank"
     );
 
@@ -159,7 +159,6 @@ We look forward to serving your table`
 
   return createPortal(
     <>
-      {/* BACKDROP */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -167,10 +166,10 @@ We look forward to serving your table`
         onClick={handleClose}
       />
 
-      {/* MODAL */}
       <motion.div
         initial={{ y: 30, scale: 0.95, opacity: 0 }}
         animate={{ y: 0, scale: 1, opacity: 1 }}
+        exit={{ y: 30, scale: 0.95, opacity: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 26 }}
         className="
           fixed z-[9999]
@@ -179,11 +178,8 @@ We look forward to serving your table`
           sm:left-1/2 sm:-translate-x-1/2
           w-auto sm:w-full sm:max-w-[480px]
           bg-black/60 backdrop-blur-2xl
-          
-          /* MULTI-COLORED BORDERS */
           border-t-4 border-b-4 border-green-400
           border-l-4 border-r-4 border-red-500
-          
           rounded-xl shadow-2xl
           max-h-[82vh] flex flex-col overflow-hidden
         "
@@ -196,7 +192,6 @@ We look forward to serving your table`
       >
         <div className="absolute inset-0 bg-black/70" />
 
-        {/* HEADER */}
         <div className="relative h-24 z-10">
           <motion.img
             src={Logo}
@@ -206,7 +201,6 @@ We look forward to serving your table`
           />
         </div>
 
-        {/* CLOSE */}
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white z-20"
@@ -214,7 +208,6 @@ We look forward to serving your table`
           <FaTimes size={14} />
         </button>
 
-        {/* CONTENT */}
         <div className="relative z-10 flex-1 overflow-y-auto px-5 pb-6 text-left">
           <h3 className="text-xl font-bold text-white mb-1">Premium Tables</h3>
           <p className="text-gray-400 text-sm mb-4">
@@ -232,7 +225,7 @@ We look forward to serving your table`
                     className={`w-full p-4 rounded-xl text-left
                       bg-white/10 border border-white/15
                       flex justify-between items-center
-                      ${open && "border-red-500/40"}
+                      ${open ? "border-green-400/60" : ""}
                     `}
                   >
                     <div className="flex gap-3">
@@ -249,7 +242,7 @@ We look forward to serving your table`
                       <p className="text-green-400 text-sm font-bold">
                         ₦{table.price.toLocaleString()}
                       </p>
-                      {open ? <FaChevronUp className="text-white" /> : <FaChevronDown className="text-white" />}
+                      {open ? <FaChevronUp className="text-white ml-auto" /> : <FaChevronDown className="text-white ml-auto" />}
                     </div>
                   </button>
 
@@ -275,48 +268,50 @@ We look forward to serving your table`
                             className="input"
                           />
 
-                          {/* MOBILE LABEL */}
-                          <label className="sm:hidden text-xs text-gray-300">
-                            Event Date
-                          </label>
-                          <input
-                            type="date"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                            className="input"
-                          />
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="space-y-1">
+                                <label className="text-[10px] text-gray-400 uppercase ml-1">Date</label>
+                                <input
+                                    type="date"
+                                    value={date}
+                                    onChange={(e) => setDate(e.target.value)}
+                                    className="input"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] text-gray-400 uppercase ml-1">Time</label>
+                                <input
+                                    type="time"
+                                    value={time}
+                                    onChange={(e) => setTime(e.target.value)}
+                                    className="input"
+                                />
+                            </div>
+                          </div>
 
-                          {/* MOBILE LABEL */}
-                          <label className="sm:hidden text-xs text-gray-300">
-                            Event Time
-                          </label>
-                          <input
-                            type="time"
-                            value={time}
-                            onChange={(e) => setTime(e.target.value)}
-                            className="input"
-                          />
+                          <div className="space-y-1">
+                            <label className="text-[10px] text-gray-400 uppercase ml-1">Number of Tables</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={units}
+                                onChange={(e) => setUnits(Number(e.target.value))}
+                                className="input"
+                            />
+                          </div>
 
-                          <input
-                            type="number"
-                            min="1"
-                            value={units}
-                            onChange={(e) => setUnits(Number(e.target.value))}
-                            className="input"
-                          />
-
-                          <div className="flex justify-between text-sm text-gray-300">
-                            <span>Total</span>
-                            <span className="text-green-400 font-bold">
+                          <div className="flex justify-between items-center py-2 border-t border-white/10">
+                            <span className="text-sm text-gray-300">Total Payable</span>
+                            <span className="text-green-400 font-bold text-lg">
                               ₦{total?.toLocaleString()}
                             </span>
                           </div>
 
                           <button
                             onClick={openWhatsApp}
-                            className="w-full py-3 bg-green-600 hover:bg-green-500 rounded-xl text-white flex items-center justify-center gap-2 transition-colors"
+                            className="w-full py-3 bg-green-600 hover:bg-green-500 rounded-xl text-white font-bold flex items-center justify-center gap-2 transition-colors"
                           >
-                            <FaWhatsapp /> Confirm via WhatsApp
+                            <FaWhatsapp size={18} /> Confirm via WhatsApp
                           </button>
                         </div>
                       </motion.div>
@@ -332,15 +327,15 @@ We look forward to serving your table`
           .input{
             width:100%;
             padding:12px;
-            border-radius:12px;
-            background:rgba(255,255,255,.1);
+            border-radius:10px;
+            background:rgba(255,255,255,.08);
             border:1px solid rgba(255,255,255,.15);
             color:white;
             font-size:14px;
             outline: none;
           }
           .input:focus {
-            border-color: rgba(74, 222, 128, 0.5);
+            border-color: #4ade80;
           }
         `}</style>
       </motion.div>

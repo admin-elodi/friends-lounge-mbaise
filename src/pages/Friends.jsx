@@ -173,8 +173,8 @@ export default function Friends() {
                   <p className="text-lg md:text-xl text-justify font-light leading-relaxed">
                     The story did not begin with a lounge; it began with a road. 
                     <strong> Chief Sir Barrister Santome Ibeneche (Zereuwa)</strong> single-handedly began construction of a landmark road project leading to 
-                    a previously unexplored parts of Udo Autonomous Community. The transformative impact of this road that became 
-                    <span className="text-red-600 font-bold">Donameche Crescent</span> is only getting started. Several residential 
+                    previously unexplored parts of Udo Autonomous Community. The transformative impact of this road that became 
+                    <span className="text-red-600 font-bold"> Donameche Crescent</span> is only getting started. Several residential 
                     buildings have already sprung up along Donameche Crescent with Friends’ Lounge Mbaise becoming the "Social Soil"— 
                     that sparked the whole process. Having already inspired these projects, a shift is now happening towards 
                     business operations including JungleX which seeks to be one of the first tech establishments to have its headquarters

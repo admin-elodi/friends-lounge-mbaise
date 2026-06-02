@@ -364,13 +364,13 @@ const Footer = () => {
             transition={{ delay: 1 }}
             className="mt-16 pt-8 border-t border-white/5 text-center"
           >
-            <p className="text-[10px] text-gray-500 tracking-widest font-light">
+            <p className="text-[10px] text-white tracking-widest font-light">
               Website crafted by
             </p>
-            <p className="text-[8px] text-gray-400 mt-1 font-medium tracking-wider">
-              ELODI NIGERIA ENTERPRISES
+            <p className="text-[8px] text-yellow-100 mt-1 font-medium tracking-wider">
+              JUNGLEX
             </p>
-            <a href="tel:+2348136573235" className="text-[10px] text-gray-500 hover:text-gray-300 transition-colors">
+            <a href="tel:+2348136573235" className="text-[10px] text-gray-100 hover:text-gray-300 transition-colors">
               08136573235
             </a>
           </motion.div>

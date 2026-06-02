@@ -15,6 +15,8 @@ import poolVideo from "@/assets/videos/pool.mp4";
 import barImage from "@/assets/images/bar.webp";
 import musicVideo from "@/assets/videos/music.webm";
 import friendsBarVideo from "@/assets/videos/friends-bar.webm";
+import securityImage from "@/assets/images/security.jpeg";
+import yamImage from "@/assets/images/yam.jpg";
 
 export default function Facilities() {
   const facilities = [
@@ -52,13 +54,16 @@ export default function Facilities() {
     },
     {
       title: "24/7 Elite Security",
-      type: "placeholder",
+      media: securityImage,
+      type: "image",
       icon: <ShieldCheck className="text-emerald-400" />,
       desc: "Your peace of mind is our priority. Discreet, professional security ensures a safe environment around the clock.",
       span: "md:col-span-1",
     },
     {
       title: "Mbaise Cultural Tours",
+      media: yamImage,
+      type: "image",
       link: "https://www.tripadvisor.com/Tourism-g304057-Nigeria-Vacations.html",
       icon: <MapPin className="text-red-400" />,
       desc: "Journey through the heart of Igboland. Explore ancient heritage sites and the rich traditions of Mbaise.",
@@ -101,8 +106,8 @@ export default function Facilities() {
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-white">
             Facilities & Services
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light leading-relaxed">
-            Mbaise Hospitality Meets Modern Luxury
+          <p className="text-gray-400 text-[12px] md:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+            Enjoy Premium Mbaise Hospitality
           </p>
         </motion.section>
 

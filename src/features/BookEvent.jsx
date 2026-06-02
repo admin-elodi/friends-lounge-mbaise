@@ -1,3 +1,4 @@
+// src/features/events/BookEvent.jsx
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
@@ -19,9 +20,14 @@ const eventTypes = [
   "Other",
 ];
 
-/* ---------------- PRICING ---------------- */
+/* ---------------- PRICING & SPACES ---------------- */
 
-const EVENT_SPACE_PRICE = 0; // ₦ — change anytime
+const SPACE_OPTIONS = [
+  { name: "Full facility for event", price: 2005000 },
+  { name: "Roof Top", price: 307500 },
+  { name: "Birthday space (Outside bar)", price: 20500 },
+  { name: "Picture space", price: 10200 },
+];
 
 /* ---------------- LIVE ANALOG CLOCK ---------------- */
 
@@ -73,6 +79,7 @@ export default function BookEvent({ isOpen, onClose }) {
     name: "",
     phone: "",
     email: "",
+    selectedSpace: "", // Added to track selection
     eventType: "",
     guests: "",
     date: "",
@@ -83,12 +90,17 @@ export default function BookEvent({ isOpen, onClose }) {
   const handleChange = (e) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
+  // Get price for the selected space
+  const selectedSpaceData = SPACE_OPTIONS.find(s => s.name === form.selectedSpace);
+  const currentPrice = selectedSpaceData ? selectedSpaceData.price : 0;
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (
       !form.name ||
       !form.phone ||
+      !form.selectedSpace ||
       !form.eventType ||
       !form.guests ||
       !form.date ||
@@ -106,13 +118,14 @@ Phone: ${form.phone}
 Email: ${form.email || "—"}
 
 EVENT DETAILS
+Event Space: ${form.selectedSpace}
 Event Type: ${form.eventType}
 Guests: ${form.guests}
 Date: ${form.date}
 Time: ${form.time}
 
 EVENT SPACE FEE
-₦${EVENT_SPACE_PRICE.toLocaleString()}
+₦${currentPrice.toLocaleString()}
 
 ADDITIONAL NOTES
 ${form.message || "—"}
@@ -188,9 +201,7 @@ Account Number: 3001586851
                 <h2 className="text-xl font-bold text-white">
                   Book Your Event
                 </h2>
-                <p className="text-gray-300 text-sm">
-                  Event space fee: ₦{EVENT_SPACE_PRICE.toLocaleString()}
-                </p>
+          
               </div>
             </div>
 
@@ -214,6 +225,14 @@ Account Number: 3001586851
                 <input name="email" placeholder="Email (optional)" value={form.email} onChange={handleChange} className="input" />
               </div>
 
+              {/* SPACE SELECTION INTEGRATED */}
+              <select required name="selectedSpace" value={form.selectedSpace} onChange={handleChange} className="input bg-black text-white">
+                <option value="">Select Event Space</option>
+                {SPACE_OPTIONS.map((s) => (
+                  <option key={s.name} value={s.name}>{s.name} (₦{s.price.toLocaleString()})</option>
+                ))}
+              </select>
+
               <select required name="eventType" value={form.eventType} onChange={handleChange} className="input bg-black text-white">
                 <option value="">Event Type</option>
                 {eventTypes.map((t) => (
@@ -227,7 +246,7 @@ Account Number: 3001586851
               <label className="sm:hidden text-xs text-gray-300">Event Time</label>
               <input required name="time" type="time" value={form.time} onChange={handleChange} className="input" />
 
-              <input required name="guests" type="number" min="20" placeholder="Guests" value={form.guests} onChange={handleChange} className="input" />
+              <input required name="guests" type="number" placeholder="Number of Guests" value={form.guests} onChange={handleChange} className="input" />
 
               <textarea name="message" rows="3" placeholder="Special requests" value={form.message} onChange={handleChange} className="input resize-none" />
 
