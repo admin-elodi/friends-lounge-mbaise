@@ -14,9 +14,41 @@ export default function Banner() {
     navigate("/programs");
   };
 
-  const currentWeek = 9;
+ 
+// Week 1 ended on Saturday, April 4, 2026 at 6:00 PM
+  const firstSoupKitchenEnd = new Date("2026-04-04T18:00:00");
+
+  // Current date/time
+  const now = new Date();
+
+  const millisecondsPerWeek = 1000 * 60 * 60 * 24 * 7;
+
+  // Number of COMPLETED soup kitchens
+  const completedWeeks =
+    Math.floor((now - firstSoupKitchenEnd) / millisecondsPerWeek) + 1;
+
+  // Impact section
+  const currentWeek = Math.max(completedWeeks, 0);
+
+  // Banner section
   const nextWeek = currentWeek + 1;
-  const nextDate = "Sat • June 6, 2026";
+
+  // Find next Saturday after the current event cycle
+  const nextSaturday = new Date(now);
+
+  const daysUntilSaturday =
+    ((6 - now.getDay() + 7) % 7) ||
+    (now.getHours() >= 18 ? 7 : 0);
+
+  nextSaturday.setDate(now.getDate() + daysUntilSaturday);
+  nextSaturday.setHours(0, 0, 0, 0);
+
+  const nextDate = nextSaturday.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
   const supportMessage = encodeURIComponent(
     `Hello, Please find evidence of my support for Friends Lounge Soup Kitchen as paid to the account details below:\n\nAccount Name: JUST FRIENDS INVESTMENT LTD\nAccount Number: 3001586851\nBank: GUARANTY TRUST BANK`
@@ -33,7 +65,7 @@ export default function Banner() {
         onClick={() => setShowSupport(false)}
       >
         <div
-          className="bg-black/95 border border-white/30 p-6 md:p-8 max-w-md w-full rounded-2xl relative"
+          className="bg-black/95 border border-white/30 p-6 md:p-8 max-w-md w-full rounded-lg relative"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close Button */}
@@ -49,9 +81,10 @@ export default function Banner() {
             alt="Support Soup Kitchen"
             className="w-full rounded-md border border-white/10 mb-6"
           />
+          <h1 className="text-white text-center">To Support This Project...</h1>
 
           <div className="text-center space-y-4">
-            <div className="text-xs text-white/70 space-y-1">
+            <div className="text-sm text-white space-y-1">
               <p className="uppercase tracking-widest text-white/50">Bank Details</p>
               <p>JUST FRIENDS INVESTMENT LTD</p>
               <p>3001586851</p>
@@ -69,7 +102,7 @@ export default function Banner() {
 
             <button
               onClick={() => setShowSupport(false)}
-              className="text-white/60 hover:text-white text-sm transition-colors"
+              className="text-white/60 hover:text-white text-lg font-semibold transition-colors"
             >
               Close
             </button>
@@ -82,7 +115,7 @@ export default function Banner() {
   return (
     <div className="w-full">
       {/* TOP LABEL */}
-      <div className="w-screen -ml-4 md:ml-0 md:w-[700px] text-center py-2 bg-black/80 backdrop-blur-xl border-t border-white/10">
+      <div className="w-screen -ml-4 md:ml-0 md:w-[700px] text-center py-2 bg-black/80 backdrop-blur-xl border-t border-white/60">
         <p className="text-[9px] md:text-[10px] uppercase tracking-[0.30em] text-white/50">
           Community Impact Spotlight
         </p>
@@ -90,7 +123,7 @@ export default function Banner() {
 
       {/* MAIN BANNER */}
       <div
-        className="relative overflow-hidden w-screen -ml-4 md:ml-0 md:w-[700px] h-[180px] md:h-[220px] border border-white/10"
+        className="relative overflow-hidden w-screen -ml-4 md:ml-0 md:w-[700px] h-[180px] md:h-[220px] border-1 border-white/70 rounded-[6px]"
         style={{
           backgroundImage: `url(${soupKitchenFlyer})`,
           backgroundSize: "cover",
@@ -106,7 +139,7 @@ export default function Banner() {
                 ANODALIFE CHILDREN HOME INITIATIVE
               </p>
 
-              <p className="text-[7px] md:text-xs uppercase tracking-widest text-white/70">
+              <p className="text-[9.7px] md:text-xs uppercase tracking-widest text-white/70">
                 in conjunction with{" "}
                 <span className="text-white font-bold">Friends' Lounge</span> presents...
               </p>
@@ -117,8 +150,8 @@ export default function Banner() {
                 </p>
               </div>
 
-              <p className="text-xs md:text-sm text-white/80">
-                {nextDate} - Friends Lounge Rooftop Bar
+              <p className="text-[11px] md:text-sm text-white/80 font-bold">
+                {nextDate} • 2PM–6PM @ Friends Lounge Rooftop Bar
               </p>
 
               <div className="pt-2 flex gap-2 justify-center">
@@ -131,7 +164,7 @@ export default function Banner() {
 
                 <button
                   onClick={() => setShowSupport(true)}
-                  className="px-6 py-2.5 bg-emerald-200 border border-emerald-400 rounded-md text-black font-bold text-xs uppercase tracking-[0.18em] hover:bg-emerald-400 transition-all duration-300"
+                  className="px-6 py-2.5 bg-emerald-200/30 border border-emerald-400 rounded-md text-white font-bold text-xs uppercase tracking-[0.18em] hover:bg-emerald-400 transition-all duration-300"
                 >
                   Support
                 </button>
@@ -147,7 +180,7 @@ export default function Banner() {
                 {currentWeek} SOUP KITCHENS SERVED SO FAR
               </p>
               <p className="text-xs text-yellow-100 capitalize">
-                Feeding about 400 Persons Weekly
+                Feeding about 300 Persons Weekly
               </p>
               <p className="text-xs text-white/60">
                 IN UMUOFOR COMMUNITY - EVERY SATURDAY 2PM-6PM
@@ -172,7 +205,7 @@ export default function Banner() {
                 </button>
                 <button
                   onClick={handlePrograms}
-                  className="px-5 py-2 bg-emerald-200 border border-emerald-200 rounded-md text-xs font-bold uppercase tracking-wider hover:bg-emerald-400 transition-all"
+                  className="px-5 py-2 bg-emerald-200/50 border border-emerald-200 rounded-md text-xs font-bold uppercase tracking-wider hover:bg-emerald-400 transition-all"
                 >
                   Programs
                 </button>
