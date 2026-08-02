@@ -5,15 +5,25 @@ import fullHouse from "@/assets/videos/full-house.webm";
 import chief from "@/assets/images/chiefs.webp";
 import occassion from "@/assets/videos/occassion.webm";
 import staff from "@/assets/images/friends-bar.webp";
+import flmSounds from "@/assets/audio/flm-sounds.mp3";
+
+// How long (ms) volume fades take when muting/unmuting the background track.
+const FADE_DURATION = 800;
 
 const Hero = () => {
-  const [isMuted, setIsMuted] = useState(true);
   const [vh, setVh] = useState(window.innerHeight * 0.01);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isFading, setIsFading] = useState(false);
 
+  // Background audio (flm-sounds.mp3) state — independent from the (always-muted) videos.
+  const [isMusicMuted, setIsMusicMuted] = useState(false);
+  const [hasStartedMusic, setHasStartedMusic] = useState(false);
+
   const videoRef = useRef(null);
+  const audioRef = useRef(null);
+  const hasInteractedRef = useRef(false);
+  const fadeIntervalRef = useRef(null);
 
   const slides = [
     {
@@ -40,9 +50,89 @@ const Hero = () => {
     },
   ];
 
-  const toggleMute = useCallback(() => {
-    setIsMuted((prev) => !prev);
+  // Smoothly ramps the audio element's volume to `target` (0–1) over FADE_DURATION.
+  const fadeAudioTo = useCallback((target, onComplete) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    clearInterval(fadeIntervalRef.current);
+
+    const steps = 20;
+    const stepTime = FADE_DURATION / steps;
+    const startVolume = audio.volume;
+    const delta = target - startVolume;
+    let stepCount = 0;
+
+    fadeIntervalRef.current = setInterval(() => {
+      stepCount += 1;
+      const progress = stepCount / steps;
+      audio.volume = Math.min(1, Math.max(0, startVolume + delta * progress));
+
+      if (stepCount >= steps) {
+        clearInterval(fadeIntervalRef.current);
+        audio.volume = target;
+        onComplete?.();
+      }
+    }, stepTime);
   }, []);
+
+  // Starts the background track the first time the user interacts with the page.
+  useEffect(() => {
+    const startMusic = () => {
+      if (hasInteractedRef.current) return;
+      hasInteractedRef.current = true;
+
+      const audio = audioRef.current;
+      if (audio) {
+        audio.volume = 0;
+        audio
+          .play()
+          .then(() => {
+            setHasStartedMusic(true);
+            fadeAudioTo(1);
+          })
+          .catch(() => {
+            // Autoplay was blocked (rare once a gesture fired) — leave paused,
+            // the mute/unmute button still lets the user start it manually.
+            setHasStartedMusic(false);
+          });
+      }
+
+      removeListeners();
+    };
+
+    const events = ["click", "scroll", "touchstart", "keydown"];
+    events.forEach((evt) =>
+      window.addEventListener(evt, startMusic, { once: true, passive: true })
+    );
+
+    function removeListeners() {
+      events.forEach((evt) => window.removeEventListener(evt, startMusic));
+    }
+
+    return () => {
+      removeListeners();
+      clearInterval(fadeIntervalRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const toggleMusicMute = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isMusicMuted || audio.paused) {
+      setIsMusicMuted(false);
+      if (audio.paused) {
+        audio.volume = 0;
+        audio.play().then(() => setHasStartedMusic(true)).catch(() => {});
+      }
+      fadeAudioTo(1);
+    } else {
+      setIsMusicMuted(true);
+      fadeAudioTo(0);
+    }
+  }, [isMusicMuted, fadeAudioTo]);
 
   useEffect(() => {
     const handleResize = () => setVh(window.innerHeight * 0.01);
@@ -104,6 +194,9 @@ const Hero = () => {
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={() => setIsPaused(true)}
     >
+      {/* Background audio track — plays on first user interaction, controlled only via the button below. */}
+      <audio ref={audioRef} src={flmSounds} loop preload="auto" />
+
       <div
         className="absolute inset-0 will-change-transform"
         style={{ willChange: "opacity, transform" }}
@@ -117,7 +210,7 @@ const Hero = () => {
             src={currentSlide.src}
             autoPlay
             loop
-            muted={isMuted}
+            muted
             playsInline
             preload="metadata"
             poster={currentSlide.poster}
@@ -167,12 +260,13 @@ const Hero = () => {
         </button>
       </div>
 
+      {/* Controls only the background music track — videos stay silent with no user-facing toggle. */}
       <button
-        onClick={toggleMute}
+        onClick={toggleMusicMute}
         className="absolute bottom-6 right-6 text-white p-4 bg-black/50 backdrop-blur-md rounded-full hover:bg-black/70 transition z-20"
-        aria-label={isMuted ? "Unmute" : "Mute"}
+        aria-label={isMusicMuted || !hasStartedMusic ? "Unmute background music" : "Mute background music"}
       >
-        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+        {isMusicMuted || !hasStartedMusic ? <VolumeX size={20} /> : <Volume2 size={20} />}
       </button>
     </section>
   );

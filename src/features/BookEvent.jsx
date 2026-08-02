@@ -79,7 +79,7 @@ export default function BookEvent({ isOpen, onClose }) {
     name: "",
     phone: "",
     email: "",
-    selectedSpace: "", // Added to track selection
+    selectedSpace: "",
     eventType: "",
     guests: "",
     date: "",
@@ -201,7 +201,6 @@ Account Number: 3001586851
                 <h2 className="text-xl font-bold text-white">
                   Book Your Event
                 </h2>
-          
               </div>
             </div>
 
@@ -212,49 +211,152 @@ Account Number: 3001586851
             >
               <X size={18} />
             </motion.button>
-            <div className="text-center text-white">
+
+            <div className="text-center text-white mb-6">
               Let's Make it Memorable
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4 pb-8">
+            <form onSubmit={handleSubmit} className="space-y-5 pb-8">
 
-              <input required name="name" placeholder="Full Name" value={form.name} onChange={handleChange} className="input" />
+              <input 
+                required 
+                name="name" 
+                placeholder="Full Name" 
+                value={form.name} 
+                onChange={handleChange} 
+                className="input" 
+              />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <input required name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} className="input" />
-                <input name="email" placeholder="Email (optional)" value={form.email} onChange={handleChange} className="input" />
+                <input 
+                  required 
+                  name="phone" 
+                  placeholder="Phone Number" 
+                  value={form.phone} 
+                  onChange={handleChange} 
+                  className="input" 
+                />
+                <input 
+                  name="email" 
+                  placeholder="Email (optional)" 
+                  value={form.email} 
+                  onChange={handleChange} 
+                  className="input" 
+                />
               </div>
 
-              {/* SPACE SELECTION INTEGRATED */}
-              <select required name="selectedSpace" value={form.selectedSpace} onChange={handleChange} className="input bg-black text-white">
-                <option value="">Select Event Space</option>
-                {SPACE_OPTIONS.map((s) => (
-                  <option key={s.name} value={s.name}>{s.name} (₦{s.price.toLocaleString()})</option>
-                ))}
-              </select>
+              {/* SPACE SELECTION */}
+              <div className="space-y-1.5">
+                <label className="block text-xs text-gray-300 px-1">Event Space</label>
+                <select 
+                  required 
+                  name="selectedSpace" 
+                  value={form.selectedSpace} 
+                  onChange={handleChange} 
+                  className="input bg-zinc-900 text-white border border-white/30"
+                >
+                  <option value="">Select Event Space</option>
+                  {SPACE_OPTIONS.map((s) => (
+                    <option key={s.name} value={s.name}>
+                      {s.name} (₦{s.price.toLocaleString()})
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-              <select required name="eventType" value={form.eventType} onChange={handleChange} className="input bg-black text-white">
-                <option value="">Event Type</option>
-                {eventTypes.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
+              {/* EVENT TYPE */}
+              <div className="space-y-1.5">
+                <label className="block text-xs text-gray-300 px-1">Event Type</label>
+                <select 
+                  required 
+                  name="eventType" 
+                  value={form.eventType} 
+                  onChange={handleChange} 
+                  className="input bg-zinc-900 text-white border border-white/30"
+                >
+                  <option value="">Select Event Type</option>
+                  {eventTypes.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
 
-              <label className="sm:hidden text-xs text-gray-300">Event Date</label>
-              <input required name="date" type="date" value={form.date} onChange={handleChange} className="input" />
+              {/* IMPROVED DATE & TIME SECTION */}
+              <div className="space-y-3">
+                <div className="text-white text-sm font-medium flex items-center gap-2">
+                  📅 Event Date &amp; Time
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Date */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs text-gray-300 px-1">Date</label>
+                    <input 
+                      required 
+                      name="date" 
+                      type="date" 
+                      value={form.date} 
+                      onChange={handleChange} 
+                      className="input w-full" 
+                    />
+                  </div>
 
-              <label className="sm:hidden text-xs text-gray-300">Event Time</label>
-              <input required name="time" type="time" value={form.time} onChange={handleChange} className="input" />
+                  {/* Time */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs text-gray-300 px-1">Time</label>
+                    <div className="relative">
+                      <input 
+                        required 
+                        name="time" 
+                        type="time" 
+                        value={form.time} 
+                        onChange={handleChange} 
+                        className="input w-full cursor-pointer" 
+                      />
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none text-sm">
+                        ⏰
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-              <input required name="guests" type="number" placeholder="Number of Guests" value={form.guests} onChange={handleChange} className="input" />
+                <p className="text-[10px] text-gray-400 px-1">
+                  Please select your preferred event time. We recommend booking at least 2 hours in advance.
+                </p>
+              </div>
 
-              <textarea name="message" rows="3" placeholder="Special requests" value={form.message} onChange={handleChange} className="input resize-none" />
+              {/* GUESTS */}
+              <div className="space-y-1.5">
+                <label className="block text-xs text-gray-300 px-1">Number of Guests</label>
+                <input 
+                  required 
+                  name="guests" 
+                  type="number" 
+                  placeholder="Expected number of guests" 
+                  value={form.guests} 
+                  onChange={handleChange} 
+                  className="input" 
+                />
+              </div>
+
+              {/* MESSAGE */}
+              <div className="space-y-1.5">
+                <label className="block text-xs text-gray-300 px-1">Special Requests / Notes</label>
+                <textarea 
+                  name="message" 
+                  rows="3" 
+                  placeholder="Any special requests or additional information..." 
+                  value={form.message} 
+                  onChange={handleChange} 
+                  className="input resize-none" 
+                />
+              </div>
 
               <motion.button
                 whileTap={{ scale: 0.97 }}
-                className="w-full py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold"
+                className="w-full py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold mt-2"
               >
-                Send via WhatsApp
+                Send Booking Request via WhatsApp
               </motion.button>
             </form>
           </div>
@@ -262,15 +364,33 @@ Account Number: 3001586851
           <style>{`
             .input{
               width:100%;
-              padding:12px;
+              padding:12px 16px;
               border-radius:12px;
-              background:rgba(255,255,255,.12);
-              border:1px solid rgba(255,255,255,.2);
+              background:rgba(255,255,255,.08);
+              border:1px solid rgba(255,255,255,.25);
               color:white;
               font-size:14px;
+              transition: all 0.2s ease;
+            }
+            .input:focus{
+              border-color: #f87171;
+              outline: none;
+              box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.25);
             }
             .input::placeholder{
-              color:rgba(255,255,255,.6);
+              color:rgba(255,255,255,.65);
+            }
+
+            /* Better mobile dropdown visibility */
+            select.input {
+              background-color: #18181b !important;
+              color: white !important;
+            }
+            
+            select.input option {
+              background-color: #18181b;
+              color: white;
+              padding: 12px;
             }
           `}</style>
         </motion.div>
