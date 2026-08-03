@@ -11,12 +11,12 @@ import {
   Sparkles 
 } from "lucide-react";
 
-import poolVideo from "@/assets/videos/pool.mp4";
+import poolVideo from "@/assets/videos/pool.webm";
 import barImage from "@/assets/images/bar.webp";
 import musicVideo from "@/assets/videos/music.webm";
 import friendsBarVideo from "@/assets/videos/friends-bar.webm";
-import securityImage from "@/assets/images/security.jpeg";
-import yamImage from "@/assets/images/yam.jpg";
+import securityImage from "@/assets/images/security.webp";
+import yamImage from "@/assets/images/yam.webp";
 
 export default function Facilities() {
   const facilities = [

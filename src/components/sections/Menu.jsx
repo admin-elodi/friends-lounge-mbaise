@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import chefsBg from "@/assets/images/friends-staff.jpg";
+import chefsBg from "@/assets/images/friends-staff.webp";
 import chipsImg from "@/assets/images/chips.webp";
 import beerImg from "@/assets/images/beer.webp";
 

@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Upload, Image, Video, ChevronLeft, ChevronRight, Crown, ShieldCheck } from "lucide-react";
 
-import chief from "@/assets/images/chief.jpg";
-import mbaiseMap from "@/assets/images/mbaise-map.jpg";
+import chief from "@/assets/images/chief.webp";
+import mbaiseMap from "@/assets/images/mbaise-map.webp";
 
 // Modals (kept for Book Event, but not used for Reserve/Taste buttons anymore)
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";

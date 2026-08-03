@@ -3,9 +3,9 @@ import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Volume2, VolumeX, ShieldCheck, Award, Star, Rocket, Users, TrendingUp, Mail } from "lucide-react";
 
-import islandVideo from "@/assets/videos/island.mp4";
-import inductionImage from "@/assets/images/induction.jpeg";
-import ikengaBg from "@/assets/images/material.jpg"; 
+import islandVideo from "@/assets/videos/island.webm";
+import inductionImage from "@/assets/images/induction.webp";
+import ikengaBg from "@/assets/images/material.webp"; 
 
 export default function Friends() {
   const [isMuted, setIsMuted] = useState(true);

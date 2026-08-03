@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { useNavigate } from "react-router-dom";
 
-import soupKitchenFlyer from "@/assets/images/soup-kitchen.jpg";
+import soupKitchenFlyer from "@/assets/images/soup-kitchen.webp";
 
 export default function Banner() {
   const [showImpact, setShowImpact] = useState(false);

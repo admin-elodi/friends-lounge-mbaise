@@ -129,7 +129,7 @@ export default function Projects() {
       <div className="absolute inset-x-0 top-0 bottom-0 -z-10 pointer-events-none">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-15"
-          style={{ backgroundImage: "url('/mbaise-archive.jpg')" }}
+          style={{ backgroundImage: "url('/mbaise-archive.webp')" }}
         />
         <div className="absolute inset-0 bg-black/85" />
       </div>

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu, X, Search, X as CloseIcon } from "lucide-react";
 
 import Logo from "@/assets/images/friends-logo.webp";
-import palmsVideo from "@/assets/videos/palms.mp4";
+import palmsVideo from "@/assets/videos/palms.webm";
 
 import Banner from "@/components/sections/Banner";
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";

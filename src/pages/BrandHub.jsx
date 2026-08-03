@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Volume2, VolumeX } from "lucide-react";
 
-import livestreamImg from "@/assets/images/local-fridge.jpg";
-import whatsappImg from "@/assets/images/palmwine.jpg";
-import supportImg from "@/assets/images/rafia.jpg";
-import futureImg from "@/assets/images/sunset.jpg";
+import livestreamImg from "@/assets/images/local-fridge.webp";
+import whatsappImg from "@/assets/images/palmwine.webp";
+import supportImg from "@/assets/images/rafia.webp";
+import futureImg from "@/assets/images/sunset.webp";
 
-import bgVideo from "@/assets/videos/abigbo-dance.mp4";
+import bgVideo from "@/assets/videos/abigbo-dance.webm";
 
 const BrandHub = () => {
   const portals = [

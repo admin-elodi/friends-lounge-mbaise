@@ -10,16 +10,18 @@ if (ffmpegPath) {
 }
 
 // --------------------- Config ---------------------
-const IMAGE_DIR = path.resolve('src/assets/images');
-const VIDEO_DIR = path.resolve('src/assets/videos');
-const CODE_DIR = path.resolve('src');
+const SEARCH_DIRS = [
+  path.resolve('src'),
+  path.resolve('public')
+];
 
-// High-performance VP9 video encoding settings
+// High-speed, multi-threaded WebM encoding settings
 const FFMPEG_OPTIONS = [
-  '-c:v libvpx-vp9', // Modern, crisp WebM encoding
-  '-crf 32',        // Quality target (28-34 is sweet spot for web)
-  '-b:v 0',          // Constant quality mode
-  '-c:a libopus',    // Clean audio compression
+  '-c:v libvpx',      // VP8 encoder (significantly faster than VP9)
+  '-crf 22',          // Quality target (10-30; 22 is sweet spot for speed + quality)
+  '-b:v 1500k',       // Stream bitrate cap
+  '-threads 0',       // Utilize ALL CPU cores on your PC
+  '-c:a libopus',     // Opus audio
   '-b:a 128k',
 ];
 
@@ -37,7 +39,7 @@ async function getFiles(dir, matchRegex) {
       }
     }
   } catch {
-    // Silently ignore missing folders (e.g., if videos dir doesn't exist yet)
+    // Silently ignore missing folders
   }
   return results;
 }
@@ -45,8 +47,16 @@ async function getFiles(dir, matchRegex) {
 // --------------------- Core Processors ---------------------
 
 async function optimizeImages() {
-  const files = await getFiles(IMAGE_DIR, /\.(png|jpe?g|avif)$/i);
-  if (files.length === 0) return;
+  let files = [];
+  for (const dir of SEARCH_DIRS) {
+    const found = await getFiles(dir, /\.(png|jpe?g|avif|tiff)$/i);
+    files = files.concat(found);
+  }
+
+  if (files.length === 0) {
+    console.log('🖼️  No unoptimized PNG/JPG images found.');
+    return;
+  }
 
   console.log(`🖼️  Found ${files.length} image(s) to convert...`);
 
@@ -65,8 +75,16 @@ async function optimizeImages() {
 }
 
 async function optimizeVideos() {
-  const files = await getFiles(VIDEO_DIR, /\.(mp4|mov|avi|mkv)$/i);
-  if (files.length === 0) return;
+  let files = [];
+  for (const dir of SEARCH_DIRS) {
+    const found = await getFiles(dir, /\.(mp4|mov|avi|mkv)$/i);
+    files = files.concat(found);
+  }
+
+  if (files.length === 0) {
+    console.log('\n🎥 No unoptimized MP4/MOV videos found.');
+    return;
+  }
 
   console.log(`\n🎥 Found ${files.length} video(s) to convert...`);
 
@@ -78,38 +96,51 @@ async function optimizeVideos() {
       await new Promise((resolve, reject) => {
         ffmpeg(file)
           .outputOptions(FFMPEG_OPTIONS)
-          .save(webmPath)
-          .on('end', resolve)
-          .on('error', reject);
+          .on('progress', (progress) => {
+            if (progress.percent) {
+              process.stdout.write(`  ⏳ (${i + 1}/${files.length}) Converting ${filename}: ${Math.floor(progress.percent)}%\r`);
+            } else {
+              process.stdout.write(`  ⏳ (${i + 1}/${files.length}) Converting ${filename}...\r`);
+            }
+          })
+          .on('end', () => {
+            console.log(`  (${i + 1}/${files.length}) ✅ Converted: ${filename} -> ${path.basename(webmPath)}        `);
+            resolve();
+          })
+          .on('error', (err) => {
+            console.error(`\n  (${i + 1}/${files.length}) ❌ Video failed (${filename}):`, err.message);
+            reject(err);
+          })
+          .save(webmPath);
       });
 
       await fs.unlink(file); // Remove original video
-      console.log(`  (${i + 1}/${files.length}) ✅ Converted: ${filename} -> ${path.basename(webmPath)}`);
-    } catch (err) {
-      console.error(`  (${i + 1}/${files.length}) ❌ Video failed (${filename}):`, err.message);
+    } catch {
+      // Continue with remaining videos even if one fails
     }
   }
 }
 
 async function updateCodeReferences() {
-  const files = await getFiles(CODE_DIR, /\.(tsx?|jsx?|css)$/i);
+  const codeDir = path.resolve('src');
+  const files = await getFiles(codeDir, /\.(tsx?|jsx?|mjs|cjs|css|scss|html|vue)$/i);
+  
   if (files.length === 0) return;
 
-  console.log(`\n📝 Updating references across ${files.length} source file(s)...`);
+  console.log(`\n📝 Scanning and updating references across ${files.length} source file(s)...`);
 
   let updatedCount = 0;
   for (const file of files) {
     let content = await fs.readFile(file, 'utf8');
 
-    // Replace image extensions (.png, .jpg, .jpeg) with .webp and video extensions (.mp4, .mov) with .webm
     const updated = content
-      .replace(/\.(png|jpe?g|avif)(?=['"`?\s\)])/gi, '.webp')
-      .replace(/\.(mp4|mov|avi)(?=['"`?\s\)])/gi, '.webm');
+      .replace(/\.(png|jpe?g|avif|tiff)(?=['"`?\s\)\>])/gi, '.webp')
+      .replace(/\.(mp4|mov|avi|mkv)(?=['"`?\s\)\>])/gi, '.webm');
 
     if (content !== updated) {
       await fs.writeFile(file, updated, 'utf8');
       updatedCount++;
-      console.log(`  ✔ Updated: ${path.relative(CODE_DIR, file)}`);
+      console.log(`  ✔ Updated: ${path.relative(codeDir, file)}`);
     }
   }
 

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { createPortal } from "react-dom";
 import Logo from "@/assets/images/friends-logo.webp";
-import RafiaTexture from "@/assets/images/rafia.jpg";
+import RafiaTexture from "@/assets/images/rafia.webp";
 
 /* ---------------- EVENT TYPES ---------------- */
 

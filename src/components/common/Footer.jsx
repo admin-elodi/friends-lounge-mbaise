@@ -12,7 +12,7 @@ import {
 import { Instagram } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
-import trees from "@/assets/images/palms.jpg";
+import trees from "@/assets/images/palms.webp";
 
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import { TableBookingModal } from "@/features/TableBookingModal";
