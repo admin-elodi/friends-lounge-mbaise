@@ -23,16 +23,23 @@ body {
    GPU ACCELERATION (SAFE VERSION)
    ---------------------------------------------------------------
    NOTE:
-   We REMOVED transform from html, body, #root, main
-   because it breaks position: fixed (your modal issue)
+   `transform` on ANY ancestor of a `position: fixed` element turns
+   that "fixed" into fixed-relative-to-that-ancestor instead of the
+   viewport. The previous version of this rule applied
+   `transform: translateZ(0)` to every <div> and <section> on the
+   page (i.e. almost every element), which broke every fixed-position
+   modal that happened to be nested a few levels deep (e.g. the menu
+   modal triggered from the Footer, which sits inside the page's
+   outer wrapper <div>). `motion.div` and `.framer-motion-component`
+   below never matched anything real — framer-motion renders plain
+   <div> elements, so those two selectors were no-ops.
+
+   GPU acceleration is now opt-in via `.gpu-accelerate` — add that
+   class only to specific elements that need it (e.g. a heavy
+   autoplaying video wrapper), never globally.
 ---------------------------------------------------------------- */
 
-/* Safe acceleration targets */
-section,
-article,
-div,
-motion.div,
-.framer-motion-component {
+.gpu-accelerate {
   will-change: transform, opacity;
   transform: translateZ(0);           /* Hardware acceleration trigger */
   backface-visibility: hidden;        /* Reduces flickering on Safari/iOS */

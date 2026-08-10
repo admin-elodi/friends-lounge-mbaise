@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   FaMapMarkerAlt,
   FaPhoneAlt,
@@ -9,7 +9,7 @@ import {
   FaConciergeBell,
   FaFacebookF,
 } from "react-icons/fa";
-import { Instagram } from "lucide-react";
+import { Instagram, UtensilsCrossed, Wine, Music2, Disc3 } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import trees from "@/assets/images/palms.webp";
@@ -17,6 +17,7 @@ import trees from "@/assets/images/palms.webp";
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import { TableBookingModal } from "@/features/TableBookingModal";
 import BookEvent from "@/features/BookEvent";
+import MenuShowcaseModal from "@/components/common/MenuShowcaseModal";
 
 const DropdownCard = ({ children, className = "", onClick }) => (
   <motion.div
@@ -40,7 +41,6 @@ const Card = ({ children, className = "" }) => (
   </motion.div>
 );
 
-// Neutral cycling messages (retained from your current version)
 const neutralMessages = [
   {
     title: "Book Your Event",
@@ -55,8 +55,6 @@ const neutralMessages = [
 ];
 
 const Footer = () => {
-  const navigate = useNavigate();
-
   const [currentMessage, setCurrentMessage] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedExp, setSelectedExp] = useState(null);
@@ -65,6 +63,7 @@ const Footer = () => {
   const [isBooking, setIsBooking] = useState(false);
   const [booked, setBooked] = useState(false);
   const [bookEventOpen, setBookEventOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState(null);
 
   const {
     isOpen: foodModalOpen,
@@ -82,7 +81,6 @@ const Footer = () => {
     deliveryFee
   } = useFoodOrder();
 
-  // Auto-slide for neutral messages
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentMessage((prev) => (prev + 1) % neutralMessages.length);
@@ -110,10 +108,6 @@ const Footer = () => {
     }, 1000);
   };
 
-  const handleAmplifyClick = () => {
-    navigate("/brand-hub");
-  };
-
   return (
     <footer className="relative overflow-hidden bg-gray-900/90 text-white py-20 font-montserrat z-10">
       <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: `url(${trees})` }} />
@@ -131,7 +125,7 @@ const Footer = () => {
           <Card className="flex flex-col justify-between w-full">
             <div>
               <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
-                Events
+                Unwind & Celebrate
               </motion.h3>
 
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-4">
@@ -178,8 +172,48 @@ const Footer = () => {
               </motion.div>
             </div>
 
+            {/* MUSIC LINKS - Thin & Silvery Archive Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="flex flex-col gap-2 mt-3"
+            >
+              <a
+                href="https://archive.org/details/audio?query=Oliver+De+Coque+Highlife"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between py-1.5 px-3 rounded-lg bg-gradient-to-r from-slate-800 via-slate-700/60 to-slate-800 border border-slate-300/30 hover:border-slate-100/70 hover:shadow-[0_0_12px_rgba(203,213,225,0.25)] transition-all duration-300"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Disc3 className="text-sm text-slate-200 group-hover:animate-spin flex-shrink-0" style={{ animationDuration: "3s" }} />
+                  <div className="text-left truncate">
+                    <h5 className="font-semibold text-slate-100 text-xs truncate leading-tight">Highlife & Igbo Legends Audio</h5>
+                    <p className="text-[10px] text-slate-300 truncate leading-tight">Oliver De Coque • Highlife Archives</p>
+                  </div>
+                </div>
+                <span className="text-sm font-bold text-slate-200 group-hover:translate-x-1 transition-transform flex-shrink-0 ml-2">→</span>
+              </a>
+
+              <a
+                href="https://music.apple.com/us/playlist/2000s-afrobeats-essentials/pl.cd4aa652224745fb95377ce8eef8dd81"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between py-1.5 px-3 rounded-lg bg-gradient-to-r from-slate-800 via-slate-700/60 to-slate-800 border border-slate-300/30 hover:border-slate-100/70 hover:shadow-[0_0_12px_rgba(203,213,225,0.25)] transition-all duration-300"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Music2 className="text-sm text-slate-200 flex-shrink-0" />
+                  <div className="text-left truncate">
+                    <h5 className="font-semibold text-slate-100 text-xs truncate leading-tight">2000s Naija Music Revolution Vault</h5>
+                    <p className="text-[10px] text-slate-300 truncate leading-tight">Junior & Pretty • Plantashun Boiz • Early Pioneers</p>
+                  </div>
+                </div>
+                <span className="text-sm font-bold text-slate-200 group-hover:translate-x-1 transition-transform flex-shrink-0 ml-2">→</span>
+              </a>
+            </motion.div>
+
             {/* SOCIAL ICONS */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex space-x-6 justify-center mt-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex space-x-6 justify-center mt-3">
               {[
                 { Icon: FaXTwitter, label: "X", href: "#", hoverBg: "hover:bg-black" },
                 { Icon: SiTiktok, label: "TikTok", href: "https://www.tiktok.com/@friends.lounge6", hoverBg: "hover:bg-black", hoverText: "hover:text-[#ff0050]" },
@@ -196,13 +230,39 @@ const Footer = () => {
             </motion.div>
           </Card>
 
-          {/* SPECIAL SERVICES + AD SLOT */}
+          {/* SPECIAL SERVICES + MENU ACCESS */}
           <Card className="w-full">
             <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
               Special Services
             </motion.h3>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-4">
+
+              <DropdownCard onClick={() => setActiveMenu("food")}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <UtensilsCrossed className="text-2xl text-amber-400" />
+                    <div className="text-left">
+                      <h5 className="font-semibold text-white">Food Menu</h5>
+                      <p className="text-xs text-gray-400">Soups, swallow, grills & more</p>
+                    </div>
+                  </div>
+                  <span className="text-3xl font-black text-red-500">→</span>
+                </div>
+              </DropdownCard>
+
+              <DropdownCard onClick={() => setActiveMenu("drinks")}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Wine className="text-2xl text-amber-400" />
+                    <div className="text-left">
+                      <h5 className="font-semibold text-white">Drinks Menu</h5>
+                      <p className="text-xs text-gray-400">Cocktails, wines, spirits & more</p>
+                    </div>
+                  </div>
+                  <span className="text-3xl font-black text-red-500">→</span>
+                </div>
+              </DropdownCard>
 
               <DropdownCard onClick={openFoodOrder}>
                 <div className="flex items-center justify-between">
@@ -229,56 +289,6 @@ const Footer = () => {
                   <span className="text-3xl font-black text-red-500">→</span>
                 </div>
               </DropdownCard>
-
-              {/* 🔥 NEUTRAL AD SLOT – Point 2 of 3-point system */}
-              <div className="block mt-6">
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  className="relative p-6 bg-gradient-to-br 
-                  from-black via-gray-900 to-black 
-                  backdrop-blur-md border border-red-500/40 
-                  shadow-lg overflow-hidden group cursor-pointer"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60"></div>
-
-                  <div className="relative z-10 text-center space-y-2">
-                    <p className="text-xs uppercase tracking-widest text-red-400 font-light">
-                      Friends' Ad – Point 2
-                    </p>
-
-                    <div className="w-14 h-14 mx-auto rounded-full 
-                    border border-red-500/60 flex items-center 
-                    justify-center text-red-500 font-black md:text-[9px]">
-                      Your Logo
-                    </div>
-
-                    <h3 className="text-[10px] md:text-[10px] font-bold text-white tracking-widest animate-softPulse">
-                      YOUR BRAND NAME HERE
-                    </h3>
-
-                    <p className="text-xs text-gray-200 italic">
-                      Reach the Mbaise community
-                    </p>
-
-                    <p className="text-xs text-gray-300">
-                      Banner • Programs • Footer exposure
-                    </p>
-
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleAmplifyClick}
-                      className="mt-3 px-5 py-2 rounded-[10px] 
-                      bg-gradient-to-r from-red-600 to-red-500 
-                      text-white text-sm font-bold tracking-wider 
-                      hover:from-red-500 hover:to-red-400 
-                      transition-all shadow-lg"
-                    >
-                      Amplify Your Brand
-                    </motion.button>
-                  </div>
-                </motion.div>
-              </div>
             </motion.div>
           </Card>
 
@@ -413,6 +423,8 @@ const Footer = () => {
         isOpen={bookEventOpen}
         onClose={() => setBookEventOpen(false)}
       />
+
+      <MenuShowcaseModal activeMenu={activeMenu} onClose={() => setActiveMenu(null)} />
 
       <style jsx>{`
         @keyframes thrust { 0%,100%{transform:translateX(-50%) scaleY(1);opacity:.2} 50%{transform:translateX(-50%) scaleY(1.1);opacity:.3} }

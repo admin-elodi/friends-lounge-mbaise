@@ -178,8 +178,7 @@ Thank you for choosing Friends’ Lounge Mbaise.`;
           sm:left-1/2 sm:-translate-x-1/2
           w-auto sm:w-full sm:max-w-[480px]
           bg-black/60 backdrop-blur-2xl
-          border-t-4 border-b-4 border-green-400
-          border-l-4 border-r-4 border-red-500
+          border-1 border-red-600/30
           rounded-xl shadow-2xl
           max-h-[82vh] flex flex-col overflow-hidden
         "

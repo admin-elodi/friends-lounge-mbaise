@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import { useNavigate } from "react-router-dom";
 
 import soupKitchenFlyer from "@/assets/images/soup-kitchen.webp";
+import { getSoupKitchenStatus } from "@/data/soupKitchen";
 
 export default function Banner() {
   const [showImpact, setShowImpact] = useState(false);
@@ -11,37 +12,17 @@ export default function Banner() {
   const navigate = useNavigate();
 
   const handlePrograms = () => {
-    navigate("/programs");
+    navigate("/friends");
   };
 
- 
-// Week 1 ended on Saturday, April 4, 2026 at 6:00 PM
-  const firstSoupKitchenEnd = new Date("2026-04-04T18:00:00");
+   // Week 1 ended on Saturday, April 4, 2026 at 6:00 PM.
+  // Shared with Friends.jsx via src/data/soupKitchen.js so the
+  // teaser here and the full archive there never disagree.
+  const { completedEditions, nextEditionNumber, nextSaturday } =
+    getSoupKitchenStatus();
 
-  // Current date/time
-  const now = new Date();
-
-  const millisecondsPerWeek = 1000 * 60 * 60 * 24 * 7;
-
-  // Number of COMPLETED soup kitchens
-  const completedWeeks =
-    Math.floor((now - firstSoupKitchenEnd) / millisecondsPerWeek) + 1;
-
-  // Impact section
-  const currentWeek = Math.max(completedWeeks, 0);
-
-  // Banner section
-  const nextWeek = currentWeek + 1;
-
-  // Find next Saturday after the current event cycle
-  const nextSaturday = new Date(now);
-
-  const daysUntilSaturday =
-    ((6 - now.getDay() + 7) % 7) ||
-    (now.getHours() >= 18 ? 7 : 0);
-
-  nextSaturday.setDate(now.getDate() + daysUntilSaturday);
-  nextSaturday.setHours(0, 0, 0, 0);
+  const currentWeek = completedEditions;
+  const nextWeek = nextEditionNumber;
 
   const nextDate = nextSaturday.toLocaleDateString("en-US", {
     weekday: "short",

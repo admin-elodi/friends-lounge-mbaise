@@ -145,7 +145,7 @@ Thank you for choosing Friends' Lounge Mbaise.`;
 
       <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
         <motion.div
-          className="relative w-full max-w-md max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl border-t-4 border-b-4 border-yellow-400 border-l-4 border-r-4 border-red-600"
+          className="relative w-full max-w-md max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl border-1 border-yellow-400/40"
           initial={{ scale: 0.95, y: 30, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.95, y: 30, opacity: 0 }}
