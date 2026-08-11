@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   FaMapMarkerAlt,
   FaPhoneAlt,
@@ -9,7 +9,7 @@ import {
   FaConciergeBell,
   FaFacebookF,
 } from "react-icons/fa";
-import { Instagram, UtensilsCrossed, Wine, Music2, Disc3 } from "lucide-react";
+import { Instagram, HeartHandshake, Compass, Music2, Disc3 } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import trees from "@/assets/images/palms.webp";
@@ -19,7 +19,6 @@ import soundsystemImg from "@/assets/images/tiwa-m.webp";
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import { TableBookingModal } from "@/features/TableBookingModal";
 import BookEvent from "@/features/BookEvent";
-import MenuShowcaseModal from "@/components/common/MenuShowcaseModal";
 
 const DropdownCard = ({ children, className = "", onClick }) => (
   <motion.div
@@ -57,6 +56,7 @@ const neutralMessages = [
 ];
 
 const Footer = () => {
+  const navigate = useNavigate();
   const [currentMessage, setCurrentMessage] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedExp, setSelectedExp] = useState(null);
@@ -65,7 +65,6 @@ const Footer = () => {
   const [isBooking, setIsBooking] = useState(false);
   const [booked, setBooked] = useState(false);
   const [bookEventOpen, setBookEventOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState(null);
 
   const {
     isOpen: foodModalOpen,
@@ -176,7 +175,7 @@ const Footer = () => {
 
             {/* Descriptive label — normal flow, sits in the existing gap between
                 the button and the pillars below */}
-            <p className="text-xs text-gray-400 font-medium text-center truncate">
+            <p className="mt-3 text-xs text-gray-400 font-medium text-center truncate">
               Stream or Download Music
             </p>
 
@@ -185,7 +184,7 @@ const Footer = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="grid grid-cols-2 gap-3 flex-1"
+              className="grid grid-cols-2 gap-3 mt-2 flex-1"
             >
               <a
                 href="https://archive.org/details/audio?query=Oliver+De+Coque+Highlife"
@@ -204,7 +203,7 @@ const Footer = () => {
                     <Disc3 className="text-xs text-amber-300 group-hover:animate-spin flex-shrink-0" style={{ animationDuration: "3s" }} />
                     <h5 className="font-semibold text-white text-[11px] leading-tight truncate">Highlife & Igbo Legends</h5>
                   </div>
-                  <p className="text-[9px] text-gray-300 truncate mt-0.5">Oliver De Coque • Sir Warrior...</p>
+                  <p className="text-[9px] text-gray-300 truncate mt-0.5">Oliver De Coque • Sir Warrior</p>
                 </div>
               </a>
 
@@ -234,31 +233,31 @@ const Footer = () => {
           {/* SPECIAL SERVICES + MENU ACCESS */}
           <Card className="w-full">
             <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
-              Menu & Booking 
+              Special Services
             </motion.h3>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-4">
 
-              <DropdownCard onClick={() => setActiveMenu("food")}>
+              <DropdownCard onClick={() => navigate("/programs-hub")}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <UtensilsCrossed className="text-2xl text-amber-400" />
+                    <HeartHandshake className="text-2xl text-amber-400" />
                     <div className="text-left">
-                      <h5 className="font-semibold text-white">Food Menu</h5>
-                      <p className="text-xs text-gray-400">Soups, swallow, grills & more</p>
+                      <h5 className="font-semibold text-white">Our Programs</h5>
+                      <p className="text-xs text-gray-400">Soup Kitchen & Community Care</p>
                     </div>
                   </div>
                   <span className="text-3xl font-black text-red-500">→</span>
                 </div>
               </DropdownCard>
 
-              <DropdownCard onClick={() => setActiveMenu("drinks")}>
+              <DropdownCard onClick={() => navigate("/mbaise")}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Wine className="text-2xl text-amber-400" />
+                    <Compass className="text-2xl text-amber-400" />
                     <div className="text-left">
-                      <h5 className="font-semibold text-white">Drinks Menu</h5>
-                      <p className="text-xs text-gray-400">Cocktails, wines, spirits & more</p>
+                      <h5 className="font-semibold text-white">Discover Mbaise</h5>
+                      <p className="text-xs text-gray-400">Culture, People & Home</p>
                     </div>
                   </div>
                   <span className="text-3xl font-black text-red-500">→</span>
@@ -342,7 +341,7 @@ const Footer = () => {
                 <p className="text-xs text-gray-400 mb-1.5 font-medium">Explore</p>
                 <div className="grid grid-cols-4 gap-1.5 text-xs">
                   <Link to="/friends" className="text-gray-300 hover:text-white transition truncate">Friends</Link>
-                  <Link to="/brand-hub" className="text-gray-300 hover:text-white transition truncate">BrandHub</Link>
+                  <Link to="/programs-hub" className="text-gray-300 hover:text-white transition truncate">Programs</Link>
                   <Link to="/mbaise" className="text-gray-300 hover:text-white transition truncate">Mbaise</Link>
                   <Link to="/projects" className="text-gray-300 hover:text-white transition truncate">Projects</Link>
                 </div>
@@ -444,8 +443,6 @@ const Footer = () => {
         isOpen={bookEventOpen}
         onClose={() => setBookEventOpen(false)}
       />
-
-      <MenuShowcaseModal activeMenu={activeMenu} onClose={() => setActiveMenu(null)} />
 
       <style jsx>{`
         @keyframes thrust { 0%,100%{transform:translateX(-50%) scaleY(1);opacity:.2} 50%{transform:translateX(-50%) scaleY(1.1);opacity:.3} }
