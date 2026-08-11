@@ -13,7 +13,13 @@ import poolVideo from "@/assets/videos/pool.webm";
 import barImage from "@/assets/images/bar.webp";
 import liveMusic from "@/assets/videos/abigbo-dance.webm";
 import friendsBarVideo from "@/assets/videos/friends-bar.webm";
-import securityImage from "@/assets/images/security.webp";
+
+// "A security camera mounted to the ceiling of a building" by Franck V.
+// (Possessed Photography) on Unsplash
+// https://unsplash.com/photos/a-security-camera-mounted-to-the-ceiling-of-a-building-ujSsIk5iZmA
+// Free to use under the Unsplash License (unsplash.com/license).
+// Save that image locally at the path below (replaces the blurred original).
+import securityImage from "@/assets/images/security-cctv.jpg";
 
 export default function Facilities() {
   const facilities = [
