@@ -13,6 +13,8 @@ import { Instagram, UtensilsCrossed, Wine, Music2, Disc3 } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import trees from "@/assets/images/palms.webp";
+import abiIgboImg from "@/assets/images/high.jpeg";
+import soundsystemImg from "@/assets/images/tiwa-m.jpeg";
 
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import { TableBookingModal } from "@/features/TableBookingModal";
@@ -165,75 +167,74 @@ const Footer = () => {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setBookEventOpen(true)}
-                  className="mt-6 w-full py-3 rounded-xl bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md border border-white/20 text-white font-medium text-sm tracking-wider hover:from-white/20 hover:to-white/10 transition-all duration-300 shadow-lg"
+                  className="mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md border border-white/20 text-white font-medium text-sm tracking-wider hover:from-white/20 hover:to-white/10 transition-all duration-300 shadow-lg"
                 >
                   Book Your Event
                 </motion.button>
               </motion.div>
             </div>
 
-            {/* MUSIC LINKS - Thin & Silvery Archive Buttons */}
+            {/* Descriptive label — normal flow, sits in the existing gap between
+                the button and the pillars below */}
+            <p className="text-xs text-gray-400 font-medium text-center truncate">
+              Stream or Download Music
+            </p>
+
+            {/* MUSIC LINKS - two tall photo pillars filling the space the social icons used to occupy */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="flex flex-col gap-2 mt-3"
+              className="grid grid-cols-2 gap-3 flex-1"
             >
               <a
                 href="https://archive.org/details/audio?query=Oliver+De+Coque+Highlife"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center justify-between py-1.5 px-3 rounded-lg bg-gradient-to-r from-slate-800 via-slate-700/60 to-slate-800 border border-slate-300/30 hover:border-slate-100/70 hover:shadow-[0_0_12px_rgba(203,213,225,0.25)] transition-all duration-300"
+                className="group relative h-full min-h-[9rem] rounded-xl overflow-hidden border border-white/10 hover:border-red-500/40 transition-all duration-300"
               >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <Disc3 className="text-sm text-slate-200 group-hover:animate-spin flex-shrink-0" style={{ animationDuration: "3s" }} />
-                  <div className="text-left truncate">
-                    <h5 className="font-semibold text-slate-100 text-xs truncate leading-tight">Highlife & Igbo Legends Audio</h5>
-                    <p className="text-[10px] text-slate-300 truncate leading-tight">Oliver De Coque • Highlife Archives</p>
+                <img
+                  src={abiIgboImg}
+                  alt="Highlife & Igbo Legends"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-2.5 text-left">
+                  <div className="flex items-center gap-1.5">
+                    <Disc3 className="text-xs text-amber-300 group-hover:animate-spin flex-shrink-0" style={{ animationDuration: "3s" }} />
+                    <h5 className="font-semibold text-white text-[11px] leading-tight truncate">Highlife & Igbo Legends</h5>
                   </div>
+                  <p className="text-[9px] text-gray-300 truncate mt-0.5">Oliver De Coque • Sir Warrior...</p>
                 </div>
-                <span className="text-sm font-bold text-slate-200 group-hover:translate-x-1 transition-transform flex-shrink-0 ml-2">→</span>
               </a>
 
               <a
                 href="https://music.apple.com/us/playlist/2000s-afrobeats-essentials/pl.cd4aa652224745fb95377ce8eef8dd81"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center justify-between py-1.5 px-3 rounded-lg bg-gradient-to-r from-slate-800 via-slate-700/60 to-slate-800 border border-slate-300/30 hover:border-slate-100/70 hover:shadow-[0_0_12px_rgba(203,213,225,0.25)] transition-all duration-300"
+                className="group relative h-full min-h-[9rem] rounded-xl overflow-hidden border border-white/10 hover:border-red-500/40 transition-all duration-300"
               >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <Music2 className="text-sm text-slate-200 flex-shrink-0" />
-                  <div className="text-left truncate">
-                    <h5 className="font-semibold text-slate-100 text-xs truncate leading-tight">2000s Naija Music Revolution Vault</h5>
-                    <p className="text-[10px] text-slate-300 truncate leading-tight">Junior & Pretty • Plantashun Boiz • Early Pioneers</p>
+                <img
+                  src={soundsystemImg}
+                  alt="Afrobeats & Hip-Hop"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-2.5 text-left">
+                  <div className="flex items-center gap-1.5">
+                    <Music2 className="text-xs text-amber-300 flex-shrink-0" />
+                    <h5 className="font-semibold text-white text-[11px] leading-tight truncate">Afrobeats & Hip-Hop</h5>
                   </div>
+                  <p className="text-[9px] text-gray-300 truncate mt-0.5">2000s Naija Revolution Vault</p>
                 </div>
-                <span className="text-sm font-bold text-slate-200 group-hover:translate-x-1 transition-transform flex-shrink-0 ml-2">→</span>
               </a>
-            </motion.div>
-
-            {/* SOCIAL ICONS */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex space-x-6 justify-center mt-3">
-              {[
-                { Icon: FaXTwitter, label: "X", href: "#", hoverBg: "hover:bg-black" },
-                { Icon: SiTiktok, label: "TikTok", href: "https://www.tiktok.com/@friends.lounge6", hoverBg: "hover:bg-black", hoverText: "hover:text-[#ff0050]" },
-                { Icon: FaFacebookF, label: "Facebook", href: "https://web.facebook.com/people/Zee-Zee/...", hoverBg: "hover:bg-[#1877F2]" },
-                { Icon: Instagram, label: "Instagram", href: "https://www.instagram.com/friends_lounge_udo/", hoverBg: "hover:bg-gradient-to-r hover:from-purple-600 hover:via-pink-500 hover:to-orange-400" },
-              ].map(({ Icon, label, href, hoverBg, hoverText = "hover:text-white" }, i) => (
-                <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group" aria-label={label}>
-                  <div className={`transform hover:scale-110 transition-all duration-300 rounded-full flex items-center justify-center w-12 h-12 border-2 border-white/30 bg-transparent text-white shadow-md hover:shadow-lg hover:border-opacity-0 ${hoverBg} ${hoverText}`}>
-                    <Icon className="text-xl" />
-                  </div>
-                  <span className="mt-1 text-sm text-gray-300">{label}</span>
-                </a>
-              ))}
             </motion.div>
           </Card>
 
           {/* SPECIAL SERVICES + MENU ACCESS */}
           <Card className="w-full">
             <motion.h3 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold text-white">
-              Special Services
+              Menu & Booking 
             </motion.h3>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-4">
@@ -337,13 +338,33 @@ const Footer = () => {
                 View Location on Google Maps
               </motion.a>
 
-              <div className="w-full mt-6 pt-4 border-t border-white/10">
-                <p className="text-xs text-gray-400 mb-2 font-medium">Explore</p>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <Link to="/friends" className="text-gray-300 hover:text-white transition">Friends</Link>
-                  <Link to="/brand-hub" className="text-gray-300 hover:text-white transition">BrandHub</Link>
-                  <Link to="/mbaise" className="text-gray-300 hover:text-white transition">Mbaise</Link>
-                  <Link to="/projects" className="text-gray-300 hover:text-white transition">Projects</Link>
+              <div className="w-full mt-4 pt-3 border-t border-white/10">
+                <p className="text-xs text-gray-400 mb-1.5 font-medium">Explore</p>
+                <div className="grid grid-cols-4 gap-1.5 text-xs">
+                  <Link to="/friends" className="text-gray-300 hover:text-white transition truncate">Friends</Link>
+                  <Link to="/brand-hub" className="text-gray-300 hover:text-white transition truncate">BrandHub</Link>
+                  <Link to="/mbaise" className="text-gray-300 hover:text-white transition truncate">Mbaise</Link>
+                  <Link to="/projects" className="text-gray-300 hover:text-white transition truncate">Projects</Link>
+                </div>
+              </div>
+
+              {/* SOCIAL ICONS - moved here from the Events column, as the last items */}
+              <div className="w-full mt-6 pt-4 border-t border-white/10 flex flex-col items-center">
+                <p className="text-xs text-gray-400 mb-3 font-medium">Follow Us</p>
+                <div className="flex space-x-6 justify-center">
+                  {[
+                    { Icon: FaXTwitter, label: "X", href: "#", hoverBg: "hover:bg-black" },
+                    { Icon: SiTiktok, label: "TikTok", href: "https://www.tiktok.com/@friends.lounge6", hoverBg: "hover:bg-black", hoverText: "hover:text-[#ff0050]" },
+                    { Icon: FaFacebookF, label: "Facebook", href: "https://web.facebook.com/people/Zee-Zee/...", hoverBg: "hover:bg-[#1877F2]" },
+                    { Icon: Instagram, label: "Instagram", href: "https://www.instagram.com/friends_lounge_udo/", hoverBg: "hover:bg-gradient-to-r hover:from-purple-600 hover:via-pink-500 hover:to-orange-400" },
+                  ].map(({ Icon, label, href, hoverBg, hoverText = "hover:text-white" }, i) => (
+                    <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group" aria-label={label}>
+                      <div className={`transform hover:scale-110 transition-all duration-300 rounded-full flex items-center justify-center w-12 h-12 border-2 border-white/30 bg-transparent text-white shadow-md hover:shadow-lg hover:border-opacity-0 ${hoverBg} ${hoverText}`}>
+                        <Icon className="text-xl" />
+                      </div>
+                      <span className="mt-1 text-sm text-gray-300">{label}</span>
+                    </a>
+                  ))}
                 </div>
               </div>
             </motion.div>
