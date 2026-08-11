@@ -19,7 +19,7 @@ import friendsBarVideo from "@/assets/videos/friends-bar.webm";
 // https://unsplash.com/photos/a-security-camera-mounted-to-the-ceiling-of-a-building-ujSsIk5iZmA
 // Free to use under the Unsplash License (unsplash.com/license).
 // Save that image locally at the path below (replaces the blurred original).
-import securityImage from "@/assets/images/security-cctv.jpg";
+import securityImage from "@/assets/images/security-cctv.webp";
 
 export default function Facilities() {
   const facilities = [

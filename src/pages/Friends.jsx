@@ -16,8 +16,8 @@ import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 //    https://unsplash.com/photos/palm-trees-during-sunset-A-11N8ItHZo
 // Both free to use under the Unsplash License (unsplash.com/license).
 // Save them locally at the paths below.
-import spaceBackground from "@/assets/images/space-nebula.jpg";
-import earthBackground from "@/assets/images/palm-dusk.jpg";
+import spaceBackground from "@/assets/images/space-nebula.webp";
+import earthBackground from "@/assets/images/palm-dusk.webp";
 
 const backgrounds = [spaceBackground, earthBackground];
 

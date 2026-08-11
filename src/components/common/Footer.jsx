@@ -13,8 +13,8 @@ import { Instagram, UtensilsCrossed, Wine, Music2, Disc3 } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import trees from "@/assets/images/palms.webp";
-import abiIgboImg from "@/assets/images/high.jpeg";
-import soundsystemImg from "@/assets/images/tiwa-m.jpeg";
+import abiIgboImg from "@/assets/images/high.webp";
+import soundsystemImg from "@/assets/images/tiwa-m.webp";
 
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import { TableBookingModal } from "@/features/TableBookingModal";
