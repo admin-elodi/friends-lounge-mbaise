@@ -155,7 +155,7 @@ Thank you for choosing Friends' Lounge Mbaise.`;
           <div className="absolute inset-0 bg-black/60 z-[1]" />
 
           <div className="relative z-10 px-6 pt-6 pb-4">
-            <motion.img src={Logo} className="w-16 h-16 mb-2 rounded-full" animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} />
+            <img src={Logo} className="w-16 h-16 mb-2 rounded-full" />
             <button onClick={close} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/70 text-white flex items-center justify-center">
               <FaTimes />
             </button>

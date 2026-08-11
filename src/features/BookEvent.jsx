@@ -190,11 +190,9 @@ Account Number: 3001586851
           {/* CONTENT */}
           <div className="relative z-10 max-h-[85vh] overflow-y-auto px-5 py-6">
             <div className="flex items-center justify-between mb-6">
-              <motion.img
+              <img
                 src={Logo}
                 className="w-20"
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               />
             
               <div className="text-right">

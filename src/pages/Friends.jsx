@@ -1,11 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Share2 } from "lucide-react";
+import { FaMotorcycle } from "react-icons/fa";
 
-// "Blue and purple galaxy digital wallpaper" by Jeremy Thomas on Unsplash
-// https://unsplash.com/photos/blue-and-purple-galaxy-digital-wallpaper-E0AHdsENmDg
-// Free to use under the Unsplash License (unsplash.com/license).
-// Save that image locally at the path below.
+import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
+
+// Background slideshow — two images crossfading, deliberately in tension:
+// the cosmic (space) against the earthly/local (Mbaise palms). Both share
+// a dark blue/purple dusk palette so the crossfade stays tonally smooth
+// even while the subject matter contrasts.
+//
+// 1) "Blue and purple galaxy digital wallpaper" by Jeremy Thomas on Unsplash
+//    https://unsplash.com/photos/blue-and-purple-galaxy-digital-wallpaper-E0AHdsENmDg
+// 2) "Palm trees during sunset" by OC Gonzalez on Unsplash
+//    https://unsplash.com/photos/palm-trees-during-sunset-A-11N8ItHZo
+// Both free to use under the Unsplash License (unsplash.com/license).
+// Save them locally at the paths below.
 import spaceBackground from "@/assets/images/space-nebula.jpg";
+import earthBackground from "@/assets/images/palm-dusk.jpg";
+
+const backgrounds = [spaceBackground, earthBackground];
 
 // A kaleidoscope of wise adages — this set written specifically to temper
 // the entertainment on offer (food, drink, music, company) with a steady
@@ -27,18 +41,57 @@ const adages = [
 ];
 
 export default function Friends() {
+  const [bgIndex, setBgIndex] = useState(0);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReducedMotion) return;
+
+    const interval = setInterval(() => {
+      setBgIndex((prev) => (prev + 1) % backgrounds.length);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const {
+    isOpen: foodModalOpen,
+    open: openFoodOrder,
+    close: closeFoodOrder,
+    cart,
+    addToCart,
+    updateQuantity,
+    getTotal,
+    customerInfo,
+    setCustomerInfo,
+    handlePayment,
+    isPaying,
+    paymentSuccess,
+    deliveryFee,
+  } = useFoodOrder();
+
+  // Not wired up yet on purpose — a placeholder for passing an adage along.
+  const handleShare = () => {};
+
   return (
     <main className="relative min-h-screen w-full overflow-hidden bg-black text-white font-montserrat">
-      {/* Background — scrolls with content (no background-attachment:fixed,
-          which is unreliable on iOS Safari) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `url(${spaceBackground})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
+      {/* Background slideshow — scrolls with content (no
+          background-attachment:fixed, which is unreliable on iOS Safari) */}
+      <div className="absolute inset-0">
+        {backgrounds.map((bg, i) => (
+          <div
+            key={bg}
+            className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+            style={{
+              backgroundImage: `url(${bg})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              opacity: i === bgIndex ? 1 : 0,
+            }}
+          />
+        ))}
+      </div>
       <div className="absolute inset-0 bg-black/60" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/35 to-black/80" />
 
@@ -71,7 +124,47 @@ export default function Friends() {
             </motion.p>
           ))}
         </div>
+
+        {/* Closing actions — native to the adages themselves, not a sales pitch */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mt-4 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-4"
+        >
+          <button
+            onClick={openFoodOrder}
+            className="group flex items-center gap-2.5 px-7 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/20 hover:border-amber-200/50 backdrop-blur-sm text-amber-50 text-sm tracking-wide transition-all duration-300"
+          >
+            <FaMotorcycle className="text-amber-200/80" />
+            Order Food
+          </button>
+
+          <button
+            onClick={handleShare}
+            className="group flex items-center gap-2.5 px-7 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/20 hover:border-amber-200/50 backdrop-blur-sm text-amber-50 text-sm tracking-wide transition-all duration-300"
+          >
+            <Share2 size={16} className="text-amber-200/80" />
+            Share Page
+          </button>
+        </motion.div>
       </div>
+
+      <FoodOrderModal
+        isOpen={foodModalOpen}
+        close={closeFoodOrder}
+        cart={cart}
+        addToCart={addToCart}
+        updateQuantity={updateQuantity}
+        getTotal={getTotal}
+        customerInfo={customerInfo}
+        setCustomerInfo={setCustomerInfo}
+        handlePayment={handlePayment}
+        isPaying={isPaying}
+        paymentSuccess={paymentSuccess}
+        deliveryFee={deliveryFee}
+      />
     </main>
   );
 }
