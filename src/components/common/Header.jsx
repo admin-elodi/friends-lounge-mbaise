@@ -11,7 +11,7 @@ import BookEvent from "@/features/BookEvent";
 
 const navItems = [
   { name: "Home", path: "/" },
-  { name: "BrandHub", path: "/brand-hub", badge: true },
+  { name: "Programs", path: "/programs-hub", badge: true },
   { name: "Friends", path: "/friends" },
   { name: "Mbaise", path: "/mbaise" },
   { name: "Projects", path: "/projects" },

@@ -12,7 +12,7 @@ export default function Banner() {
   const navigate = useNavigate();
 
   const handlePrograms = () => {
-    navigate("/friends");
+    navigate("/programs-hub");
   };
 
    // Week 1 ended on Saturday, April 4, 2026 at 6:00 PM.
