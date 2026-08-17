@@ -6,6 +6,7 @@ import Logo from "@/assets/images/friends-logo.webp";
 import palmsVideo from "@/assets/videos/palms.webm";
 
 import Banner from "@/components/sections/Banner";
+import MusicToggle from "@/components/common/MusicToggle";
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import BookEvent from "@/features/BookEvent";
 
@@ -124,6 +125,8 @@ export default function Header() {
           ))}
         </ul>
 
+        <MusicToggle />
+
         <div className="flex gap-3">
           <button
             onClick={() => setBookEventOpen(true)}
@@ -159,6 +162,8 @@ export default function Header() {
           <Search size={20} strokeWidth={2.5} />
           <span className="text-sm">Search</span>
         </button>
+
+        <MusicToggle />
 
         <button
           onClick={toggleMobileMenu}
