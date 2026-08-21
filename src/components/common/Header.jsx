@@ -7,6 +7,7 @@ import palmsVideo from "@/assets/videos/palms.webm";
 
 import Banner from "@/components/sections/Banner";
 import MusicToggle from "@/components/common/MusicToggle";
+import EventNavButton from "@/components/common/EventNavButton";
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import BookEvent from "@/features/BookEvent";
 
@@ -125,7 +126,10 @@ export default function Header() {
           ))}
         </ul>
 
-        <MusicToggle />
+        <div className="flex items-center gap-3">
+          <MusicToggle />
+          <EventNavButton />
+        </div>
 
         <div className="flex gap-3">
           <button
@@ -163,7 +167,10 @@ export default function Header() {
           <span className="text-sm">Search</span>
         </button>
 
-        <MusicToggle />
+        <div className="flex items-center gap-2.5">
+          <MusicToggle />
+          <EventNavButton />
+        </div>
 
         <button
           onClick={toggleMobileMenu}
