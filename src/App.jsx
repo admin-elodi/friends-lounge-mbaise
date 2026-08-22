@@ -4,9 +4,6 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { MusicProvider } from '@/context/MusicContext';
-import { EventProvider } from '@/context/EventContext';
-import { AuthProvider } from '@/context/AuthContext';
-import ProtectedRoute from '@/components/admin/ProtectedRoute';
 
 // Lazy load pages to split bundles and reduce initial load
 const Home = lazy(() => import('@/pages/Home'));
@@ -14,8 +11,6 @@ const ProgramsHub = lazy(() => import('@/pages/ProgramsHub'));
 const Friends = lazy(() => import('@/pages/Friends'));
 const Mbaise = lazy(() => import('@/pages/Mbaise'));
 const Projects = lazy(() => import('@/pages/Projects'));
-const AdminLogin = lazy(() => import('@/pages/AdminLogin'));
-const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -31,16 +26,21 @@ const suspenseFallback = (
   </div>
 );
 
-// The public marketing site — Header, footer-embedded music player, all of
-// it. Kept as its own component so the admin routes below can skip this
-// entirely: a login screen and a management dashboard have no use for the
-// public nav, hero music, or footer.
-function PublicSite() {
+// No more separate /admin routes and no more AuthProvider/EventProvider —
+// the entire event-announcement + admin feature is now self-contained in
+// <EventFeature />, rendered from Header.jsx, with its own local auth and
+// data subscriptions. Simpler tree, fewer moving parts.
+function App() {
   return (
-    <MusicProvider>
-      <EventProvider>
+    <Router>
+      <MusicProvider>
         <div className="flex flex-col min-h-screen">
           <Header />
+          {/* The auto-shown event banner (from EventFeature, rendered in
+              Header) portals into this slot, so it appears as a proper
+              full-width section right below the header instead of being
+              cramped inside the nav row it's actually triggered from. */}
+          <div id="event-banner-slot" />
           <main className="flex-grow">
             <Suspense fallback={suspenseFallback}>
               <Routes>
@@ -55,31 +55,8 @@ function PublicSite() {
           </main>
           <Footer />
         </div>
-      </EventProvider>
-    </MusicProvider>
-  );
-}
-
-function App() {
-  return (
-    <AuthProvider>
-      <Router>
-        <Suspense fallback={suspenseFallback}>
-          <Routes>
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route
-              path="/admin/dashboard"
-              element={
-                <ProtectedRoute>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/*" element={<PublicSite />} />
-          </Routes>
-        </Suspense>
-      </Router>
-    </AuthProvider>
+      </MusicProvider>
+    </Router>
   );
 }
 

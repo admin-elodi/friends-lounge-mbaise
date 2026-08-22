@@ -23,6 +23,14 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
+// Firestore supports multiple named databases per project — if yours
+// isn't literally named "(default)" (Google Cloud Console sometimes lets
+// you pick a custom name when creating it, unlike the Firebase console's
+// "Get started" flow which always uses "(default)"), set
+// VITE_FIREBASE_DATABASE_ID in .env to match. Left blank, this connects
+// to "(default)" as normal.
+const databaseId = import.meta.env.VITE_FIREBASE_DATABASE_ID;
+
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const db = databaseId ? getFirestore(app, databaseId) : getFirestore(app);
 export default app;
