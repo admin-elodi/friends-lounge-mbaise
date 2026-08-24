@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { MusicProvider } from '@/context/MusicContext';
+import EventWidget from '@/components/common/EventWidget';
 
 // Lazy load pages to split bundles and reduce initial load
 const Home = lazy(() => import('@/pages/Home'));
@@ -26,21 +27,17 @@ const suspenseFallback = (
   </div>
 );
 
-// No more separate /admin routes and no more AuthProvider/EventProvider —
-// the entire event-announcement + admin feature is now self-contained in
-// <EventFeature />, rendered from Header.jsx, with its own local auth and
-// data subscriptions. Simpler tree, fewer moving parts.
+// <EventWidget /> is mounted exactly once, right here — not inside
+// Header.jsx. It's fully self-contained (its own Firestore subscription,
+// its own auth state, its own modal), with no Context/Provider layer at
+// all. This is the deliberate architectural change: fewer moving parts,
+// nothing to duplicate, nothing to wire incorrectly across components.
 function App() {
   return (
     <Router>
       <MusicProvider>
         <div className="flex flex-col min-h-screen">
           <Header />
-          {/* The auto-shown event banner (from EventFeature, rendered in
-              Header) portals into this slot, so it appears as a proper
-              full-width section right below the header instead of being
-              cramped inside the nav row it's actually triggered from. */}
-          <div id="event-banner-slot" />
           <main className="flex-grow">
             <Suspense fallback={suspenseFallback}>
               <Routes>
@@ -55,6 +52,7 @@ function App() {
           </main>
           <Footer />
         </div>
+        <EventWidget />
       </MusicProvider>
     </Router>
   );

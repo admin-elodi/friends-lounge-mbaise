@@ -1,12 +1,21 @@
-// src/components/common/EventFeature.jsx
+// src/components/common/EventWidget.jsx
 //
-// Everything about the event-announcement feature lives in this one file:
-// the small nav button, the auto-shown banner, the two-tab modal
-// (Announcement / Admin), the inline login form, and the inline
-// create/edit/take-down form. Deliberately consolidated — no separate
-// /admin routes, no separate context providers. Firebase Auth's session
-// persists across reloads on its own, so no extra state management is
-// needed for that either.
+// A DELIBERATELY DIFFERENT architecture from the previous attempts.
+//
+// Everything — the trigger button, the Firestore subscription, the auth
+// state, and the modal — lives in ONE component with ONLY local state.
+// No React Context, no separate Provider, no cross-component wiring of
+// any kind. This is mounted exactly ONCE, directly in App.jsx (not
+// inside Header.jsx, which would risk duplication if Header is ever
+// re-rendered per breakpoint the way some other nav items are).
+//
+// The trigger is a fixed-position floating button (bottom-right), visible
+// on every page, rather than embedded inside the header's nav row — this
+// avoids any dependency on exactly where/how many times Header renders.
+//
+// Verbose console logging is left in deliberately (prefixed
+// "[EventWidget]") so that if anything ever goes wrong again, there's an
+// immediate, unmistakable trail showing exactly how far execution got.
 
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -55,18 +64,45 @@ const emptyForm = {
   flyerUrl: "",
 };
 
-export default function EventFeature() {
-  // ---- Event data (single document, real-time) ----
+// Catches any render crash inside the announcement view and shows a real,
+// visible error instead of silently failing.
+class Boundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+  componentDidCatch(error, info) {
+    console.error("[EventWidget] Render crashed:", error, info);
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="p-6 text-center">
+          <p className="text-red-400 text-sm font-semibold mb-2">Something went wrong displaying this.</p>
+          <p className="text-stone-400 text-xs">{String(this.state.error?.message || this.state.error)}</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+console.log("[EventWidget] Module loaded.");
+
+export default function EventWidget() {
+  console.log("[EventWidget] Component function called (render).");
+
+  // ---- Event data ----
   const [currentEvent, setCurrentEvent] = useState(null);
   const [eventLoading, setEventLoading] = useState(true);
 
-  // ---- Auto-shown banner on load ----
-  const [bannerDismissed, setBannerDismissed] = useState(false);
-  const [flyerOpen, setFlyerOpen] = useState(false);
-
-  // ---- The button-triggered modal ----
+  // ---- Modal ----
   const [modalOpen, setModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("announcement"); // "announcement" | "admin"
+  const [activeTab, setActiveTab] = useState("announcement");
+  const [flyerOpen, setFlyerOpen] = useState(false);
 
   // ---- Auth ----
   const [user, setUser] = useState(null);
@@ -77,7 +113,7 @@ export default function EventFeature() {
   const [loginSubmitting, setLoginSubmitting] = useState(false);
   const [loginError, setLoginError] = useState("");
 
-  // ---- Event create/edit form (shown to logged-in admin) ----
+  // ---- Create/edit form ----
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [flyerFile, setFlyerFile] = useState(null);
@@ -86,38 +122,37 @@ export default function EventFeature() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
 
-  const [bannerSlot, setBannerSlot] = useState(null);
-
+  // No more auto-open-on-load. The button is the only entry point now —
+  // it just needs to reflect whatever the current state is whenever the
+  // data arrives, with no time pressure on exactly when. This removes an
+  // entire category of timing bugs the auto-open behavior kept running into.
   useEffect(() => {
-    // Looked up after mount, not during render — the slot div (a sibling
-    // rendered by App.jsx) isn't guaranteed to exist in the real DOM yet
-    // during this component's own initial render.
-    setBannerSlot(document.getElementById("event-banner-slot"));
-  }, []);
+    console.log("[EventWidget] Mounted. Subscribing to Firestore...");
 
-  useEffect(() => {
     const unsubscribe = subscribeToCurrentEvent(
       (event) => {
+        console.log("[EventWidget] Firestore data received:", event);
         setCurrentEvent(event);
         setEventLoading(false);
       },
-      () => setEventLoading(false)
+      (err) => {
+        console.error("[EventWidget] Firestore subscription error:", err);
+        setEventLoading(false);
+      }
     );
-    return unsubscribe;
-  }, []);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
+    const authUnsubscribe = onAuthStateChanged(auth, (u) => {
+      console.log("[EventWidget] Auth state:", u ? u.email : "signed out");
       setUser(u);
       setAuthLoading(false);
     });
-    return unsubscribe;
-  }, []);
 
-  const openModal = () => {
-    setActiveTab("announcement");
-    setModalOpen(true);
-  };
+    return () => {
+      console.log("[EventWidget] Unmounting, cleaning up subscriptions.");
+      unsubscribe();
+      authUnsubscribe();
+    };
+  }, []);
 
   const startEditing = () => {
     if (currentEvent) {
@@ -130,8 +165,8 @@ export default function EventFeature() {
         timeLabel: currentEvent.timeLabel || "",
         venue: currentEvent.venue || "",
         whatsappNumber: currentEvent.whatsappNumber || "",
-        performers: (currentEvent.performers || []).join(", "),
-        highlights: (currentEvent.highlights || []).join(", "),
+        performers: (Array.isArray(currentEvent.performers) ? currentEvent.performers : []).join(", "),
+        highlights: (Array.isArray(currentEvent.highlights) ? currentEvent.highlights : []).join(", "),
         closingLine: currentEvent.closingLine || "",
         flyerUrl: currentEvent.flyerUrl || "",
       });
@@ -214,10 +249,10 @@ export default function EventFeature() {
         flyerUrl,
       });
 
+      console.log("[EventWidget] Save succeeded.");
       setEditing(false);
-      setBannerDismissed(false); // show the freshly posted event right away
-      setModalOpen(false);
     } catch (err) {
+      console.error("[EventWidget] Save failed:", err);
       setFormError(err?.message || "Something went wrong saving this event. Please try again.");
     } finally {
       setSaving(false);
@@ -231,83 +266,53 @@ export default function EventFeature() {
     setEditing(false);
   };
 
-  const showBanner = !eventLoading && currentEvent && !bannerDismissed;
-
   return (
     <>
-      {/* ================= NAV BUTTON ================= */}
+      {/* ================= FLOATING TRIGGER BUTTON ================= */}
       <motion.button
-        onClick={openModal}
-        whileHover={{ scale: 1.05 }}
+        onClick={() => {
+          setActiveTab("announcement");
+          setModalOpen(true);
+        }}
+        whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.94 }}
         aria-label={currentEvent ? `View ${currentEvent.title} announcement` : "Event announcements"}
-        className={`relative flex items-center justify-center w-11 h-11 rounded-lg cursor-pointer border-2 shadow-[0_3px_0_rgba(0,0,0,0.4)] hover:shadow-[0_2px_0_rgba(0,0,0,0.4)] hover:translate-y-[1px] transition-all duration-200 ${
+        className={`fixed bottom-6 right-6 z-[9998] flex items-center justify-center w-14 h-14 rounded-full cursor-pointer border-2 shadow-lg overflow-hidden transition-all duration-300 ${
           currentEvent
-            ? "bg-amber-500/30 border-amber-300 hover:bg-amber-500/45"
-            : "bg-black/60 border-white/40 hover:bg-black/80"
+            ? "bg-gradient-to-br from-amber-400 via-amber-500 to-red-500 border-amber-200 shadow-amber-500/40"
+            : "bg-stone-800 border-stone-600 hover:bg-stone-700"
         }`}
       >
         {currentEvent && (
-          <motion.span
-            className="absolute inset-0 rounded-lg border border-amber-300/60"
-            animate={{ scale: [1, 1.15, 1], opacity: [0.6, 0, 0.6] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          />
+          <>
+            {/* Soft pulsing glow ring — reads as "alive," not urgent */}
+            <motion.span
+              className="absolute inset-0 rounded-full border-2 border-amber-200/70"
+              animate={{ scale: [1, 1.3, 1], opacity: [0.6, 0, 0.6] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            {/* Slow diagonal shimmer sweep — a touch of "flashy," kept gentle */}
+            <motion.span
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%)",
+              }}
+              animate={{ x: ["-120%", "120%"] }}
+              transition={{ duration: 3, repeat: Infinity, repeatDelay: 1.5, ease: "easeInOut" }}
+            />
+            {/* Small notification badge — unmistakable "something's here" cue */}
+            <span className="absolute top-1 right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-stone-900" />
+          </>
         )}
         {currentEvent ? (
-          <Calendar size={18} className="text-amber-100" />
+          <Calendar size={22} className="relative text-white drop-shadow" />
         ) : (
-          <Bell size={18} className="text-white/85" />
+          <Bell size={22} className="relative text-white/70" />
         )}
       </motion.button>
 
-      {/* ================= AUTO-SHOWN BANNER ================= */}
-      {createPortal(
-        <AnimatePresence>
-          {showBanner && (
-            <motion.section
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="relative bg-gradient-to-br from-red-950 via-red-900 to-amber-950 text-white overflow-hidden"
-            >
-              <EventDetails event={currentEvent} onFlyerClick={() => setFlyerOpen(true)} />
-              <button
-                onClick={() => setBannerDismissed(true)}
-                aria-label="Dismiss event announcement"
-                className="absolute top-4 right-4 p-2 rounded-full bg-black/30 hover:bg-black/50 text-white/70 hover:text-white transition-colors"
-              >
-                <X size={16} />
-              </button>
-            </motion.section>
-          )}
-        </AnimatePresence>,
-        bannerSlot || document.body
-      )}
-
-      {/* Full flyer lightbox, for the auto-shown banner */}
-      <AnimatePresence>
-        {flyerOpen && currentEvent?.flyerUrl && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setFlyerOpen(false)}
-            className="fixed inset-0 z-[9998] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out"
-          >
-            <motion.img
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              src={currentEvent.flyerUrl}
-              alt={`${currentEvent.title} flyer`}
-              className="max-w-full max-h-full rounded-lg shadow-2xl"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ================= THE MODAL (button-triggered) ================= */}
+      {/* ================= MODAL ================= */}
       {createPortal(
         <AnimatePresence>
           {modalOpen && (
@@ -333,7 +338,6 @@ export default function EventFeature() {
                   <X size={16} />
                 </button>
 
-                {/* Tabs */}
                 <div className="flex border-b border-stone-700">
                   <button
                     onClick={() => setActiveTab("announcement")}
@@ -358,10 +362,11 @@ export default function EventFeature() {
                 </div>
 
                 <div className="p-6">
-                  {/* ---- ANNOUNCEMENT TAB ---- */}
                   {activeTab === "announcement" &&
                     (currentEvent ? (
-                      <EventDetails event={currentEvent} compact />
+                      <Boundary>
+                        <EventDetails event={currentEvent} onFlyerClick={() => setFlyerOpen(true)} />
+                      </Boundary>
                     ) : (
                       <div className="text-center py-6">
                         <Bell size={28} className="text-amber-300 mx-auto mb-3" />
@@ -369,13 +374,11 @@ export default function EventFeature() {
                       </div>
                     ))}
 
-                  {/* ---- ADMIN TAB ---- */}
                   {activeTab === "admin" && (
                     <>
                       {authLoading ? (
                         <p className="text-stone-400 text-sm text-center py-6">Checking sign-in status…</p>
                       ) : !user ? (
-                        // Not logged in — login form
                         <form onSubmit={handleLogin} className="space-y-4">
                           <p className="text-xs text-stone-400 mb-1">Sign in to manage the event announcement.</p>
                           <div>
@@ -421,7 +424,6 @@ export default function EventFeature() {
                           </button>
                         </form>
                       ) : editing ? (
-                        // Logged in, creating/editing the event
                         <form onSubmit={handleSaveEvent} className="space-y-4">
                           <div className="flex items-center justify-between">
                             <h3 className="text-sm font-semibold text-stone-200">
@@ -482,7 +484,6 @@ export default function EventFeature() {
                           </button>
                         </form>
                       ) : (
-                        // Logged in, not editing — management view
                         <div className="space-y-4">
                           <div className="flex items-center justify-between">
                             <p className="text-xs text-stone-400">Signed in as {user.email}</p>
@@ -538,6 +539,30 @@ export default function EventFeature() {
         </AnimatePresence>,
         document.body
       )}
+
+      {createPortal(
+        <AnimatePresence>
+          {flyerOpen && currentEvent?.flyerUrl && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setFlyerOpen(false)}
+              className="fixed inset-0 z-[10000] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out"
+            >
+              <motion.img
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.9 }}
+                src={currentEvent?.flyerUrl}
+                alt={`${currentEvent?.title} flyer`}
+                className="max-w-full max-h-full rounded-lg shadow-2xl"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }
@@ -557,85 +582,72 @@ function AdminField({ label, value, onChange, placeholder }) {
   );
 }
 
-function EventDetails({ event, onFlyerClick, compact = false }) {
+function EventDetails({ event, onFlyerClick }) {
   return (
-    <div className={compact ? "" : "max-w-6xl mx-auto px-5 sm:px-8 py-10 md:py-14"}>
-      <div className={compact ? "space-y-4" : "grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-10 items-center"}>
-        {event.flyerUrl && (
-          <button
-            onClick={onFlyerClick}
-            className={`${compact ? "w-full" : "md:col-span-2"} relative rounded-xl overflow-hidden border border-white/15 shadow-2xl shadow-black/50 group ${
-              !onFlyerClick ? "cursor-default" : ""
-            }`}
-          >
-            <img src={event.flyerUrl} alt={`${event.title} flyer`} className="w-full h-auto group-hover:scale-105 transition-transform duration-500" />
-          </button>
+    <div className="space-y-4">
+      {event.flyerUrl && (
+        <button onClick={onFlyerClick} className="relative w-full rounded-xl overflow-hidden border border-white/15 shadow-2xl shadow-black/50 group">
+          <img src={event.flyerUrl} alt={`${event.title} flyer`} className="w-full h-auto group-hover:scale-105 transition-transform duration-500" />
+        </button>
+      )}
+
+      <div>
+        {event.presenter && (
+          <p className="text-amber-300 text-[10px] uppercase tracking-[0.3em] font-semibold mb-2">{event.presenter}</p>
         )}
+        <h2 className="text-2xl font-playfair font-semibold leading-tight">{event.title}</h2>
+        {event.subtitle && <p className="text-amber-200/80 text-sm mt-1">{event.subtitle}</p>}
+        {event.tagline && <p className="text-white/70 text-sm mt-3 font-light leading-relaxed">{event.tagline}</p>}
 
-        <div className={compact ? "" : "md:col-span-3"}>
-          {event.presenter && (
-            <p className="text-amber-300 text-[10px] md:text-xs uppercase tracking-[0.3em] font-semibold mb-2">
-              {event.presenter}
-            </p>
-          )}
-          <h2 className={compact ? "text-2xl font-playfair font-semibold leading-tight" : "text-3xl md:text-4xl font-playfair font-semibold leading-tight"}>
-            {event.title}
-          </h2>
-          {event.subtitle && <p className="text-amber-200/80 text-sm md:text-base mt-1">{event.subtitle}</p>}
-          {event.tagline && (
-            <p className="text-white/70 text-sm md:text-base mt-4 font-light leading-relaxed max-w-md">{event.tagline}</p>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6 max-w-md">
-            {event.dateLabel && (
-              <div className="flex items-center gap-2.5 text-sm text-white/85">
-                <Calendar size={16} className="text-amber-300 flex-shrink-0" />
-                {event.dateLabel}
-              </div>
-            )}
-            {event.timeLabel && (
-              <div className="flex items-center gap-2.5 text-sm text-white/85">
-                <Clock size={16} className="text-amber-300 flex-shrink-0" />
-                {event.timeLabel}
-              </div>
-            )}
-            {event.venue && (
-              <div className="flex items-center gap-2.5 text-sm text-white/85 sm:col-span-2">
-                <MapPin size={16} className="text-amber-300 flex-shrink-0" />
-                {event.venue}
-              </div>
-            )}
-          </div>
-
-          {event.performers?.length > 0 && (
-            <div className="flex items-start gap-2.5 mt-4 max-w-md">
-              <Music2 size={16} className="text-amber-300 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-white/70">{event.performers.join(" · ")}</p>
+        <div className="space-y-2 mt-5">
+          {event.dateLabel && (
+            <div className="flex items-center gap-2.5 text-sm text-white/85">
+              <Calendar size={15} className="text-amber-300 flex-shrink-0" />
+              {event.dateLabel}
             </div>
           )}
-
-          {event.highlights?.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-5">
-              {event.highlights.map((item) => (
-                <span key={item} className="text-xs px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-white/80">
-                  {item}
-                </span>
-              ))}
+          {event.timeLabel && (
+            <div className="flex items-center gap-2.5 text-sm text-white/85">
+              <Clock size={15} className="text-amber-300 flex-shrink-0" />
+              {event.timeLabel}
             </div>
           )}
-
-          {event.whatsappNumber && (
-            <a
-              href={waLink(event.whatsappNumber, `Hello, I'd like to know more about ${event.title}...`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-semibold transition-colors"
-            >
-              <FaWhatsapp size={17} />
-              Chat About This Event
-            </a>
+          {event.venue && (
+            <div className="flex items-center gap-2.5 text-sm text-white/85">
+              <MapPin size={15} className="text-amber-300 flex-shrink-0" />
+              {event.venue}
+            </div>
           )}
         </div>
+
+        {Array.isArray(event.performers) && event.performers.length > 0 && (
+          <div className="flex items-start gap-2.5 mt-4">
+            <Music2 size={15} className="text-amber-300 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-white/70">{event.performers.join(" · ")}</p>
+          </div>
+        )}
+
+        {Array.isArray(event.highlights) && event.highlights.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-4">
+            {event.highlights.map((item) => (
+              <span key={item} className="text-xs px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-white/80">
+                {item}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {event.whatsappNumber && (
+          <a
+            href={waLink(event.whatsappNumber, `Hello, I'd like to know more about ${event.title}...`)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-semibold transition-colors"
+          >
+            <FaWhatsapp size={16} />
+            Chat About This Event
+          </a>
+        )}
       </div>
     </div>
   );
