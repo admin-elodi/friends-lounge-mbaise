@@ -49,8 +49,8 @@ const emptyForm = {
   title: "",
   subtitle: "",
   tagline: "",
-  dateLabel: "",
-  timeLabel: "",
+  eventDate: "", // picker-only, e.g. "2026-08-15" — formatted into dateLabel at save time
+  eventTime: "", // picker-only, e.g. "14:00" — formatted into timeLabel at save time
   venue: "Friends Lounge, Umuofor-Udo",
   whatsappNumber: "",
   performers: "",
@@ -59,6 +59,43 @@ const emptyForm = {
   flyerUrl: "",
   mediaType: "image",
 };
+
+// Turns a native <input type="date"> value ("2026-08-15") into the same
+// nice display string style the site already uses ("Saturday, August 15,
+// 2026"). The stored field (dateLabel) stays a plain string either way —
+// this is purely a frontend convenience, no schema change involved.
+function formatDateLabel(isoDate) {
+  if (!isoDate) return "";
+  const d = new Date(`${isoDate}T00:00:00`); // avoid UTC/timezone date-shift
+  return d.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+}
+
+// Turns a native <input type="time"> value ("14:00") into a friendly
+// label — "2 PM", "12 Noon", "12 Midnight", or "2:30 PM" when there are
+// minutes to show.
+function formatTimeLabel(isoTime) {
+  if (!isoTime) return "";
+  const [h, m] = isoTime.split(":").map(Number);
+  if (h === 12 && m === 0) return "12 Noon";
+  if (h === 0 && m === 0) return "12 Midnight";
+  const period = h >= 12 ? "PM" : "AM";
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return m === 0 ? `${hour12} ${period}` : `${hour12}:${String(m).padStart(2, "0")} ${period}`;
+}
+
+// Best-effort reverse parse, for pre-filling the pickers when editing an
+// existing event whose dateLabel/timeLabel were typed in some other
+// format. Falls back to empty (blank pickers, admin just re-selects)
+// rather than guessing wrong.
+function parseDateLabelToIso(label) {
+  if (!label) return "";
+  const parsed = new Date(label);
+  if (isNaN(parsed.getTime())) return "";
+  const yyyy = parsed.getFullYear();
+  const mm = String(parsed.getMonth() + 1).padStart(2, "0");
+  const dd = String(parsed.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
 
 // Catches any render crash inside the announcement view and shows a real,
 // visible error instead of silently failing.
@@ -183,8 +220,8 @@ export default function EventWidget() {
         title: currentEvent.title || "",
         subtitle: currentEvent.subtitle || "",
         tagline: currentEvent.tagline || "",
-        dateLabel: currentEvent.dateLabel || "",
-        timeLabel: currentEvent.timeLabel || "",
+        eventDate: parseDateLabelToIso(currentEvent.dateLabel),
+        eventTime: "", // free-form labels like "12 Noon" can't be reliably reverse-parsed — admin re-picks if editing
         venue: currentEvent.venue || "",
         whatsappNumber: currentEvent.whatsappNumber || "",
         performers: (Array.isArray(currentEvent.performers) ? currentEvent.performers : []).join(", "),
@@ -240,10 +277,16 @@ export default function EventWidget() {
       return;
     }
 
-    const cleanedWhatsapp = form.whatsappNumber.replace(/[\s+()-]/g, "");
+    // Accept either local format (e.g. 08100900926) or already-international
+    // (e.g. 2348100900926) — normalize local numbers to international
+    // before saving, since that's what the wa.me chat link needs.
+    let cleanedWhatsapp = form.whatsappNumber.replace(/[\s+()-]/g, "");
+    if (/^0\d{10}$/.test(cleanedWhatsapp)) {
+      cleanedWhatsapp = "234" + cleanedWhatsapp.slice(1);
+    }
     if (cleanedWhatsapp && !/^\d{10,15}$/.test(cleanedWhatsapp)) {
       setFormError(
-        "WhatsApp number should be digits only, with country code, no spaces or symbols (e.g. 2347066064379)."
+        "WhatsApp number should be digits only — either local format (e.g. 08100900926) or with country code (e.g. 2348100900926)."
       );
       return;
     }
@@ -268,8 +311,8 @@ export default function EventWidget() {
         title: form.title.trim(),
         subtitle: form.subtitle.trim(),
         tagline: form.tagline.trim(),
-        dateLabel: form.dateLabel.trim(),
-        timeLabel: form.timeLabel.trim(),
+        dateLabel: form.eventDate ? formatDateLabel(form.eventDate) : (currentEvent?.dateLabel || ""),
+        timeLabel: form.eventTime ? formatTimeLabel(form.eventTime) : (currentEvent?.timeLabel || ""),
         venue: form.venue.trim(),
         whatsappNumber: cleanedWhatsapp,
         performers: form.performers.split(",").map((s) => s.trim()).filter(Boolean),
@@ -488,10 +531,51 @@ export default function EventWidget() {
                           <AdminField label="Title *" value={form.title} onChange={(v) => setForm({ ...form, title: v })} placeholder="Iri Ji Festival" />
                           <AdminField label="Subtitle" value={form.subtitle} onChange={(v) => setForm({ ...form, subtitle: v })} placeholder="Feast of St. Dom." />
                           <AdminField label="Presenter line" value={form.presenter} onChange={(v) => setForm({ ...form, presenter: v })} />
-                          <AdminField label="Date label" value={form.dateLabel} onChange={(v) => setForm({ ...form, dateLabel: v })} placeholder="Saturday, August 15, 2026" />
-                          <AdminField label="Time label" value={form.timeLabel} onChange={(v) => setForm({ ...form, timeLabel: v })} placeholder="12 Noon" />
+
+                          {/* Date & time — picked, not typed */}
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="flex items-center gap-1.5 text-xs text-stone-400 mb-1.5">
+                                <Calendar size={12} />
+                                Date
+                              </label>
+                              <input
+                                type="date"
+                                value={form.eventDate}
+                                onChange={(e) => setForm({ ...form, eventDate: e.target.value })}
+                                className="w-full px-3.5 py-2.5 rounded-lg bg-stone-800 border border-stone-600 text-stone-100 text-sm focus:outline-none focus:border-amber-400 [color-scheme:dark]"
+                              />
+                              <p className="text-[10px] text-stone-500 mt-1.5 min-h-[14px]">
+                                {form.eventDate
+                                  ? `Shows as: ${formatDateLabel(form.eventDate)}`
+                                  : currentEvent?.dateLabel
+                                  ? `Currently: ${currentEvent.dateLabel}`
+                                  : ""}
+                              </p>
+                            </div>
+                            <div>
+                              <label className="flex items-center gap-1.5 text-xs text-stone-400 mb-1.5">
+                                <Clock size={12} />
+                                Time
+                              </label>
+                              <input
+                                type="time"
+                                value={form.eventTime}
+                                onChange={(e) => setForm({ ...form, eventTime: e.target.value })}
+                                className="w-full px-3.5 py-2.5 rounded-lg bg-stone-800 border border-stone-600 text-stone-100 text-sm focus:outline-none focus:border-amber-400 [color-scheme:dark]"
+                              />
+                              <p className="text-[10px] text-stone-500 mt-1.5 min-h-[14px]">
+                                {form.eventTime
+                                  ? `Shows as: ${formatTimeLabel(form.eventTime)}`
+                                  : currentEvent?.timeLabel
+                                  ? `Currently: ${currentEvent.timeLabel}`
+                                  : ""}
+                              </p>
+                            </div>
+                          </div>
+
                           <AdminField label="Venue" value={form.venue} onChange={(v) => setForm({ ...form, venue: v })} />
-                          <AdminField label="WhatsApp number (optional)" value={form.whatsappNumber} onChange={(v) => setForm({ ...form, whatsappNumber: v })} placeholder="2347066064379" />
+                          <AdminField label="WhatsApp number (optional)" value={form.whatsappNumber} onChange={(v) => setForm({ ...form, whatsappNumber: v })} placeholder="08100900926" />
                           <AdminField label="Tagline" value={form.tagline} onChange={(v) => setForm({ ...form, tagline: v })} />
                           <AdminField label="Performers (comma-separated)" value={form.performers} onChange={(v) => setForm({ ...form, performers: v })} />
                           <AdminField label="Highlights (comma-separated)" value={form.highlights} onChange={(v) => setForm({ ...form, highlights: v })} />
