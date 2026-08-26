@@ -1,17 +1,18 @@
 // src/components/common/EventWidget.jsx
 //
-// A DELIBERATELY DIFFERENT architecture from the previous attempts.
-//
-// Everything — the trigger button, the Firestore subscription, the auth
-// state, and the modal — lives in ONE component with ONLY local state.
-// No React Context, no separate Provider, no cross-component wiring of
-// any kind. This is mounted exactly ONCE, directly in App.jsx (not
-// inside Header.jsx, which would risk duplication if Header is ever
-// re-rendered per breakpoint the way some other nav items are).
+// Everything — the trigger button, the auth state, and the modal — lives
+// in ONE component with ONLY local state. No React Context, no separate
+// Provider, no cross-component wiring of any kind. This is mounted
+// exactly ONCE, directly in App.jsx (not inside Header.jsx, which would
+// risk duplication if Header is ever re-rendered per breakpoint the way
+// some other nav items are).
 //
 // The trigger is a fixed-position floating button (bottom-right), visible
 // on every page, rather than embedded inside the header's nav row — this
 // avoids any dependency on exactly where/how many times Header renders.
+//
+// Backend: Appwrite (Auth + Database + Storage, one client) — see
+// src/lib/appwrite.js and src/lib/eventApi.js.
 //
 // Verbose console logging is left in deliberately (prefixed
 // "[EventWidget]") so that if anything ever goes wrong again, there's an
@@ -37,14 +38,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { subscribeToCurrentEvent, saveCurrentEvent, takeDownCurrentEvent } from "@/lib/eventApi";
-import { uploadFlyer } from "@/lib/cloudinary";
+import { account } from "@/lib/appwrite";
+import { fetchCurrentEvent, saveCurrentEvent, takeDownCurrentEvent, uploadMedia } from "@/lib/eventApi";
 
 const waLink = (number, text) =>
   `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
@@ -62,6 +57,7 @@ const emptyForm = {
   highlights: "",
   closingLine: "",
   flyerUrl: "",
+  mediaType: "image",
 };
 
 // Catches any render crash inside the announcement view and shows a real,
@@ -118,39 +114,65 @@ export default function EventWidget() {
   const [form, setForm] = useState(emptyForm);
   const [flyerFile, setFlyerFile] = useState(null);
   const [flyerPreview, setFlyerPreview] = useState("");
-  const [uploadProgress, setUploadProgress] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
 
   // No more auto-open-on-load. The button is the only entry point now —
   // it just needs to reflect whatever the current state is whenever the
-  // data arrives, with no time pressure on exactly when. This removes an
-  // entire category of timing bugs the auto-open behavior kept running into.
+  // data arrives, with no time pressure on exactly when.
+  //
+  // A one-time fetch (not a persistent listener) on mount — see the notes
+  // in eventApi.js for why. Retries a couple of times on failure, since a
+  // genuine network hiccup during the single request is still possible,
+  // but this is a much smaller, simpler mechanism than the old
+  // listener-retry logic — a plain fetch either resolves or rejects, there's
+  // no "waiting to see if anything ever comes back" ambiguity anymore.
   useEffect(() => {
-    console.log("[EventWidget] Mounted. Subscribing to Firestore...");
+    let cancelled = false;
 
-    const unsubscribe = subscribeToCurrentEvent(
-      (event) => {
-        console.log("[EventWidget] Firestore data received:", event);
-        setCurrentEvent(event);
-        setEventLoading(false);
-      },
-      (err) => {
-        console.error("[EventWidget] Firestore subscription error:", err);
-        setEventLoading(false);
+    const load = async (attempt = 1) => {
+      console.log(`[EventWidget] Fetching current event (attempt ${attempt})...`);
+      try {
+        const event = await fetchCurrentEvent();
+        console.log("[EventWidget] Fetch succeeded:", event);
+        if (!cancelled) {
+          setCurrentEvent(event);
+          setEventLoading(false);
+        }
+      } catch (err) {
+        console.error(`[EventWidget] Fetch failed (attempt ${attempt}):`, err);
+        if (cancelled) return;
+        if (attempt < 3) {
+          setTimeout(() => load(attempt + 1), 1500);
+        } else {
+          console.error("[EventWidget] Giving up after 3 attempts.");
+          setEventLoading(false);
+        }
       }
-    );
+    };
 
-    const authUnsubscribe = onAuthStateChanged(auth, (u) => {
-      console.log("[EventWidget] Auth state:", u ? u.email : "signed out");
-      setUser(u);
-      setAuthLoading(false);
-    });
+    load();
+
+    // Appwrite doesn't have a built-in reactive "auth state changed"
+    // listener the way Firebase/Supabase do — check once on mount for an
+    // existing session, then update state directly after login/logout
+    // actions (see handleLogin/handleLogout below).
+    account
+      .get()
+      .then((u) => {
+        console.log("[EventWidget] Existing session found:", u.email);
+        if (!cancelled) setUser(u);
+      })
+      .catch(() => {
+        console.log("[EventWidget] No existing session.");
+      })
+      .finally(() => {
+        if (!cancelled) setAuthLoading(false);
+      });
 
     return () => {
-      console.log("[EventWidget] Unmounting, cleaning up subscriptions.");
-      unsubscribe();
-      authUnsubscribe();
+      cancelled = true;
     };
   }, []);
 
@@ -169,6 +191,7 @@ export default function EventWidget() {
         highlights: (Array.isArray(currentEvent.highlights) ? currentEvent.highlights : []).join(", "),
         closingLine: currentEvent.closingLine || "",
         flyerUrl: currentEvent.flyerUrl || "",
+        mediaType: currentEvent.mediaType || "image",
       });
       setFlyerPreview(currentEvent.flyerUrl || "");
     } else {
@@ -185,7 +208,9 @@ export default function EventWidget() {
     setLoginError("");
     setLoginSubmitting(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await account.createEmailPasswordSession(email, password);
+      const u = await account.get();
+      setUser(u);
       setEmail("");
       setPassword("");
     } catch {
@@ -195,8 +220,9 @@ export default function EventWidget() {
     }
   };
 
-  const handleLogout = () => {
-    signOut(auth);
+  const handleLogout = async () => {
+    await account.deleteSession("current");
+    setUser(null);
     setEditing(false);
   };
 
@@ -224,17 +250,20 @@ export default function EventWidget() {
 
     setSaving(true);
     setFormError("");
-    setUploadProgress(null);
+    setUploading(false);
 
     try {
       let flyerUrl = form.flyerUrl;
+      let mediaType = form.mediaType;
       if (flyerFile) {
-        setUploadProgress(0);
-        flyerUrl = await uploadFlyer(flyerFile, setUploadProgress);
-        setUploadProgress(null);
+        setUploading(true);
+        const result = await uploadMedia(flyerFile);
+        flyerUrl = result.url;
+        mediaType = result.mediaType;
+        setUploading(false);
       }
 
-      await saveCurrentEvent({
+      const savedEvent = {
         presenter: form.presenter.trim(),
         title: form.title.trim(),
         subtitle: form.subtitle.trim(),
@@ -247,22 +276,31 @@ export default function EventWidget() {
         highlights: form.highlights.split(",").map((s) => s.trim()).filter(Boolean),
         closingLine: form.closingLine.trim(),
         flyerUrl,
-      });
+        mediaType,
+      };
+
+      await saveCurrentEvent(savedEvent);
 
       console.log("[EventWidget] Save succeeded.");
+      // No live listener anymore (see eventApi.js) — update the local
+      // view directly with what we just saved, rather than waiting on a
+      // subscription to notice the change.
+      setCurrentEvent({ id: "currentEvent", ...savedEvent });
       setEditing(false);
     } catch (err) {
       console.error("[EventWidget] Save failed:", err);
       setFormError(err?.message || "Something went wrong saving this event. Please try again.");
     } finally {
       setSaving(false);
-      setUploadProgress(null);
+      setUploading(false);
     }
   };
 
   const handleTakeDown = async () => {
     if (!window.confirm("Take down the current event? This can't be undone.")) return;
     await takeDownCurrentEvent();
+    // Same reasoning as above — update local state directly.
+    setCurrentEvent(null);
     setEditing(false);
   };
 
@@ -274,42 +312,51 @@ export default function EventWidget() {
           setActiveTab("announcement");
           setModalOpen(true);
         }}
-        whileHover={{ scale: 1.06 }}
+        whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.94 }}
-        aria-label={currentEvent ? `View ${currentEvent.title} announcement` : "Event announcements"}
-        className={`fixed bottom-6 right-6 z-[9998] flex items-center justify-center w-14 h-14 rounded-full cursor-pointer border-2 shadow-lg overflow-hidden transition-all duration-300 ${
+        animate={
           currentEvent
-            ? "bg-gradient-to-br from-amber-400 via-amber-500 to-red-500 border-amber-200 shadow-amber-500/40"
-            : "bg-stone-800 border-stone-600 hover:bg-stone-700"
-        }`}
+            ? { scale: [1, 1.04, 1] }
+            : {}
+        }
+        transition={currentEvent ? { scale: { duration: 1.8, repeat: Infinity, ease: "easeInOut" } } : {}}
+        aria-label={currentEvent ? `View ${currentEvent.title} announcement` : "Event announcements"}
+        className={`fixed bottom-6 right-6 z-[9998] flex items-center justify-center gap-2 w-36 h-12 rounded-lg cursor-pointer border-2 overflow-hidden transition-all duration-200 ${
+          currentEvent
+            ? "bg-gradient-to-br from-amber-400 via-amber-500 to-red-500 border-amber-200 shadow-[0_3px_0_rgba(0,0,0,0.4),0_0_18px_rgba(251,191,36,0.55)] hover:shadow-[0_2px_0_rgba(0,0,0,0.4),0_0_22px_rgba(251,191,36,0.7)]"
+            : "bg-stone-800 border-stone-600 hover:bg-stone-700 shadow-[0_3px_0_rgba(0,0,0,0.4)] hover:shadow-[0_2px_0_rgba(0,0,0,0.4)]"
+        } hover:translate-y-[1px]`}
       >
         {currentEvent && (
           <>
             {/* Soft pulsing glow ring — reads as "alive," not urgent */}
             <motion.span
-              className="absolute inset-0 rounded-full border-2 border-amber-200/70"
-              animate={{ scale: [1, 1.3, 1], opacity: [0.6, 0, 0.6] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 rounded-lg border-2 border-amber-200/70"
+              animate={{ scale: [1, 1.1, 1], opacity: [0.7, 0, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             />
-            {/* Slow diagonal shimmer sweep — a touch of "flashy," kept gentle */}
+            {/* Diagonal shimmer sweep — a touch of "flashy," kept gentle but a bit more frequent */}
             <motion.span
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%)",
+                  "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%)",
               }}
               animate={{ x: ["-120%", "120%"] }}
-              transition={{ duration: 3, repeat: Infinity, repeatDelay: 1.5, ease: "easeInOut" }}
+              transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1, ease: "easeInOut" }}
             />
-            {/* Small notification badge — unmistakable "something's here" cue */}
+            {/* Notification badge — unmistakable "something's here" cue */}
             <span className="absolute top-1 right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-stone-900" />
           </>
         )}
         {currentEvent ? (
-          <Calendar size={22} className="relative text-white drop-shadow" />
+          <Calendar size={19} className="relative text-white drop-shadow flex-shrink-0" />
         ) : (
-          <Bell size={22} className="relative text-white/70" />
+          <Bell size={19} className="relative text-white/70 flex-shrink-0" />
         )}
+        <span className={`relative text-[11px] font-bold tracking-wide leading-tight ${currentEvent ? "text-white" : "text-white/70"}`}>
+          {currentEvent ? "UPCOMING EVENTS" : "EVENTS"}
+        </span>
       </motion.button>
 
       {/* ================= MODAL ================= */}
@@ -451,23 +498,26 @@ export default function EventWidget() {
                           <AdminField label="Closing line" value={form.closingLine} onChange={(v) => setForm({ ...form, closingLine: v })} />
 
                           <div>
-                            <label className="block text-xs text-stone-400 mb-1.5">Flyer image (max 8MB)</label>
+                            <label className="block text-xs text-stone-400 mb-1.5">Flyer image or video (images max 8MB, video max 50MB)</label>
                             <div className="flex items-center gap-3">
-                              {flyerPreview && (
-                                <img src={flyerPreview} alt="" className="w-16 h-16 object-cover rounded-lg border border-stone-600" />
+                              {flyerPreview &&
+                                (flyerFile ? flyerFile.type.startsWith("video/") : form.mediaType === "video") ? (
+                                <video src={flyerPreview} className="w-16 h-16 object-cover rounded-lg border border-stone-600" muted />
+                              ) : (
+                                flyerPreview && (
+                                  <img src={flyerPreview} alt="" className="w-16 h-16 object-cover rounded-lg border border-stone-600" />
+                                )
                               )}
                               <label className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-stone-700 hover:bg-stone-600 text-xs text-stone-200 cursor-pointer transition-colors">
                                 <Upload size={14} />
                                 {flyerPreview ? "Replace" : "Upload"}
-                                <input type="file" accept="image/*" onChange={handleFlyerChange} className="hidden" />
+                                <input type="file" accept="image/*,video/*" onChange={handleFlyerChange} className="hidden" />
                               </label>
                             </div>
-                            {uploadProgress !== null && (
-                              <div className="mt-2">
-                                <div className="h-1.5 rounded-full bg-stone-700 overflow-hidden">
-                                  <div className="h-full bg-red-500 transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
-                                </div>
-                                <p className="text-[10px] text-stone-400 mt-1">Uploading… {uploadProgress}%</p>
+                            {uploading && (
+                              <div className="mt-2 flex items-center gap-2">
+                                <Loader2 size={13} className="animate-spin text-red-400" />
+                                <p className="text-[10px] text-stone-400">Uploading…</p>
                               </div>
                             )}
                           </div>
@@ -480,7 +530,7 @@ export default function EventWidget() {
                             className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-60 text-white text-sm font-semibold transition-colors"
                           >
                             {saving && <Loader2 size={15} className="animate-spin" />}
-                            {saving ? (uploadProgress !== null ? `Uploading… ${uploadProgress}%` : "Saving…") : "Save Event"}
+                            {saving ? (uploading ? "Uploading…" : "Saving…") : "Save Event"}
                           </button>
                         </form>
                       ) : (
@@ -550,14 +600,28 @@ export default function EventWidget() {
               onClick={() => setFlyerOpen(false)}
               className="fixed inset-0 z-[10000] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out"
             >
-              <motion.img
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.9 }}
-                src={currentEvent?.flyerUrl}
-                alt={`${currentEvent?.title} flyer`}
-                className="max-w-full max-h-full rounded-lg shadow-2xl"
-              />
+              {currentEvent?.mediaType === "video" ? (
+                <motion.video
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0.9 }}
+                  onClick={(e) => e.stopPropagation()}
+                  src={currentEvent?.flyerUrl}
+                  className="max-w-full max-h-full rounded-lg shadow-2xl"
+                  controls
+                  autoPlay
+                  playsInline
+                />
+              ) : (
+                <motion.img
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0.9 }}
+                  src={currentEvent?.flyerUrl}
+                  alt={`${currentEvent?.title} flyer`}
+                  className="max-w-full max-h-full rounded-lg shadow-2xl"
+                />
+              )}
             </motion.div>
           )}
         </AnimatePresence>,
@@ -587,7 +651,18 @@ function EventDetails({ event, onFlyerClick }) {
     <div className="space-y-4">
       {event.flyerUrl && (
         <button onClick={onFlyerClick} className="relative w-full rounded-xl overflow-hidden border border-white/15 shadow-2xl shadow-black/50 group">
-          <img src={event.flyerUrl} alt={`${event.title} flyer`} className="w-full h-auto group-hover:scale-105 transition-transform duration-500" />
+          {event.mediaType === "video" ? (
+            <video
+              src={event.flyerUrl}
+              className="w-full h-auto"
+              autoPlay
+              loop
+              muted
+              playsInline
+            />
+          ) : (
+            <img src={event.flyerUrl} alt={`${event.title} flyer`} className="w-full h-auto group-hover:scale-105 transition-transform duration-500" />
+          )}
         </button>
       )}
 

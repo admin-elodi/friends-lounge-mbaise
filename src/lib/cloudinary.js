@@ -1,5 +1,6 @@
 // src/lib/cloudinary.js
-// Flyer image uploads, via Cloudinary instead of Firebase Storage.
+// Event media uploads (image OR video), via Cloudinary instead of Firebase
+// Storage.
 //
 // Why: as of Feb 2026, Firebase Storage requires the paid "Blaze" plan
 // (a linked billing card) just to create a bucket — even if actual usage
@@ -23,13 +24,20 @@
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-const MAX_FLYER_SIZE_MB = 8;
+const MAX_IMAGE_SIZE_MB = 8;
+const MAX_VIDEO_SIZE_MB = 50;
 
-// Uploads a flyer image and returns its public URL. `onProgress(percent)`
-// is called as the upload advances (0-100). Uses XMLHttpRequest rather
-// than fetch() specifically because fetch has no built-in upload-progress
-// event — XHR does, and that's what powers the dashboard's progress bar.
-export function uploadFlyer(file, onProgress) {
+// Uploads an image OR a video (detected from the file's type) and returns
+// { url, mediaType }, where mediaType is "image" or "video" — the caller
+// needs this to know whether to render an <img> or a <video> later.
+// Cloudinary requires a different endpoint per media type, even for
+// unsigned uploads.
+//
+// `onProgress(percent)` is called as the upload advances (0-100). Uses
+// XMLHttpRequest rather than fetch() specifically because fetch has no
+// built-in upload-progress event — XHR does, and that's what powers the
+// dashboard's progress bar.
+export function uploadMedia(file, onProgress) {
   return new Promise((resolve, reject) => {
     if (!CLOUD_NAME || !UPLOAD_PRESET) {
       reject(
@@ -40,10 +48,13 @@ export function uploadFlyer(file, onProgress) {
       return;
     }
 
-    if (file.size > MAX_FLYER_SIZE_MB * 1024 * 1024) {
+    const isVideo = file.type.startsWith("video/");
+    const maxSizeMB = isVideo ? MAX_VIDEO_SIZE_MB : MAX_IMAGE_SIZE_MB;
+
+    if (file.size > maxSizeMB * 1024 * 1024) {
       reject(
         new Error(
-          `That image is too large (${(file.size / (1024 * 1024)).toFixed(1)}MB). Please use one under ${MAX_FLYER_SIZE_MB}MB.`
+          `That file is too large (${(file.size / (1024 * 1024)).toFixed(1)}MB). Please use ${isVideo ? "a video" : "an image"} under ${maxSizeMB}MB.`
         )
       );
       return;
@@ -52,10 +63,11 @@ export function uploadFlyer(file, onProgress) {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", UPLOAD_PRESET);
-    formData.append("folder", "flyers");
+    formData.append("folder", "event-media");
 
+    const endpoint = isVideo ? "video" : "image";
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`);
+    xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${endpoint}/upload`);
 
     xhr.upload.onprogress = (event) => {
       if (onProgress && event.lengthComputable) {
@@ -66,7 +78,7 @@ export function uploadFlyer(file, onProgress) {
     xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         const response = JSON.parse(xhr.responseText);
-        resolve(response.secure_url);
+        resolve({ url: response.secure_url, mediaType: isVideo ? "video" : "image" });
       } else {
         reject(
           new Error(
@@ -85,10 +97,10 @@ export function uploadFlyer(file, onProgress) {
 }
 
 // Cloudinary deletion requires a signed request (a backend/API secret),
-// which this client-only setup deliberately doesn't have — so old flyer
-// images are simply left in place when an event is deleted or replaced,
-// rather than actively removed. At the Free plan's 25GB, this is a
-// non-issue for a lounge posting occasional event flyers.
-export async function deleteFlyer() {
+// which this client-only setup deliberately doesn't have — so old media
+// is simply left in place when an event is deleted or replaced, rather
+// than actively removed. At the Free plan's 25GB, this is a non-issue for
+// a lounge posting occasional event media.
+export async function deleteMedia() {
   // Intentionally a no-op — see note above.
 }
