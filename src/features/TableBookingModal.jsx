@@ -178,7 +178,6 @@ Thank you for choosing Friends’ Lounge Mbaise.`;
           sm:left-1/2 sm:-translate-x-1/2
           w-auto sm:w-full sm:max-w-[480px]
           bg-black/60 backdrop-blur-2xl
-          border-1 border-red-600/30
           rounded-xl shadow-2xl
           max-h-[82vh] flex flex-col overflow-hidden
         "
@@ -192,11 +191,9 @@ Thank you for choosing Friends’ Lounge Mbaise.`;
         <div className="absolute inset-0 bg-black/70" />
 
         <div className="relative h-24 z-10">
-          <motion.img
+          <img
             src={Logo}
             className="w-20 absolute left-4 top-4"
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           />
         </div>
 
