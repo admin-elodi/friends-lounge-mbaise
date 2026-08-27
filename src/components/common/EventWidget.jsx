@@ -18,7 +18,7 @@
 // "[EventWidget]") so that if anything ever goes wrong again, there's an
 // immediate, unmistakable trail showing exactly how far execution got.
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -155,10 +155,15 @@ export default function EventWidget() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
 
-  // No more auto-open-on-load. The button is the only entry point now —
-  // it just needs to reflect whatever the current state is whenever the
-  // data arrives, with no time pressure on exactly when.
-  //
+  // Auto-opens the modal on page load if an event is posted — safe to do
+  // now that reads are a single one-shot fetch (fetchCurrentEvent), not a
+  // persistent listener with a "was that cache or real data" two-step.
+  // The previous version of this feature was removed specifically because
+  // it kept firing prematurely off a stale first response; that ambiguity
+  // doesn't exist with a plain fetch — it either succeeds with the real
+  // answer or it doesn't resolve at all.
+  const hasAutoOpenedRef = useRef(false);
+
   // A one-time fetch (not a persistent listener) on mount — see the notes
   // in eventApi.js for why. Retries a couple of times on failure, since a
   // genuine network hiccup during the single request is still possible,
@@ -176,6 +181,12 @@ export default function EventWidget() {
         if (!cancelled) {
           setCurrentEvent(event);
           setEventLoading(false);
+          if (event && !hasAutoOpenedRef.current) {
+            console.log("[EventWidget] Auto-opening modal for:", event.title);
+            hasAutoOpenedRef.current = true;
+            setActiveTab("announcement");
+            setModalOpen(true);
+          }
         }
       } catch (err) {
         console.error(`[EventWidget] Fetch failed (attempt ${attempt}):`, err);
