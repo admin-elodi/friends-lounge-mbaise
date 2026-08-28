@@ -1,4 +1,4 @@
-// MicroStats.jsx — minimalist metrics for Friends Lounge Mbaise
+// MicroStats.jsx - minimalist metrics for Friends Lounge Mbaise
 import React, { useState, useEffect } from "react"
 import { Users, TrendingUp, Flag } from "lucide-react"
 

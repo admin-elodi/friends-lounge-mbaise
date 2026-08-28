@@ -50,7 +50,7 @@ export default function Banner() {
         ))}
       </div>
 
-      {/* Main content — Full-span gradient */}
+      {/* Main content - Full-span gradient */}
       <div className="relative w-full h-full bg-gradient-to-r from-[hsl(160,100%,10%)] via-black to-[hsl(160,100%,18%)] py-1 md:py-2 text-center transition-all duration-500 group-hover:scale-[1.02] flex flex-col justify-center items-center px-4 space-y-0.5 md:space-y-1">
 
         {/* Line 1: Rationale */}
@@ -97,7 +97,7 @@ export default function Banner() {
         </button>
       </div>
 
-      {/* UPA LOGO — Left Side, Fully Visible, Perfect Balance */}
+      {/* UPA LOGO - Left Side, Fully Visible, Perfect Balance */}
       <Link to = "/programs">
         <div className="absolute top-1/2 -translate-y-1/2 left-1 md:left-2 pointer-events-none z-10">
           <div className="relative">
@@ -958,7 +958,7 @@ const Footer = () => {
         {/* FOOTER BOTTOM */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-16 pt-10 border-t border-red-600/50 text-center relative z-10">
           <p className="font-bold text-[12px] text-gray-300">
-            © {new Date().getFullYear()} Friends’ Lounge Mbaise — All Rights Reserved.
+            © {new Date().getFullYear()} Friends’ Lounge Mbaise - All Rights Reserved.
           </p>
 
           <div className="relative flex flex-col items-center justify-center mt-8 space-y-2">

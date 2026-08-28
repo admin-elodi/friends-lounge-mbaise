@@ -30,9 +30,9 @@ export default function Mbaise() {
 
   /* ---------------- MARKET DATA ---------------- */
   const markets = [
-    { name: "Nkwo Mbaise Market", igboDay: "NKWO", days: ["Wednesday"], location: "Ahiazu Mbaise", info: "Largest regional market — foodstuffs, livestock, fabrics, trade hubs." },
+    { name: "Nkwo Mbaise Market", igboDay: "NKWO", days: ["Wednesday"], location: "Ahiazu Mbaise", info: "Largest regional market - foodstuffs, livestock, fabrics, trade hubs." },
     { name: "Eke Nguru", igboDay: "EKE", days: ["Sunday", "Thursday"], location: "Nguru Mbaise", info: "Fresh produce, palm wine, garri, spices and farm harvests." },
-    { name: "Orie Aboh", igboDay: "ORIE", days: ["Monday", "Friday"], location: "Aboh Mbaise", info: "Commercial crossroads — transport, trade & logistics." },
+    { name: "Orie Aboh", igboDay: "ORIE", days: ["Monday", "Friday"], location: "Aboh Mbaise", info: "Commercial crossroads - transport, trade & logistics." },
     { name: "Afo Owerri Mbaise", igboDay: "AFO", days: ["Tuesday", "Saturday"], location: "Owerri Mbaise", info: "Yam, cocoyam, vegetables, bush meat & grains." },
   ];
 
@@ -305,7 +305,7 @@ export default function Mbaise() {
               <img src={chief} alt="Chief Santome" className="w-full rounded-xl shadow-md object-cover" />
             </div>
             <div className="flex-1">
-              <h3 className="text-2xl font-bold mb-2">Your Host — Chief. Sir. Barrister Santome Ibeneche</h3>
+              <h3 className="text-2xl font-bold mb-2">Your Host - Chief. Sir. Barrister Santome Ibeneche</h3>
               <p className="text-sm text-gray-600 mb-4">Founder, Friends' Lounge Mbaise</p>
               <blockquote className="italic text-gray-700 border-l-4 border-red-500 pl-4">
                 [One of Chief's favorite quotes to be published shortly]
@@ -481,7 +481,7 @@ export default function Mbaise() {
                 <h4 className="text-xl font-semibold mb-4 text-red-800">Admin Note on Age Grades</h4>
                 <p className="text-sm text-gray-800 leading-relaxed">
                   The Age Grades of Udo are the heartbeat of our community. From Ogueri to Ugomba, each group brings unique energy, wisdom, and dedication to development. 
-                  We celebrate their ongoing projects and encourage every member — home or abroad — to stay connected and contribute.
+                  We celebrate their ongoing projects and encourage every member - home or abroad - to stay connected and contribute.
                 </p>
               </div>
             </div>
@@ -723,7 +723,7 @@ export default function Mbaise() {
           </div>
         </section>
 
-        {/* UDO — THE SPIRITUAL HEART OF MBAISE (moved here) */}
+        {/* UDO - THE SPIRITUAL HEART OF MBAISE (moved here) */}
         <section className="space-y-8">
           <div className="text-center">
             <h3 className="text-3xl font-bold mb-2">Udo Autonomous Community</h3>
@@ -735,7 +735,7 @@ export default function Mbaise() {
               <h4 className="font-bold text-xl mb-4 text-red-800">A Place of Ancient Origins</h4>
               <p className="text-gray-700 leading-relaxed">
                 Udo, meaning "peace" in Igbo, stands as one of the most revered communities in Ezinihitte Mbaise. 
-                Oral traditions link the area to the primordial seat of creation — Orie Ukwu Oboama-na-Umunama — where the Ezinihitte people trace their common ancestry and spiritual roots. 
+                Oral traditions link the area to the primordial seat of creation - Orie Ukwu Oboama-na-Umunama - where the Ezinihitte people trace their common ancestry and spiritual roots. 
                 It remains a living symbol of unity, harmony, and the enduring bond among Mbaise clans.
               </p>
             </div>
@@ -743,14 +743,14 @@ export default function Mbaise() {
             <div className="bg-white/90 rounded-2xl p-7 border shadow-sm">
               <h4 className="font-bold text-xl mb-4 text-red-800">Guardian of Sacred Heritage</h4>
               <p className="text-gray-700 leading-relaxed">
-                Udo has hosted profound cultural gatherings, including historic editions of the renowned Oji Ezinihitte festival — a celebration of the kola nut as the king of Igbo symbols of hospitality, brotherhood, and spiritual connection. 
+                Udo has hosted profound cultural gatherings, including historic editions of the renowned Oji Ezinihitte festival - a celebration of the kola nut as the king of Igbo symbols of hospitality, brotherhood, and spiritual connection. 
                 Here, communities gather to honor Chileke (the Creator), ancestors, and the unbroken thread of Igbo tradition.
               </p>
             </div>
           </div>
 
           <p className="text-center text-gray-600 italic text-lg mt-6 max-w-3xl mx-auto">
-            In Udo, one feels the quiet power of Mbaise's spiritual capital — a serene foundation from which to explore the richness of the entire region.
+            In Udo, one feels the quiet power of Mbaise's spiritual capital - a serene foundation from which to explore the richness of the entire region.
           </p>
         </section>
 

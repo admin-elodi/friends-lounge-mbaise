@@ -27,7 +27,7 @@ const suspenseFallback = (
   </div>
 );
 
-// <EventWidget /> is mounted exactly once, right here — not inside
+// <EventWidget /> is mounted exactly once, right here - not inside
 // Header.jsx. It's fully self-contained (its own Firestore subscription,
 // its own auth state, its own modal), with no Context/Provider layer at
 // all. This is the deliberate architectural change: fewer moving parts,

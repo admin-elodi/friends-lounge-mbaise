@@ -1,21 +1,21 @@
 // src/lib/eventApi.js
-// Everything about "the current event" — reading it, saving it, taking it
-// down, and uploading its flyer/video — lives in this one file, all
+// Everything about "the current event" - reading it, saving it, taking it
+// down, and uploading its flyer/video - lives in this one file, all
 // through the single Appwrite client.
 //
 // Same "single record" model as every previous version: one fixed row
 // (ID: "current-event") in an Appwrite table represents whatever's
 // currently posted. If the row exists, there's an event; if it doesn't,
-// there isn't. No date-based auto-expiry — the admin takes it down
+// there isn't. No date-based auto-expiry - the admin takes it down
 // manually.
 //
-// Uses Appwrite's TablesDB service (Tables/Rows/Columns) — the current
+// Uses Appwrite's TablesDB service (Tables/Rows/Columns) - the current
 // API, matching what a table created via Appwrite's console actually is.
 // Row attribute (column) names stay camelCase, matching the rest of the
-// app — no snake_case mapping layer needed.
+// app - no snake_case mapping layer needed.
 //
 // Reads use a single plain request, not a persistent real-time
-// subscription — same reasoning as every previous backend attempt: a
+// subscription - same reasoning as every previous backend attempt: a
 // one-off request/response is far less likely to be interfered with by
 // browser extensions or network filtering than a kept-open streaming
 // connection is.
@@ -29,7 +29,7 @@ const BUCKET_ID = import.meta.env.VITE_APPWRITE_BUCKET_ID;
 const ROW_ID = "current-event";
 
 const MAX_IMAGE_SIZE_MB = 8;
-const MAX_VIDEO_SIZE_MB = 45; // Appwrite Free plan's file size cap is 50MB — staying a little under it
+const MAX_VIDEO_SIZE_MB = 45; // Appwrite Free plan's file size cap is 50MB - staying a little under it
 
 function fromRow(row) {
   if (!row) return null;
@@ -68,7 +68,7 @@ export async function fetchCurrentEvent() {
   }
 }
 
-// Creates or fully replaces the current event in one call — upsertRow
+// Creates or fully replaces the current event in one call - upsertRow
 // handles both cases, so there's no need to check whether the row
 // already exists first.
 export async function saveCurrentEvent(event) {
@@ -80,7 +80,7 @@ export async function saveCurrentEvent(event) {
   });
 }
 
-// Manually takes the event down — the admin's explicit action.
+// Manually takes the event down - the admin's explicit action.
 export async function takeDownCurrentEvent() {
   try {
     await tablesDB.deleteRow({
@@ -94,7 +94,7 @@ export async function takeDownCurrentEvent() {
 }
 
 // Uploads an image or video and returns { url, mediaType }. Doesn't
-// report a live upload percentage — Appwrite's web SDK doesn't expose
+// report a live upload percentage - Appwrite's web SDK doesn't expose
 // that natively, and reimplementing raw upload just for a progress bar
 // wasn't worth the added complexity. The dashboard shows a simple
 // "Uploading…" state instead.

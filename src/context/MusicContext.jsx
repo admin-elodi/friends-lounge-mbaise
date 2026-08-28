@@ -8,8 +8,8 @@ import React, {
 } from "react";
 import flmSounds from "@/assets/audio/flm-sounds.mp3";
 
-// Lifted out of Hero.jsx so the background music track — and the button
-// controlling it — can live in Header.jsx (rendered on every page) without
+// Lifted out of Hero.jsx so the background music track - and the button
+// controlling it - can live in Header.jsx (rendered on every page) without
 // the audio being torn down every time the route changes. The <audio>
 // element is mounted once here, at the top of the app, and persists for
 // the whole session regardless of navigation.
@@ -52,7 +52,7 @@ export function MusicProvider({ children }) {
   }, []);
 
   // Starts the background track the first time the user interacts with the
-  // page. Only a SUCCESSFUL play() consumes the listeners — some gestures
+  // page. Only a SUCCESSFUL play() consumes the listeners - some gestures
   // (notably `scroll`) don't count as real user-activation in most browsers
   // and get silently rejected by the autoplay policy. If we removed the
   // listeners regardless of success, one failed scroll-triggered attempt
@@ -75,7 +75,7 @@ export function MusicProvider({ children }) {
           removeListeners();
         })
         .catch(() => {
-          // Blocked by the browser's autoplay policy for this gesture —
+          // Blocked by the browser's autoplay policy for this gesture -
           // leave the listeners active so the next interaction can retry.
         });
     };

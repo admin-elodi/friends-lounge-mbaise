@@ -1,5 +1,5 @@
 // src/lib/firebase.js
-// Firebase project connection — Auth (GM login) and Firestore (event data).
+// Firebase project connection - Auth (GM login) and Firestore (event data).
 // Flyer image uploads go through Cloudinary instead (see src/lib/cloudinary.js)
 // since Firebase Storage now requires the paid Blaze plan even for
 // free-tier usage.
@@ -23,7 +23,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// Firestore supports multiple named databases per project — if yours
+// Firestore supports multiple named databases per project - if yours
 // isn't literally named "(default)" (Google Cloud Console sometimes lets
 // you pick a custom name when creating it, unlike the Firebase console's
 // "Get started" flow which always uses "(default)"), set

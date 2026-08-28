@@ -5,7 +5,7 @@ import { FaMotorcycle } from "react-icons/fa";
 
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 
-// Background slideshow — two images crossfading, deliberately in tension:
+// Background slideshow - two images crossfading, deliberately in tension:
 // the cosmic (space) against the earthly/local (Mbaise palms). Both share
 // a dark blue/purple dusk palette so the crossfade stays tonally smooth
 // even while the subject matter contrasts.
@@ -21,7 +21,7 @@ import earthBackground from "@/assets/images/palm-dusk.webp";
 
 const backgrounds = [spaceBackground, earthBackground];
 
-// A kaleidoscope of wise adages — this set written specifically to temper
+// A kaleidoscope of wise adages - this set written specifically to temper
 // the entertainment on offer (food, drink, music, company) with a steady
 // reminder toward moderation and sobriety. Original compositions in a
 // reflective, proverb-like tone rather than sourced/attributed sayings.
@@ -71,12 +71,12 @@ export default function Friends() {
     deliveryFee,
   } = useFoodOrder();
 
-  // Not wired up yet on purpose — a placeholder for passing an adage along.
+  // Not wired up yet on purpose - a placeholder for passing an adage along.
   const handleShare = () => {};
 
   return (
     <main className="relative min-h-screen w-full overflow-hidden bg-black text-white font-montserrat">
-      {/* Background slideshow — scrolls with content (no
+      {/* Background slideshow - scrolls with content (no
           background-attachment:fixed, which is unreliable on iOS Safari) */}
       <div className="absolute inset-0">
         {backgrounds.map((bg, i) => (
@@ -125,7 +125,7 @@ export default function Friends() {
           ))}
         </div>
 
-        {/* Closing actions — native to the adages themselves, not a sales pitch */}
+        {/* Closing actions - native to the adages themselves, not a sales pitch */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

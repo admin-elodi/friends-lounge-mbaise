@@ -31,10 +31,10 @@ body {
    modal that happened to be nested a few levels deep (e.g. the menu
    modal triggered from the Footer, which sits inside the page's
    outer wrapper <div>). `motion.div` and `.framer-motion-component`
-   below never matched anything real — framer-motion renders plain
+   below never matched anything real - framer-motion renders plain
    <div> elements, so those two selectors were no-ops.
 
-   GPU acceleration is now opt-in via `.gpu-accelerate` — add that
+   GPU acceleration is now opt-in via `.gpu-accelerate` - add that
    class only to specific elements that need it (e.g. a heavy
    autoplaying video wrapper), never globally.
 ---------------------------------------------------------------- */

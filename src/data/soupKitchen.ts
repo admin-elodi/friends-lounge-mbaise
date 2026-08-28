@@ -1,10 +1,10 @@
-// Friends Lounge Free Soup Kitchen — shared scheduling logic.
+// Friends Lounge Free Soup Kitchen - shared scheduling logic.
 // Run in partnership with Anodalife Children Home Initiative,
 // every Saturday, 2pm–6pm, at Friends Lounge Rooftop Bar,
 // Umuofor Udo, Ezinihitte Mbaise.
 //
 // Single source of truth for "how many editions have happened" and
-// "when is the next one" — both Banner.jsx (the homepage teaser) and
+// "when is the next one" - both Banner.jsx (the homepage teaser) and
 // Friends.jsx (the full archive) read from this so the two can never
 // show conflicting numbers as real time moves forward.
 
@@ -47,7 +47,7 @@ export function getSoupKitchenStatus(now = new Date()) {
  *
  * PHOTOS / VIDEOS: only the official flyer and one kitchen clip were
  * available at build time. Attach real photos/videos from past
- * Saturdays via the `media` field once they're supplied — left null
+ * Saturdays via the `media` field once they're supplied - left null
  * on purpose rather than filled with unrelated stock photos.
  */
 export function getEditions(now = new Date()) {

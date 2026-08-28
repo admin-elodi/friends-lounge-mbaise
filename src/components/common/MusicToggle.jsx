@@ -4,7 +4,7 @@ import { useMusic } from "@/context/MusicContext";
 
 // A sturdy, landscape-rectangular button with an explicit ON/OFF label next
 // to the equalizer bars, plus a small caption underneath identifying what
-// it controls — so its purpose and current state are obvious without
+// it controls - so its purpose and current state are obvious without
 // needing to hover or guess what a speaker icon means.
 export default function MusicToggle({ className = "" }) {
   const { isMusicMuted, hasStartedMusic, toggleMusicMute } = useMusic();

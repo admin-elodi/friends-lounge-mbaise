@@ -210,7 +210,7 @@ export default function Header() {
                 handleOpenFoodOrder(); // ← Changed only here
                 closeMobileMenu();
               }}
-              className="w-full bg-red-600 py-3 rounded-xl font-semibold text-sm hover:bg-red-500 transition-colors"
+              className="w-full bg-red-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-red-500 transition-colors"
             >
               Order Food
             </button>

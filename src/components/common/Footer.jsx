@@ -173,7 +173,7 @@ const Footer = () => {
               </motion.div>
             </div>
 
-            {/* Descriptive label — normal flow, sits in the existing gap between
+            {/* Descriptive label - normal flow, sits in the existing gap between
                 the button and the pillars below */}
             <p className="mt-3 text-xs text-gray-400 font-medium text-center truncate">
               Stream or Download Music
@@ -373,7 +373,7 @@ const Footer = () => {
         {/* FOOTER BOTTOM */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-16 pt-10 border-t border-red-600/50 text-center relative z-10">
           <p className="font-bold text-[12px] text-gray-300">
-            © {new Date().getFullYear()} Friends’ Lounge Mbaise — All Rights Reserved.
+            © {new Date().getFullYear()} Friends’ Lounge Mbaise - All Rights Reserved.
           </p>
 
           <div className="relative flex flex-col items-center justify-center mt-8 space-y-2">

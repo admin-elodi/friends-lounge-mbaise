@@ -35,7 +35,7 @@ export default function Menu() {
           className="relative w-full max-w-3xl mt-14 md:mt-16"
           style={{ perspective: "2200px" }}
         >
-          {/* Ribbon bookmark — purely decorative, hangs from the top edge */}
+          {/* Ribbon bookmark - purely decorative, hangs from the top edge */}
           <div
             className="absolute -top-4 md:-top-5 left-6 md:left-10 z-30 w-4 md:w-5 h-14 md:h-20 bg-gradient-to-b from-red-600 to-red-800 shadow-md"
             style={{ clipPath: "polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%)" }}
@@ -66,15 +66,15 @@ export default function Menu() {
 
           {/* The page, and everything that sells the "book" behind it */}
           <div className="relative rounded-r-2xl rounded-l-sm shadow-2xl shadow-black/70">
-            {/* Stacked pages underneath — static, peeking out at the right and
+            {/* Stacked pages underneath - static, peeking out at the right and
                 bottom edges, so the top page reads as one sheet among many
                 rather than a single floating card. */}
             <div className="hidden md:block absolute inset-0 translate-x-2.5 translate-y-2.5 rotate-[0.6deg] bg-amber-100/90 rounded-r-2xl rounded-l-sm -z-10 shadow-md" />
             <div className="hidden md:block absolute inset-0 translate-x-[18px] translate-y-[18px] rotate-[1.1deg] bg-amber-200/80 rounded-r-2xl rounded-l-sm -z-20 shadow-md" />
-            {/* A single, smaller echo for mobile — same idea, lighter touch */}
+            {/* A single, smaller echo for mobile - same idea, lighter touch */}
             <div className="md:hidden absolute inset-0 translate-x-1.5 translate-y-1.5 rotate-[0.5deg] bg-amber-100/80 rounded-r-2xl rounded-l-sm -z-10 shadow-sm" />
 
-            {/* Page-edge ruffle — thin lines along the right edge, mimicking
+            {/* Page-edge ruffle - thin lines along the right edge, mimicking
                 the visible edges of many thin pages in a closed book. */}
             <div className="absolute -right-1 md:-right-1.5 top-3 bottom-3 w-1 md:w-1.5 flex flex-col justify-between z-0 opacity-70 pointer-events-none">
               {Array.from({ length: 16 }).map((_, i) => (
@@ -82,7 +82,7 @@ export default function Menu() {
               ))}
             </div>
 
-            {/* Spine shadow — deepened near the binding, softening outward,
+            {/* Spine shadow - deepened near the binding, softening outward,
                 to suggest the curve of paper close to a bound edge. */}
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-black/50 z-10 pointer-events-none" />
             <div className="absolute left-0 top-0 bottom-0 w-4 md:w-6 bg-gradient-to-r from-black/45 via-black/15 to-transparent rounded-l-sm z-10 pointer-events-none" />
@@ -97,7 +97,7 @@ export default function Menu() {
                 style={{ transformOrigin: "left center", transformStyle: "preserve-3d" }}
                 className="relative z-20 bg-black/50 border border-white/15 rounded-r-2xl rounded-l-sm max-h-[65vh] md:max-h-[70vh] overflow-y-auto"
               >
-                {/* Corner page-curl, desktop only — a subtle fold at the
+                {/* Corner page-curl, desktop only - a subtle fold at the
                     bottom-right corner, another classic "this is paper" cue. */}
                 <div className="hidden md:block absolute bottom-0 right-0 w-9 h-9 pointer-events-none">
                   <div
@@ -135,7 +135,7 @@ export default function Menu() {
                                 )}
                               </div>
                               <span className="text-sm text-white font-semibold whitespace-nowrap">
-                                {item.price || "—"}
+                                {item.price || "-"}
                               </span>
                             </div>
                           ))}

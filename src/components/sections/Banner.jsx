@@ -35,7 +35,7 @@ export default function Banner() {
     `Hello, Please find evidence of my support for Friends Lounge Soup Kitchen as paid to the account details below:\n\nAccount Name: JUST FRIENDS INVESTMENT LTD\nAccount Number: 3001586851\nBank: GUARANTY TRUST BANK`
   );
 
-  // Portal-based modal — renders directly into document.body,
+  // Portal-based modal - renders directly into document.body,
   // guaranteeing fixed positioning is relative to the true viewport
   // on both mobile and desktop regardless of ancestor transforms.
   const supportModal =
@@ -196,7 +196,7 @@ export default function Banner() {
         </div>
       </div>
 
-      {/* Portal modal renders here — outside the component tree */}
+      {/* Portal modal renders here - outside the component tree */}
       {supportModal}
 
       {/* CONTACT STRIP */}

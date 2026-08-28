@@ -3,7 +3,7 @@
 // Single source of truth for the event feature, mounted once at the top
 // of the app. This is what fixes the duplication bug: the Firestore
 // subscription and the "should the modal be open" state live here, in
-// exactly one place — so no matter how many <EventTriggerButton /> copies
+// exactly one place - so no matter how many <EventTriggerButton /> copies
 // exist in the header (desktop nav, mobile nav), there's only ever one
 // real subscription and one real modal, not one per button.
 
@@ -23,13 +23,13 @@ export function EventProvider({ children }) {
   useEffect(() => {
     const unsubscribe = subscribeToCurrentEvent(
       (event) => {
-        // TEMPORARY DEBUG LOGGING — safe to remove once this is confirmed working.
+        // TEMPORARY DEBUG LOGGING - safe to remove once this is confirmed working.
         console.log("[EventContext] Firestore returned:", event);
 
         setCurrentEvent(event);
         setEventLoading(false);
 
-        // Auto-open the modal on page load if an event is posted — but
+        // Auto-open the modal on page load if an event is posted - but
         // only once per page load, not every time Firestore pushes an
         // update (e.g. while an admin is actively editing elsewhere).
         if (event && !hasAutoOpenedRef.current) {
@@ -38,7 +38,7 @@ export function EventProvider({ children }) {
           setActiveTab("announcement");
           setModalOpen(true);
         } else if (!event) {
-          console.log("[EventContext] No event document exists — nothing to auto-open.");
+          console.log("[EventContext] No event document exists - nothing to auto-open.");
         }
       },
       (err) => {

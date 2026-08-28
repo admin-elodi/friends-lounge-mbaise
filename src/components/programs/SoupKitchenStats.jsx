@@ -5,7 +5,7 @@ import {
   VENUE,
 } from "@/data/soupKitchen";
 
-// Live counters for the Soup Kitchen program detail view — same
+// Live counters for the Soup Kitchen program detail view - same
 // getSoupKitchenStatus() source Banner.jsx's teaser reads from, so the
 // numbers here can never drift out of sync with the homepage.
 function StatCard({ label, value }) {
@@ -25,7 +25,7 @@ export default function SoupKitchenStats() {
   const { completedEditions, nextEditionNumber, nextSaturday } =
     getSoupKitchenStatus();
 
-  // No weekday prefix ("Sat,") — that's what was pushing this past one line.
+  // No weekday prefix ("Sat,") - that's what was pushing this past one line.
   const nextDate = nextSaturday.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",

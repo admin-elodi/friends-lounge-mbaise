@@ -3,7 +3,7 @@
 // Storage.
 //
 // Why: as of Feb 2026, Firebase Storage requires the paid "Blaze" plan
-// (a linked billing card) just to create a bucket — even if actual usage
+// (a linked billing card) just to create a bucket - even if actual usage
 // never leaves the free quota. Cloudinary's Free plan needs no card at
 // all, so it's what actually keeps this feature free.
 //
@@ -28,21 +28,21 @@ const MAX_IMAGE_SIZE_MB = 8;
 const MAX_VIDEO_SIZE_MB = 50;
 
 // Uploads an image OR a video (detected from the file's type) and returns
-// { url, mediaType }, where mediaType is "image" or "video" — the caller
+// { url, mediaType }, where mediaType is "image" or "video" - the caller
 // needs this to know whether to render an <img> or a <video> later.
 // Cloudinary requires a different endpoint per media type, even for
 // unsigned uploads.
 //
 // `onProgress(percent)` is called as the upload advances (0-100). Uses
 // XMLHttpRequest rather than fetch() specifically because fetch has no
-// built-in upload-progress event — XHR does, and that's what powers the
+// built-in upload-progress event - XHR does, and that's what powers the
 // dashboard's progress bar.
 export function uploadMedia(file, onProgress) {
   return new Promise((resolve, reject) => {
     if (!CLOUD_NAME || !UPLOAD_PRESET) {
       reject(
         new Error(
-          "Cloudinary isn't configured yet — check VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET in your .env file."
+          "Cloudinary isn't configured yet - check VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET in your .env file."
         )
       );
       return;
@@ -82,14 +82,14 @@ export function uploadMedia(file, onProgress) {
       } else {
         reject(
           new Error(
-            "Upload failed — double-check your Cloudinary upload preset is set to 'Unsigned' in the Cloudinary console."
+            "Upload failed - double-check your Cloudinary upload preset is set to 'Unsigned' in the Cloudinary console."
           )
         );
       }
     };
 
     xhr.onerror = () => {
-      reject(new Error("Upload failed — check your internet connection and try again."));
+      reject(new Error("Upload failed - check your internet connection and try again."));
     };
 
     xhr.send(formData);
@@ -97,10 +97,10 @@ export function uploadMedia(file, onProgress) {
 }
 
 // Cloudinary deletion requires a signed request (a backend/API secret),
-// which this client-only setup deliberately doesn't have — so old media
+// which this client-only setup deliberately doesn't have - so old media
 // is simply left in place when an event is deleted or replaced, rather
 // than actively removed. At the Free plan's 25GB, this is a non-issue for
 // a lounge posting occasional event media.
 export async function deleteMedia() {
-  // Intentionally a no-op — see note above.
+  // Intentionally a no-op - see note above.
 }

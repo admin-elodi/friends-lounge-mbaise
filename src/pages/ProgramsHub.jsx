@@ -28,10 +28,10 @@ export default function ProgramsHub() {
           Friends Lounge
         </p>
         <h1 className="text-3xl md:text-5xl font-light font-playfair text-stone-50">
-          Our Programs
+          Programs Hub
         </h1>
         <p className="text-stone-300 mt-4 max-w-xl mx-auto text-sm md:text-base font-light leading-relaxed">
-          What we're doing for our community, today and ahead.
+          What we're doing for our community.
         </p>
       </div>
 
@@ -75,7 +75,7 @@ export default function ProgramsHub() {
             );
           })}
 
-          {/* Placeholder tile — signals room to grow without fabricating content */}
+          {/* Placeholder tile - signals room to grow without fabricating content */}
           <div className="rounded-2xl border-2 border-dashed border-stone-500/40 p-8 min-h-[220px] flex flex-col items-center justify-center text-center text-stone-400">
             <Sparkles size={22} className="mb-3" />
             <p className="text-sm uppercase tracking-widest font-medium">
@@ -84,7 +84,7 @@ export default function ProgramsHub() {
           </div>
         </div>
 
-        {/* EXPANDED DETAIL — the reusable template */}
+        {/* EXPANDED DETAIL - the reusable template */}
         <AnimatePresence>
           {activeProgram && (
             <motion.div

@@ -9,7 +9,7 @@ import occassion from "@/assets/videos/occassion.webm";
 import bar from "@/assets/images/bar.webp";
 
 // How long (ms) each slide holds before auto-advancing. Manual arrows/dots
-// still work at any time and don't fight the auto-advance — clicking one
+// still work at any time and don't fight the auto-advance - clicking one
 // just changes the current slide, the interval keeps ticking from there.
 const SLIDE_DURATION = 7000;
 
@@ -38,7 +38,7 @@ const Hero = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Auto-advance, paused for reduced-motion users — manual controls below
+  // Auto-advance, paused for reduced-motion users - manual controls below
   // still work either way.
   useEffect(() => {
     if (prefersReducedMotion) return;
@@ -93,7 +93,7 @@ const Hero = () => {
         </h1>
       </div>
 
-      {/* ================= SLIDESHOW CONTROLS — arrows flanking dots, bottom-center ================= */}
+      {/* ================= SLIDESHOW CONTROLS - arrows flanking dots, bottom-center ================= */}
       <div className="absolute bottom-7 inset-x-0 z-10 flex items-center justify-center gap-4">
         <button
           onClick={goToPrev}

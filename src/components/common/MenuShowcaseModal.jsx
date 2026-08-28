@@ -76,7 +76,7 @@ export default function MenuShowcaseModal({ activeMenu, onClose }) {
                             <p className="text-xs md:text-sm text-gray-400 italic mt-1">{it.desc}</p>
                           </div>
                           <span className="text-amber-100 font-light text-base md:text-lg whitespace-nowrap">
-                            {it.price || "—"}
+                            {it.price || "-"}
                           </span>
                         </div>
                       ))}

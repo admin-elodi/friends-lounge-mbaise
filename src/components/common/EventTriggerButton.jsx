@@ -1,6 +1,6 @@
 // src/components/common/EventTriggerButton.jsx
 //
-// Just the button UI — safe to render more than once (desktop nav, mobile
+// Just the button UI - safe to render more than once (desktop nav, mobile
 // nav) because it holds no state of its own. All real state lives in
 // EventContext, and the actual modal is rendered exactly once elsewhere
 // (see EventModal.jsx, mounted once in App.jsx).

@@ -115,7 +115,7 @@ export default function BookEvent({ isOpen, onClose }) {
 CLIENT DETAILS
 Name: ${form.name}
 Phone: ${form.phone}
-Email: ${form.email || "—"}
+Email: ${form.email || "-"}
 
 EVENT DETAILS
 Event Space: ${form.selectedSpace}
@@ -128,7 +128,7 @@ EVENT SPACE FEE
 ₦${currentPrice.toLocaleString()}
 
 ADDITIONAL NOTES
-${form.message || "—"}
+${form.message || "-"}
 
 ------------------------------------
 

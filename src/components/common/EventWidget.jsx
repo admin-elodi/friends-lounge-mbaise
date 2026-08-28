@@ -1,6 +1,6 @@
 // src/components/common/EventWidget.jsx
 //
-// Everything — the trigger button, the auth state, and the modal — lives
+// Everything - the trigger button, the auth state, and the modal - lives
 // in ONE component with ONLY local state. No React Context, no separate
 // Provider, no cross-component wiring of any kind. This is mounted
 // exactly ONCE, directly in App.jsx (not inside Header.jsx, which would
@@ -8,10 +8,10 @@
 // some other nav items are).
 //
 // The trigger is a fixed-position floating button (bottom-right), visible
-// on every page, rather than embedded inside the header's nav row — this
+// on every page, rather than embedded inside the header's nav row - this
 // avoids any dependency on exactly where/how many times Header renders.
 //
-// Backend: Appwrite (Auth + Database + Storage, one client) — see
+// Backend: Appwrite (Auth + Database + Storage, one client) - see
 // src/lib/appwrite.js and src/lib/eventApi.js.
 //
 // Verbose console logging is left in deliberately (prefixed
@@ -49,8 +49,8 @@ const emptyForm = {
   title: "",
   subtitle: "",
   tagline: "",
-  eventDate: "", // picker-only, e.g. "2026-08-15" — formatted into dateLabel at save time
-  eventTime: "", // picker-only, e.g. "14:00" — formatted into timeLabel at save time
+  eventDate: "", // picker-only, e.g. "2026-08-15" - formatted into dateLabel at save time
+  eventTime: "", // picker-only, e.g. "14:00" - formatted into timeLabel at save time
   venue: "Friends Lounge, Umuofor-Udo",
   whatsappNumber: "",
   performers: "",
@@ -62,7 +62,7 @@ const emptyForm = {
 
 // Turns a native <input type="date"> value ("2026-08-15") into the same
 // nice display string style the site already uses ("Saturday, August 15,
-// 2026"). The stored field (dateLabel) stays a plain string either way —
+// 2026"). The stored field (dateLabel) stays a plain string either way -
 // this is purely a frontend convenience, no schema change involved.
 function formatDateLabel(isoDate) {
   if (!isoDate) return "";
@@ -71,7 +71,7 @@ function formatDateLabel(isoDate) {
 }
 
 // Turns a native <input type="time"> value ("14:00") into a friendly
-// label — "2 PM", "12 Noon", "12 Midnight", or "2:30 PM" when there are
+// label - "2 PM", "12 Noon", "12 Midnight", or "2:30 PM" when there are
 // minutes to show.
 function formatTimeLabel(isoTime) {
   if (!isoTime) return "";
@@ -155,20 +155,20 @@ export default function EventWidget() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
 
-  // Auto-opens the modal on page load if an event is posted — safe to do
+  // Auto-opens the modal on page load if an event is posted - safe to do
   // now that reads are a single one-shot fetch (fetchCurrentEvent), not a
   // persistent listener with a "was that cache or real data" two-step.
   // The previous version of this feature was removed specifically because
   // it kept firing prematurely off a stale first response; that ambiguity
-  // doesn't exist with a plain fetch — it either succeeds with the real
+  // doesn't exist with a plain fetch - it either succeeds with the real
   // answer or it doesn't resolve at all.
   const hasAutoOpenedRef = useRef(false);
 
-  // A one-time fetch (not a persistent listener) on mount — see the notes
+  // A one-time fetch (not a persistent listener) on mount - see the notes
   // in eventApi.js for why. Retries a couple of times on failure, since a
   // genuine network hiccup during the single request is still possible,
   // but this is a much smaller, simpler mechanism than the old
-  // listener-retry logic — a plain fetch either resolves or rejects, there's
+  // listener-retry logic - a plain fetch either resolves or rejects, there's
   // no "waiting to see if anything ever comes back" ambiguity anymore.
   useEffect(() => {
     let cancelled = false;
@@ -203,7 +203,7 @@ export default function EventWidget() {
     load();
 
     // Appwrite doesn't have a built-in reactive "auth state changed"
-    // listener the way Firebase/Supabase do — check once on mount for an
+    // listener the way Firebase/Supabase do - check once on mount for an
     // existing session, then update state directly after login/logout
     // actions (see handleLogin/handleLogout below).
     account
@@ -232,7 +232,7 @@ export default function EventWidget() {
         subtitle: currentEvent.subtitle || "",
         tagline: currentEvent.tagline || "",
         eventDate: parseDateLabelToIso(currentEvent.dateLabel),
-        eventTime: "", // free-form labels like "12 Noon" can't be reliably reverse-parsed — admin re-picks if editing
+        eventTime: "", // free-form labels like "12 Noon" can't be reliably reverse-parsed - admin re-picks if editing
         venue: currentEvent.venue || "",
         whatsappNumber: currentEvent.whatsappNumber || "",
         performers: (Array.isArray(currentEvent.performers) ? currentEvent.performers : []).join(", "),
@@ -289,7 +289,7 @@ export default function EventWidget() {
     }
 
     // Accept either local format (e.g. 08100900926) or already-international
-    // (e.g. 2348100900926) — normalize local numbers to international
+    // (e.g. 2348100900926) - normalize local numbers to international
     // before saving, since that's what the wa.me chat link needs.
     let cleanedWhatsapp = form.whatsappNumber.replace(/[\s+()-]/g, "");
     if (/^0\d{10}$/.test(cleanedWhatsapp)) {
@@ -297,7 +297,7 @@ export default function EventWidget() {
     }
     if (cleanedWhatsapp && !/^\d{10,15}$/.test(cleanedWhatsapp)) {
       setFormError(
-        "WhatsApp number should be digits only — either local format (e.g. 08100900926) or with country code (e.g. 2348100900926)."
+        "WhatsApp number should be digits only - either local format (e.g. 08100900926) or with country code (e.g. 2348100900926)."
       );
       return;
     }
@@ -336,7 +336,7 @@ export default function EventWidget() {
       await saveCurrentEvent(savedEvent);
 
       console.log("[EventWidget] Save succeeded.");
-      // No live listener anymore (see eventApi.js) — update the local
+      // No live listener anymore (see eventApi.js) - update the local
       // view directly with what we just saved, rather than waiting on a
       // subscription to notice the change.
       setCurrentEvent({ id: "currentEvent", ...savedEvent });
@@ -353,7 +353,7 @@ export default function EventWidget() {
   const handleTakeDown = async () => {
     if (!window.confirm("Take down the current event? This can't be undone.")) return;
     await takeDownCurrentEvent();
-    // Same reasoning as above — update local state directly.
+    // Same reasoning as above - update local state directly.
     setCurrentEvent(null);
     setEditing(false);
   };
@@ -383,13 +383,13 @@ export default function EventWidget() {
       >
         {currentEvent && (
           <>
-            {/* Soft pulsing glow ring — reads as "alive," not urgent */}
+            {/* Soft pulsing glow ring - reads as "alive," not urgent */}
             <motion.span
               className="absolute inset-0 rounded-lg border-2 border-amber-200/70"
               animate={{ scale: [1, 1.1, 1], opacity: [0.7, 0, 0.7] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             />
-            {/* Diagonal shimmer sweep — a touch of "flashy," kept gentle but a bit more frequent */}
+            {/* Diagonal shimmer sweep - a touch of "flashy," kept gentle but a bit more frequent */}
             <motion.span
               className="absolute inset-0"
               style={{
@@ -399,7 +399,7 @@ export default function EventWidget() {
               animate={{ x: ["-120%", "120%"] }}
               transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1, ease: "easeInOut" }}
             />
-            {/* Notification badge — unmistakable "something's here" cue */}
+            {/* Notification badge - unmistakable "something's here" cue */}
             <span className="absolute top-1 right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-stone-900" />
           </>
         )}
@@ -471,7 +471,7 @@ export default function EventWidget() {
                     ) : (
                       <div className="text-center py-6">
                         <Bell size={28} className="text-amber-300 mx-auto mb-3" />
-                        <p className="text-white/85 font-medium">No events right now — stay tuned!</p>
+                        <p className="text-white/85 font-medium">No events right now - stay tuned!</p>
                       </div>
                     ))}
 
@@ -543,7 +543,7 @@ export default function EventWidget() {
                           <AdminField label="Subtitle" value={form.subtitle} onChange={(v) => setForm({ ...form, subtitle: v })} placeholder="Feast of St. Dom." />
                           <AdminField label="Presenter line" value={form.presenter} onChange={(v) => setForm({ ...form, presenter: v })} />
 
-                          {/* Date & time — picked, not typed */}
+                          {/* Date & time - picked, not typed */}
                           <div className="grid grid-cols-2 gap-3">
                             <div>
                               <label className="flex items-center gap-1.5 text-xs text-stone-400 mb-1.5">

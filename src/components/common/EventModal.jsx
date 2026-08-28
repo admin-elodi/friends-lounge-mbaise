@@ -1,9 +1,9 @@
 // src/components/common/EventModal.jsx
 //
-// The actual modal — announcement + admin tabs, login, create/edit form.
+// The actual modal - announcement + admin tabs, login, create/edit form.
 // Mounted exactly ONCE, in App.jsx (not duplicated like the trigger
 // button), reading its open/closed state from EventContext. This is also
-// what now serves as the "auto-shown on page load" display — per
+// what now serves as the "auto-shown on page load" display - per
 // feedback, the separate full-width red banner style has been dropped in
 // favor of always using this same compact modal layout.
 
@@ -56,7 +56,7 @@ const emptyForm = {
 
 // If anything inside the modal throws during render (e.g. an unexpected
 // data shape on an older event document), this shows a real, visible
-// error message instead of the modal just silently failing to appear —
+// error message instead of the modal just silently failing to appear -
 // which is exactly the kind of "nothing happens, no error shown" failure
 // this whole feature has been difficult to diagnose because of.
 class EventModalErrorBoundary extends React.Component {
@@ -209,11 +209,11 @@ export default function EventModal() {
         flyerUrl,
       });
 
-      // Deliberately NOT switching to the "announcement" tab here — after
+      // Deliberately NOT switching to the "announcement" tab here - after
       // posting, the admin stays in the admin view (now showing the
       // "Currently posted" management screen for what was just saved).
       // The public announcement view is only meant to auto-open on an
-      // actual fresh page load, not immediately after the save action —
+      // actual fresh page load, not immediately after the save action -
       // this keeps those two things decoupled.
       setEditing(false);
     } catch (err) {
@@ -290,7 +290,7 @@ export default function EventModal() {
                   ) : (
                     <div className="text-center py-6">
                       <Bell size={28} className="text-amber-300 mx-auto mb-3" />
-                      <p className="text-white/85 font-medium">No events right now — stay tuned!</p>
+                      <p className="text-white/85 font-medium">No events right now - stay tuned!</p>
                     </div>
                   ))}
 
