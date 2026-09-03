@@ -45,6 +45,11 @@ import { fetchCurrentEvent, saveCurrentEvent, takeDownCurrentEvent, uploadMedia 
 const waLink = (number, text) =>
   `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
 
+// ✅ Toggle visibility here — flip to true when ready to deploy the
+// "Open Analytics Dashboard" link in the Admin tab. Same on/off pattern
+// used for section visibility in Home.jsx.
+const SHOW_ANALYTICS_BUTTON = false;
+
 const emptyForm = {
   presenter: "Friends Lounge Udo Presents",
   title: "",
@@ -681,15 +686,17 @@ export default function EventWidget() {
                               Google's own dashboard; GA's own login (with
                               individual Viewer access already set up) is
                               what actually protects the real data. */}
-                          <a
-                            href="https://analytics.google.com"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-stone-800/60 border border-stone-600 hover:bg-stone-700 text-xs text-stone-300 hover:text-white transition-colors"
-                          >
-                            <BarChart3 size={13} />
-                            Open Analytics Dashboard
-                          </a>
+                          {SHOW_ANALYTICS_BUTTON && (
+                            <a
+                              href="https://analytics.google.com"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-stone-800/60 border border-stone-600 hover:bg-stone-700 text-xs text-stone-300 hover:text-white transition-colors"
+                            >
+                              <BarChart3 size={13} />
+                              Open Analytics Dashboard
+                            </a>
+                          )}
                         </div>
                       )}
                     </>
