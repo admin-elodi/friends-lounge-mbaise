@@ -21,6 +21,25 @@ function ScrollToTop() {
   return null;
 }
 
+// Fires a GA4 page_view on every in-app route change. A plain GA4 snippet
+// only ever sees the very first page load in a single-page app like this
+// one - React Router's navigation doesn't trigger a real browser reload -
+// so without this, only the homepage would ever show up in Analytics
+// regardless of which pages people actually visit. Safe no-op if GA
+// hasn't loaded (ad-blockers, or VITE_GA_MEASUREMENT_ID left blank).
+function AnalyticsPageViewTracker() {
+  const location = useLocation();
+  React.useEffect(() => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'page_view', {
+        page_path: location.pathname + location.search,
+        page_title: document.title,
+      });
+    }
+  }, [location]);
+  return null;
+}
+
 const suspenseFallback = (
   <div className="flex items-center justify-center min-h-[200px] py-8">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
@@ -28,10 +47,10 @@ const suspenseFallback = (
 );
 
 // <EventWidget /> is mounted exactly once, right here - not inside
-// Header.jsx. It's fully self-contained (its own Firestore subscription,
-// its own auth state, its own modal), with no Context/Provider layer at
-// all. This is the deliberate architectural change: fewer moving parts,
-// nothing to duplicate, nothing to wire incorrectly across components.
+// Header.jsx. It's fully self-contained (its own data fetch, its own auth
+// state, its own modal), with no Context/Provider layer at all. This is
+// the deliberate architectural change: fewer moving parts, nothing to
+// duplicate, nothing to wire incorrectly across components.
 function App() {
   return (
     <Router>
@@ -49,6 +68,7 @@ function App() {
               </Routes>
             </Suspense>
             <ScrollToTop />
+            <AnalyticsPageViewTracker />
           </main>
           <Footer />
         </div>

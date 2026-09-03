@@ -36,6 +36,7 @@ import {
   Loader2,
   Pencil,
   Trash2,
+  BarChart3,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { account } from "@/lib/appwrite";
@@ -673,6 +674,22 @@ export default function EventWidget() {
                               </button>
                             </div>
                           )}
+
+                          {/* Only reachable after the same real login used for
+                              event management — no separate secret URL, no
+                              second security model to maintain. Just opens
+                              Google's own dashboard; GA's own login (with
+                              individual Viewer access already set up) is
+                              what actually protects the real data. */}
+                          <a
+                            href="https://analytics.google.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-stone-800/60 border border-stone-600 hover:bg-stone-700 text-xs text-stone-300 hover:text-white transition-colors"
+                          >
+                            <BarChart3 size={13} />
+                            Open Analytics Dashboard
+                          </a>
                         </div>
                       )}
                     </>
