@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import grill from "@/assets/videos/grill.webm";
 import chiefs from "@/assets/images/chiefs.webp";
 import fullHouse from "@/assets/videos/full-house.webm";
-import goodFood from "@/assets/images/chips.webp";
+import goodFood from "@/assets/images/beer.webp";
 import occassion from "@/assets/videos/occassion.webm";
 import bar from "@/assets/images/bar.webp";
 
@@ -18,7 +18,7 @@ const slides = [
   { type: "video", src: grill, poster: bar, caption: "Chill & Grill" },
   { type: "image", src: chiefs, caption: "Chief Santome & Guests" },
   { type: "video", src: fullHouse, poster: bar, caption: "Friends Lounge In Session" },
-  { type: "image", src: goodFood, caption: "Good Food" },
+  { type: "image", src: goodFood, caption: "Chilled Drinks" },
   { type: "video", src: occassion, poster: bar, caption: "Good Times" },
   { type: "image", src: bar, caption: "Premium Bar" },
 ];
