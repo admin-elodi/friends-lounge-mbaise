@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UtensilsCrossed, Wine } from "lucide-react";
 
-import chefsBg from "@/assets/images/friends-staff.webp";
+import chefsBg from "@/assets/images/chips.webp";
 import { menu } from "@/data/menuData";
 
 const pages = ["food", "drinks"];
@@ -53,8 +53,8 @@ export default function Menu() {
                   onClick={() => setActivePage(page)}
                   className={`flex items-center gap-2 pl-3 pr-4 py-2.5 rounded-l-lg text-xs md:text-sm font-semibold uppercase tracking-wide shadow-lg transition-all duration-300 ${
                     isActive
-                      ? "bg-amber-50 text-amber-900 translate-x-0"
-                      : "bg-amber-900/80 text-amber-100 translate-x-2 hover:translate-x-0 hover:bg-amber-800/90"
+                      ? "bg-amber-50/80 text-amber-900 backdrop-blur-sm translate-x-0"
+                      : "bg-amber-900/60 text-amber-100 backdrop-blur-sm translate-x-2 hover:translate-x-0 hover:bg-amber-800/80"
                   }`}
                 >
                   <Icon size={15} />
@@ -67,12 +67,11 @@ export default function Menu() {
           {/* The page, and everything that sells the "book" behind it */}
           <div className="relative rounded-r-2xl rounded-l-sm shadow-2xl shadow-black/70">
             {/* Stacked pages underneath - static, peeking out at the right and
-                bottom edges, so the top page reads as one sheet among many
-                rather than a single floating card. */}
-            <div className="hidden md:block absolute inset-0 translate-x-2.5 translate-y-2.5 rotate-[0.6deg] bg-amber-100/90 rounded-r-2xl rounded-l-sm -z-10 shadow-md" />
-            <div className="hidden md:block absolute inset-0 translate-x-[18px] translate-y-[18px] rotate-[1.1deg] bg-amber-200/80 rounded-r-2xl rounded-l-sm -z-20 shadow-md" />
+                bottom edges with lowered opacity to remain transparent */}
+            <div className="hidden md:block absolute inset-0 translate-x-2.5 translate-y-2.5 rotate-[0.6deg] bg-amber-100/25 rounded-r-2xl rounded-l-sm -z-10 shadow-md backdrop-blur-xs" />
+            <div className="hidden md:block absolute inset-0 translate-x-[18px] translate-y-[18px] rotate-[1.1deg] bg-amber-200/20 rounded-r-2xl rounded-l-sm -z-20 shadow-md backdrop-blur-xs" />
             {/* A single, smaller echo for mobile - same idea, lighter touch */}
-            <div className="md:hidden absolute inset-0 translate-x-1.5 translate-y-1.5 rotate-[0.5deg] bg-amber-100/80 rounded-r-2xl rounded-l-sm -z-10 shadow-sm" />
+            <div className="md:hidden absolute inset-0 translate-x-1.5 translate-y-1.5 rotate-[0.5deg] bg-amber-100/20 rounded-r-2xl rounded-l-sm -z-10 shadow-sm backdrop-blur-xs" />
 
             {/* Page-edge ruffle - thin lines along the right edge, mimicking
                 the visible edges of many thin pages in a closed book. */}
@@ -95,7 +94,7 @@ export default function Menu() {
                 exit={{ rotateY: 85, opacity: 0 }}
                 transition={{ duration: 0.65, ease: "easeInOut" }}
                 style={{ transformOrigin: "left center", transformStyle: "preserve-3d" }}
-                className="relative z-20 bg-black/50 border border-white/15 rounded-r-2xl rounded-l-sm max-h-[65vh] md:max-h-[70vh] overflow-y-auto"
+                className="relative z-20 bg-black/35 border border-white/20 rounded-r-2xl rounded-l-sm max-h-[65vh] md:max-h-[70vh] overflow-y-auto shadow-inner"
               >
                 {/* Corner page-curl, desktop only - a subtle fold at the
                     bottom-right corner, another classic "this is paper" cue. */}
@@ -105,13 +104,13 @@ export default function Menu() {
                     style={{ clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
                   />
                   <div
-                    className="absolute inset-0 bg-gradient-to-tl from-amber-50/90 to-orange-100/70"
+                    className="absolute inset-0 bg-gradient-to-tl from-amber-50/40 to-orange-100/30"
                     style={{ clipPath: "polygon(100% 15%, 100% 100%, 15% 100%)" }}
                   />
                 </div>
 
                 <div className="p-6 md:p-10">
-                  <h3 className="text-2xl md:text-3xl font-serif text-white text-center mb-8">
+                  <h3 className="text-2xl md:text-3xl font-serif text-white text-center mb-8 drop-shadow-md">
                     {currentMenu.title}
                   </h3>
 

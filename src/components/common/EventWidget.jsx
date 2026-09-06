@@ -48,7 +48,7 @@ const waLink = (number, text) =>
 // ✅ Toggle visibility here — flip to true when ready to deploy the
 // "Open Analytics Dashboard" link in the Admin tab. Same on/off pattern
 // used for section visibility in Home.jsx.
-const SHOW_ANALYTICS_BUTTON = false;
+const SHOW_ANALYTICS_BUTTON = true;
 
 const emptyForm = {
   presenter: "Friends Lounge Udo Presents",
