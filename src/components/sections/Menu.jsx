@@ -54,7 +54,7 @@ export default function Menu() {
                   className={`flex items-center gap-2 pl-3 pr-4 py-2.5 rounded-l-lg text-xs md:text-sm font-semibold uppercase tracking-wide shadow-lg transition-all duration-300 ${
                     isActive
                       ? "bg-amber-50/80 text-amber-900 backdrop-blur-sm translate-x-0"
-                      : "bg-amber-900/60 text-amber-100 backdrop-blur-sm translate-x-2 hover:translate-x-0 hover:bg-amber-800/80"
+                      : "bg-amber-900/60 text-amber-100 backdrop-blur-lg translate-x-2 hover:translate-x-0 hover:bg-amber-800/80"
                   }`}
                 >
                   <Icon size={15} />
@@ -69,7 +69,7 @@ export default function Menu() {
             {/* Stacked pages underneath - static, peeking out at the right and
                 bottom edges with lowered opacity to remain transparent */}
             <div className="hidden md:block absolute inset-0 translate-x-2.5 translate-y-2.5 rotate-[0.6deg] bg-amber-100/25 rounded-r-2xl rounded-l-sm -z-10 shadow-md backdrop-blur-xs" />
-            <div className="hidden md:block absolute inset-0 translate-x-[18px] translate-y-[18px] rotate-[1.1deg] bg-amber-200/20 rounded-r-2xl rounded-l-sm -z-20 shadow-md backdrop-blur-xs" />
+            <div className="hidden md:block absolute inset-0 translate-x-[18px] translate-y-[18px] rotate-[1.1deg] bg-amber-200/20 rounded-r-2xl rounded-l-sm -z-20 shadow-md backdrop-blur-lg" />
             {/* A single, smaller echo for mobile - same idea, lighter touch */}
             <div className="md:hidden absolute inset-0 translate-x-1.5 translate-y-1.5 rotate-[0.5deg] bg-amber-100/20 rounded-r-2xl rounded-l-sm -z-10 shadow-sm backdrop-blur-xs" />
 
