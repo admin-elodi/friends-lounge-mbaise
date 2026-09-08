@@ -131,7 +131,7 @@ export default function Banner() {
                 </p>
               </div>
 
-              <p className="text-[11px] md:text-sm text-white/80 font-bold">
+              <p className="text-[10px] md:text-sm text-white/80 font-bold">
                 {nextDate} • 2PM–6PM @ Friends Lounge Rooftop Bar
               </p>
 
