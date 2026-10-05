@@ -16,6 +16,7 @@ const navItems = [
   { name: "Friends", path: "/friends" },
   { name: "Mbaise", path: "/mbaise" },
   { name: "Projects", path: "/projects" },
+  { name: "Games", path: "/games" },
 ];
 
 export default function Header() {
@@ -109,15 +110,19 @@ export default function Header() {
       </div>
 
       {/* DESKTOP NAVIGATION */}
-      <nav className="hidden md:flex justify-between items-center px-10 py-4 bg-black/50 backdrop-blur-xl">
-        <ul className="flex gap-10 text-[15px] tracking-wide text-black font-semibold">
+      <nav className="hidden md:flex justify-between items-center px-10 py-3.5 bg-black/60 backdrop-blur-xl border-b border-white/10">
+        <ul className="flex items-center gap-7 text-sm font-medium tracking-wide text-gray-200">
           {navList.map((item) => (
-            <li key={item.path} className="relative">
-              <Link to={item.path} className="hover:text-white transition-colors">
+            <li key={item.path} className="relative group">
+              <Link 
+                to={item.path} 
+                className="hover:text-amber-400 transition-colors py-1 block relative z-10"
+              >
                 {item.name}
               </Link>
+              <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-amber-400 transition-all duration-300 group-hover:w-full" />
               {item.badge && (
-                <span className="absolute -top-2 -right-5 bg-red-600 text-white text-[9px] px-2 py-[2px] rounded-full font-bold tracking-wider shadow-md">
+                <span className="absolute -top-2.5 -right-5 bg-red-600 text-white text-[8px] px-1.5 py-[1px] rounded-full font-bold tracking-wider shadow-md">
                   AD
                 </span>
               )}
@@ -132,23 +137,23 @@ export default function Header() {
         <div className="flex gap-3">
           <button
             onClick={() => setBookEventOpen(true)}
-            className="bg-white text-black px-5 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition-colors"
+            className="bg-white text-black px-5 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition-colors shadow-md"
           >
             Book Event
           </button>
 
           <button
-            onClick={handleOpenFoodOrder} // ← Changed only here
-            className="bg-red-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-red-500 transition-colors"
+            onClick={handleOpenFoodOrder}
+            className="bg-red-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-red-500 transition-colors shadow-md"
           >
             Order Food
           </button>
 
           <button
             onClick={handleSearchClick}
-            className="flex items-center gap-2 border border-green-400 px-4 py-2 rounded-full text-sm text-green-300 hover:bg-green-400 hover:text-black transition-colors"
+            className="flex items-center gap-2 border border-green-400 px-4 py-2 rounded-full text-sm text-green-300 font-medium hover:bg-green-400 hover:text-black transition-colors shadow-md"
           >
-            <Search size={16} />
+            <Search size={16} strokeWidth={2.5} />
             Search
           </button>
         </div>
@@ -184,19 +189,19 @@ export default function Header() {
 
       {/* MOBILE MENU */}
       {mobileMenuOpen && (
-        <div className="absolute left-0 top-full w-full bg-black/92 backdrop-blur-xl border-t border-white/10 shadow-2xl">
-          <ul className="flex flex-col divide-y divide-white/10 text-white font-medium">
+        <div className="absolute left-0 top-full w-full bg-black/95 backdrop-blur-xl border-t border-white/10 shadow-2xl">
+          <ul className="flex flex-col divide-y divide-white/10 text-gray-200 font-medium tracking-wide text-sm">
             {navList.map((item) => (
               <li key={item.path} className="relative">
                 <Link
                   to={item.path}
                   onClick={closeMobileMenu}
-                  className="block px-6 py-3.5 hover:bg-white/10 transition-colors"
+                  className="block px-6 py-3.5 hover:bg-white/10 text-gray-100 hover:text-amber-400 transition-colors"
                 >
                   {item.name}
                 </Link>
                 {item.badge && (
-                  <span className="absolute top-1/2 -translate-y-1/2 right-6 bg-red-600 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold tracking-wider">
+                  <span className="absolute top-1/2 -translate-y-1/2 right-6 bg-red-600 text-white text-[8px] px-2 py-0.5 rounded-full font-bold tracking-wider">
                     AD
                   </span>
                 )}
@@ -207,10 +212,10 @@ export default function Header() {
           <div className="px-6 py-5 space-y-3 border-t border-white/10">
             <button
               onClick={() => {
-                handleOpenFoodOrder(); // ← Changed only here
+                handleOpenFoodOrder();
                 closeMobileMenu();
               }}
-              className="w-full bg-red-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-red-500 transition-colors"
+              className="w-full bg-red-600 text-white py-2.5 rounded-xl font-semibold text-sm hover:bg-red-500 transition-colors tracking-wide"
             >
               Order Food
             </button>
@@ -220,7 +225,7 @@ export default function Header() {
                 setBookEventOpen(true);
                 closeMobileMenu();
               }}
-              className="w-full bg-white py-3 rounded-xl text-black font-semibold text-sm hover:bg-gray-200 transition-colors"
+              className="w-full bg-white py-2.5 rounded-xl text-black font-semibold text-sm hover:bg-gray-200 transition-colors tracking-wide"
             >
               Book Event
             </button>
@@ -270,12 +275,12 @@ export default function Header() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Enter keywords..."
-                className="w-full px-4 py-2 border border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 text-gray-800 placeholder-gray-500"
+                className="w-full px-4 py-2 border border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 text-gray-800 placeholder-gray-500 text-sm"
                 autoFocus
               />
               <button
                 type="submit"
-                className="bg-emerald-500 text-white py-2 rounded-lg font-medium hover:bg-emerald-600 transition-colors shadow-sm"
+                className="bg-emerald-500 text-white py-2 rounded-lg font-medium hover:bg-emerald-600 transition-colors shadow-sm text-sm"
               >
                 Search
               </button>
@@ -286,14 +291,3 @@ export default function Header() {
     </header>
   );
 }
-
-// Optional animation for modal
-<style>{`
-  @keyframes fade-in {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-  .animate-fade-in {
-    animation: fade-in 0.2s ease-out;
-  }
-`}</style>

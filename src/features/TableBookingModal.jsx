@@ -33,7 +33,6 @@ const eventTables = [
     name: "Mbaise Heritage Table",
     caption: "Event & Hangout Table • For 4 persons",
     icon: <FaLeaf />,
-    // Total sum: 5075+4100+8000+6000+12200+8200+5000+3000 = 51,575
     price: 51575,
     menu: [
       { item: "Afang Soup", qty: 1, price: 5075 },
@@ -51,7 +50,6 @@ const eventTables = [
     name: "Birthday Table",
     caption: "Event & Hangout Table • For 4 persons",
     icon: <FaBirthdayCake />,
-    // Total sum: 6100+6100+10300+10150+5000+3000 = 40,650
     price: 40650,
     menu: [
       { item: "Jollof Rice", qty: 2, price: 6100 },
@@ -67,7 +65,6 @@ const eventTables = [
     name: "Igba Nkwu Special",
     caption: "Event & Hangout Table • For 4 persons",
     icon: <FaRing />,
-    // Total sum: 4100+5075+8000+8000+12200+6000+5000+3000 = 51,375
     price: 51375,
     menu: [
       { item: "Egusi Soup", qty: 1, price: 4100 },
@@ -94,7 +91,7 @@ export const TableBookingModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const selected = eventTables.find((t) => t.id === expandedId);
-  const total = selected && selected.price * units;
+  const total = selected ? selected.price * units : 0;
 
   const handleClose = () => {
     onClose();
@@ -157,11 +154,14 @@ Thank you for choosing Friends’ Lounge Mbaise.`;
     handleClose();
   };
 
+  const inputStyle = "w-full p-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm outline-none focus:border-green-400 transition-colors";
+
   return createPortal(
     <>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-md"
         onClick={handleClose}
       />
@@ -193,13 +193,15 @@ Thank you for choosing Friends’ Lounge Mbaise.`;
         <div className="relative h-24 z-10">
           <img
             src={Logo}
-            className="w-20 absolute left-4 top-4"
+            alt="Friends Lounge Logo"
+            className="w-20 absolute left-4 top-4 rounded-full"
           />
         </div>
 
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white z-20"
+          type="button"
+          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white z-20 hover:bg-black/80 transition-colors"
         >
           <FaTimes size={14} />
         </button>
@@ -217,15 +219,16 @@ Thank you for choosing Friends’ Lounge Mbaise.`;
               return (
                 <div key={table.id}>
                   <button
+                    type="button"
                     onClick={() => setExpandedId(open ? null : table.id)}
                     className={`w-full p-4 rounded-xl text-left
                       bg-white/10 border border-white/15
                       flex justify-between items-center
-                      ${open ? "border-green-400/60" : ""}
+                      transition-colors ${open ? "border-green-400/60" : "hover:border-white/30"}
                     `}
                   >
-                    <div className="flex gap-3">
-                      <div className="text-green-400">{table.icon}</div>
+                    <div className="flex gap-3 items-center">
+                      <div className="text-green-400 text-lg">{table.icon}</div>
                       <div>
                         <p className="text-white text-sm font-medium">
                           {table.name}
@@ -234,11 +237,11 @@ Thank you for choosing Friends’ Lounge Mbaise.`;
                       </div>
                     </div>
 
-                    <div className="text-right">
+                    <div className="text-right flex items-center gap-2">
                       <p className="text-green-400 text-sm font-bold">
                         ₦{table.price.toLocaleString()}
                       </p>
-                      {open ? <FaChevronUp className="text-white ml-auto" /> : <FaChevronDown className="text-white ml-auto" />}
+                      {open ? <FaChevronUp className="text-white" /> : <FaChevronDown className="text-white" />}
                     </div>
                   </button>
 
@@ -258,52 +261,53 @@ Thank you for choosing Friends’ Lounge Mbaise.`;
                           </ul>
 
                           <input
-                            placeholder="Customer Name"
+                            placeholder="Customer Name *"
                             value={customerName}
                             onChange={(e) => setCustomerName(e.target.value)}
-                            className="input"
+                            className={inputStyle}
                           />
 
                           <div className="grid grid-cols-2 gap-2">
                             <div className="space-y-1">
-                                <label className="text-[10px] text-gray-400 uppercase ml-1">Date</label>
-                                <input
-                                    type="date"
-                                    value={date}
-                                    onChange={(e) => setDate(e.target.value)}
-                                    className="input"
-                                />
+                              <label className="text-[10px] text-gray-400 uppercase ml-1">Date</label>
+                              <input
+                                type="date"
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                                className={inputStyle}
+                              />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-[10px] text-gray-400 uppercase ml-1">Time</label>
-                                <input
-                                    type="time"
-                                    value={time}
-                                    onChange={(e) => setTime(e.target.value)}
-                                    className="input"
-                                />
+                              <label className="text-[10px] text-gray-400 uppercase ml-1">Time</label>
+                              <input
+                                type="time"
+                                value={time}
+                                onChange={(e) => setTime(e.target.value)}
+                                className={inputStyle}
+                              />
                             </div>
                           </div>
 
                           <div className="space-y-1">
                             <label className="text-[10px] text-gray-400 uppercase ml-1">Number of Tables</label>
                             <input
-                                type="number"
-                                min="1"
-                                value={units}
-                                onChange={(e) => setUnits(Number(e.target.value))}
-                                className="input"
+                              type="number"
+                              min="1"
+                              value={units}
+                              onChange={(e) => setUnits(Number(e.target.value))}
+                              className={inputStyle}
                             />
                           </div>
 
                           <div className="flex justify-between items-center py-2 border-t border-white/10">
                             <span className="text-sm text-gray-300">Total Payable</span>
                             <span className="text-green-400 font-bold text-lg">
-                              ₦{total?.toLocaleString()}
+                              ₦{total.toLocaleString()}
                             </span>
                           </div>
 
                           <button
+                            type="button"
                             onClick={openWhatsApp}
                             className="w-full py-3 bg-green-600 hover:bg-green-500 rounded-xl text-white font-bold flex items-center justify-center gap-2 transition-colors"
                           >
@@ -318,24 +322,10 @@ Thank you for choosing Friends’ Lounge Mbaise.`;
             })}
           </div>
         </div>
-
-        <style>{`
-          .input{
-            width:100%;
-            padding:12px;
-            border-radius:10px;
-            background:rgba(255,255,255,.08);
-            border:1px solid rgba(255,255,255,.15);
-            color:white;
-            font-size:14px;
-            outline: none;
-          }
-          .input:focus {
-            border-color: #4ade80;
-          }
-        `}</style>
       </motion.div>
     </>,
     document.body
   );
 };
+
+export default TableBookingModal;

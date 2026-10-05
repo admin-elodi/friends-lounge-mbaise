@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Share2 } from "lucide-react";
+import { Share2, Check } from "lucide-react";
 import { FaMotorcycle } from "react-icons/fa";
 
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
@@ -42,6 +42,7 @@ const adages = [
 
 export default function Friends() {
   const [bgIndex, setBgIndex] = useState(0);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia?.(
@@ -71,8 +72,31 @@ export default function Friends() {
     deliveryFee,
   } = useFoodOrder();
 
-  // Not wired up yet on purpose - a placeholder for passing an adage along.
-  const handleShare = () => {};
+  const handleShare = async () => {
+    const shareData = {
+      title: "Friends - Words To Live By",
+      text: "Check out these adages and words to live by from Friends' Lounge.",
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Error sharing:", err);
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      } catch (err) {
+        console.error("Failed to copy link:", err);
+      }
+    }
+  };
 
   return (
     <main className="relative min-h-screen w-full overflow-hidden bg-black text-white font-montserrat">
@@ -145,8 +169,17 @@ export default function Friends() {
             onClick={handleShare}
             className="group flex items-center gap-2.5 px-7 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/20 hover:border-amber-200/50 backdrop-blur-sm text-amber-50 text-sm tracking-wide transition-all duration-300"
           >
-            <Share2 size={16} className="text-amber-200/80" />
-            Share Page
+            {copied ? (
+              <>
+                <Check size={16} className="text-green-400" />
+                <span>Link Copied!</span>
+              </>
+            ) : (
+              <>
+                <Share2 size={16} className="text-amber-200/80" />
+                <span>Share Page</span>
+              </>
+            )}
           </button>
         </motion.div>
       </div>

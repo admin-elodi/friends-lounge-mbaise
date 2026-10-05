@@ -1,17 +1,34 @@
 // src/App.jsx
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { MusicProvider } from '@/context/MusicContext';
 import EventWidget from '@/components/common/EventWidget';
 
+// ============================================================================
+// PAGE FEATURE FLAGS
+// Toggle any page to `false` before pushing to production to hide it.
+// Disabled pages will automatically redirect visitors to the homepage ("/");
+// ============================================================================
+const ENABLED_PAGES = {
+  home: true,
+  gallery: true,
+  programsHub: true,
+  friends: true,
+  mbaise: true,
+  projects: false,
+  games: false,
+};
+
 // Lazy load pages to split bundles and reduce initial load
 const Home = lazy(() => import('@/pages/Home'));
+const Gallery = lazy(() => import('@/pages/Gallery'));
 const ProgramsHub = lazy(() => import('@/pages/ProgramsHub'));
 const Friends = lazy(() => import('@/pages/Friends'));
 const Mbaise = lazy(() => import('@/pages/Mbaise'));
 const Projects = lazy(() => import('@/pages/Projects'));
+const Games = lazy(() => import('@/pages/Games'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -21,12 +38,6 @@ function ScrollToTop() {
   return null;
 }
 
-// Fires a GA4 page_view on every in-app route change. A plain GA4 snippet
-// only ever sees the very first page load in a single-page app like this
-// one - React Router's navigation doesn't trigger a real browser reload -
-// so without this, only the homepage would ever show up in Analytics
-// regardless of which pages people actually visit. Safe no-op if GA
-// hasn't loaded (ad-blockers, or VITE_GA_MEASUREMENT_ID left blank).
 function AnalyticsPageViewTracker() {
   const location = useLocation();
   React.useEffect(() => {
@@ -46,11 +57,6 @@ const suspenseFallback = (
   </div>
 );
 
-// <EventWidget /> is mounted exactly once, right here - not inside
-// Header.jsx. It's fully self-contained (its own data fetch, its own auth
-// state, its own modal), with no Context/Provider layer at all. This is
-// the deliberate architectural change: fewer moving parts, nothing to
-// duplicate, nothing to wire incorrectly across components.
 function App() {
   return (
     <Router>
@@ -60,11 +66,35 @@ function App() {
           <main className="flex-grow">
             <Suspense fallback={suspenseFallback}>
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/programs-hub" element={<ProgramsHub />} />
-                <Route path="/friends" element={<Friends />} />
-                <Route path="/mbaise" element={<Mbaise />} />
-                <Route path="/projects" element={<Projects />} />
+                <Route
+                  path="/"
+                  element={ENABLED_PAGES.home ? <Home /> : <Navigate to="/" replace />}
+                />
+                <Route
+                  path="/gallery"
+                  element={ENABLED_PAGES.gallery ? <Gallery /> : <Navigate to="/" replace />}
+                />
+                <Route
+                  path="/programs-hub"
+                  element={ENABLED_PAGES.programsHub ? <ProgramsHub /> : <Navigate to="/" replace />}
+                />
+                <Route
+                  path="/friends"
+                  element={ENABLED_PAGES.friends ? <Friends /> : <Navigate to="/" replace />}
+                />
+                <Route
+                  path="/mbaise"
+                  element={ENABLED_PAGES.mbaise ? <Mbaise /> : <Navigate to="/" replace />}
+                />
+                <Route
+                  path="/projects"
+                  element={ENABLED_PAGES.projects ? <Projects /> : <Navigate to="/" replace />}
+                />
+                <Route
+                  path="/games"
+                  element={ENABLED_PAGES.games ? <Games /> : <Navigate to="/" replace />}
+                />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Suspense>
             <ScrollToTop />

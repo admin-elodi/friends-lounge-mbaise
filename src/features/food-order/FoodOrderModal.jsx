@@ -87,7 +87,6 @@ export const FoodOrderModal = ({ isOpen, close }) => {
   const totalWithDelivery = subtotal + DELIVERY_FEE;
 
   const handleWhatsAppPayment = (e) => {
-    // Prevent double triggers
     e.preventDefault();
     e.stopPropagation();
 
@@ -155,8 +154,8 @@ Thank you for choosing Friends' Lounge Mbaise.`;
           <div className="absolute inset-0 bg-black/60 z-[1]" />
 
           <div className="relative z-10 px-6 pt-6 pb-4">
-            <img src={Logo} className="w-16 h-16 mb-2 rounded-full" />
-            <button onClick={close} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/70 text-white flex items-center justify-center">
+            <img src={Logo} alt="Friends Lounge Logo" className="w-16 h-16 mb-2 rounded-full" />
+            <button onClick={close} type="button" className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/70 text-white flex items-center justify-center">
               <FaTimes />
             </button>
             <h1 className="text-xl font-bold text-white">Order Food</h1>
@@ -174,18 +173,20 @@ Thank you for choosing Friends' Lounge Mbaise.`;
                   </div>
                   <div className="flex items-center gap-3">
                     <button 
+                      type="button"
                       onClick={() => updateQuantity(item.id, -1)} 
                       disabled={qty === 0} 
                       className="w-8 h-8 rounded-full bg-white/10 text-white disabled:opacity-20 flex items-center justify-center"
                     >
-                      <FaMinus size={12} />  {/* ← Centered perfectly */}
+                      <FaMinus size={12} />
                     </button>
                     <span className="text-white font-bold w-4 text-center">{qty}</span>
                     <button 
+                      type="button"
                       onClick={() => addToCart(item)} 
                       className="w-8 h-8 rounded-full bg-yellow-400 text-black flex items-center justify-center"
                     >
-                      <FaPlus size={12} />  {/* ← Centered perfectly */}
+                      <FaPlus size={12} />
                     </button>
                   </div>
                 </div>
@@ -194,17 +195,42 @@ Thank you for choosing Friends' Lounge Mbaise.`;
 
             {cart.length > 0 && (
               <div className="pt-4 space-y-3 border-t border-white/20">
-                <input placeholder="Full Name *" className="custom-input" value={customerInfo.name} onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})} />
-                <input placeholder="Phone Number *" className="custom-input" value={customerInfo.phone} onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})} />
-                <textarea placeholder="Delivery Address *" rows={2} className="custom-input" value={customerInfo.address} onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})} />
-                <input placeholder="Notes (e.g. Extra pepper)" className="custom-input" value={customerInfo.note} onChange={e => setCustomerInfo({...customerInfo, note: e.target.value})} />
+                <input 
+                  placeholder="Full Name *" 
+                  className="w-full p-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm outline-none focus:border-yellow-400" 
+                  value={customerInfo.name} 
+                  onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})} 
+                />
+                <input 
+                  placeholder="Phone Number *" 
+                  className="w-full p-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm outline-none focus:border-yellow-400" 
+                  value={customerInfo.phone} 
+                  onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})} 
+                />
+                <textarea 
+                  placeholder="Delivery Address *" 
+                  rows={2} 
+                  className="w-full p-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm outline-none focus:border-yellow-400" 
+                  value={customerInfo.address} 
+                  onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})} 
+                />
+                <input 
+                  placeholder="Notes (e.g. Extra pepper)" 
+                  className="w-full p-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm outline-none focus:border-yellow-400" 
+                  value={customerInfo.note} 
+                  onChange={e => setCustomerInfo({...customerInfo, note: e.target.value})} 
+                />
 
                 <div className="bg-yellow-400/10 border border-yellow-400/20 p-3 rounded-lg flex justify-between">
                   <span className="text-white">Total (inc. Delivery)</span>
                   <span className="text-yellow-400 font-bold">₦{totalWithDelivery.toLocaleString()}</span>
                 </div>
 
-                <button onClick={handleWhatsAppPayment} className="w-full py-4 bg-green-600 rounded-xl text-white font-bold flex items-center justify-center gap-2">
+                <button 
+                  type="button"
+                  onClick={handleWhatsAppPayment} 
+                  className="w-full py-4 bg-green-600 rounded-xl text-white font-bold flex items-center justify-center gap-2 hover:bg-green-700 transition"
+                >
                   <FaWhatsapp size={20} /> Proceed on WhatsApp
                 </button>
               </div>
@@ -212,15 +238,10 @@ Thank you for choosing Friends' Lounge Mbaise.`;
           </div>
         </motion.div>
       </div>
-
-      <style>{`
-        .custom-input {
-          width: 100%; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.1);
-          border: 1px solid rgba(255,255,255,0.2); color: white; outline: none; font-size: 14px;
-        }
-        .custom-input:focus { border-color: #fbbf24; }
-      `}</style>
     </AnimatePresence>,
     document.body
   );
 };
+
+// Default Export added to support import FoodOrderModal from '...'
+export default FoodOrderModal;

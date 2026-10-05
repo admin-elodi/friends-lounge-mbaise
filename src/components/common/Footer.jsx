@@ -119,8 +119,8 @@ const Footer = () => {
         Friendship Community Progress
       </span>
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-12 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 w-full">
 
           {/* EVENTS COLUMN */}
           <Card className="flex flex-col justify-between w-full">
@@ -302,7 +302,7 @@ const Footer = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="flex flex-col items-start space-y-4 text-base text-gray-300 mt-4 w-full max-w-md mx-auto"
+              className="flex flex-col items-start space-y-4 text-base text-gray-300 mt-4 w-full"
             >
               <div className="flex items-start space-x-3 w-full">
                 <FaMapMarkerAlt className="text-xl text-red-600 mt-1 flex-shrink-0" />
