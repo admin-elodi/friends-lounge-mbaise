@@ -22,14 +22,13 @@ export default function GalleryLightbox({
   onUpdated,
   onDelete,
   onEdit,
+  isAdmin = false,
 }) {
   const [commentName, setCommentName] = useState("");
   const [commentText, setCommentText] = useState("");
   const [copied, setCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
-
-  // Check if this specific item has already been liked in this browser session
   const [hasLiked, setHasLiked] = useState(false);
 
   useEffect(() => {
@@ -62,7 +61,7 @@ export default function GalleryLightbox({
   };
 
   const handleLike = async () => {
-    if (isLiking || hasLiked) return; // Prevent spamming or liking more than once
+    if (isLiking || hasLiked) return;
 
     try {
       setIsLiking(true);
@@ -71,7 +70,6 @@ export default function GalleryLightbox({
         onUpdated({ ...item, likes: updated.likes });
       }
 
-      // Save to localStorage so it stays liked on this device
       const likedItems = JSON.parse(localStorage.getItem("flm_liked_media") || "[]");
       if (!likedItems.includes(item.id)) {
         likedItems.push(item.id);
@@ -116,7 +114,7 @@ export default function GalleryLightbox({
         });
       }
       setCommentText("");
-      setCommentName(""); // Clears the name field after posting!
+      setCommentName("");
     } catch (err) {
       console.error("Failed to submit comment:", err);
       alert("Could not post comment. Please try again.");
@@ -196,25 +194,29 @@ export default function GalleryLightbox({
               )}
 
               <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleEdit}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-amber-400 hover:text-amber-300"
-                  title="Edit details"
-                >
-                  <Edit3 size={13} />
-                  <span>Edit</span>
-                </button>
+                {isAdmin && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleEdit}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-amber-400 hover:text-amber-300"
+                      title="Edit details"
+                    >
+                      <Edit3 size={13} />
+                      <span>Edit</span>
+                    </button>
 
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-red-400 hover:text-red-300"
-                  title="Delete media"
-                >
-                  <Trash2 size={13} />
-                  <span>Delete</span>
-                </button>
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-red-400 hover:text-red-300"
+                      title="Delete media"
+                    >
+                      <Trash2 size={13} />
+                      <span>Delete</span>
+                    </button>
+                  </>
+                )}
 
                 <button
                   type="button"

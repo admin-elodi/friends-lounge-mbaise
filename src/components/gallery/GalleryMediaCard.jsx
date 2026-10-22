@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Heart, MessageSquare, Share2, Check, Play, Star, Trash2, Edit3 } from "lucide-react";
 import galleryService from "@/services/galleryService";
 
-export default function GalleryMediaCard({ item, category, onOpen, onUpdated, onDelete, onEdit }) {
+export default function GalleryMediaCard({ item, category, onOpen, onUpdated, onDelete, onEdit, isAdmin = false }) {
   const [copied, setCopied] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
@@ -129,25 +129,27 @@ export default function GalleryMediaCard({ item, category, onOpen, onUpdated, on
           )}
         </div>
 
-        {/* EDIT / DELETE ACTIONS */}
-        <div className="absolute right-3 top-3 flex items-center gap-1.5 z-10">
-          <button
-            type="button"
-            onClick={handleEdit}
-            className="flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur-md border border-white/10 shadow-md transition hover:bg-amber-500 hover:text-black hover:scale-105"
-            title="Edit media details"
-          >
-            <Edit3 size={12} />
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="flex h-7 w-7 items-center justify-center rounded-full bg-red-600/90 text-white shadow-md transition hover:bg-red-700 hover:scale-105"
-            title="Delete media item"
-          >
-            <Trash2 size={12} />
-          </button>
-        </div>
+        {/* EDIT / DELETE ACTIONS — ADMIN ONLY */}
+        {isAdmin && (
+          <div className="absolute right-3 top-3 flex items-center gap-1.5 z-10">
+            <button
+              type="button"
+              onClick={handleEdit}
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur-md border border-white/10 shadow-md transition hover:bg-amber-500 hover:text-black hover:scale-105"
+              title="Edit media details"
+            >
+              <Edit3 size={12} />
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-red-600/90 text-white shadow-md transition hover:bg-red-700 hover:scale-105"
+              title="Delete media item"
+            >
+              <Trash2 size={12} />
+            </button>
+          </div>
+        )}
 
         {isVideo && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

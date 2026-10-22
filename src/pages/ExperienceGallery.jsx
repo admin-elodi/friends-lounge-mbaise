@@ -55,6 +55,9 @@ export default function ExperienceGallery() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Admin access check (Set to true for authorized staff / session; can be tied to localStorage or login state)
+  const [isAdmin, setIsAdmin] = useState(true);
+
   useEffect(() => {
     let isMounted = true;
     async function loadGallery() {
@@ -176,6 +179,7 @@ export default function ExperienceGallery() {
   );
 
   const handleDeleteMedia = async (mediaId, fileId) => {
+    if (!isAdmin) return;
     await galleryService.deleteMediaItem(mediaId, fileId);
     setItems((prev) => prev.filter((item) => item.id !== mediaId));
     if (activeItem?.id === mediaId) {
@@ -184,6 +188,7 @@ export default function ExperienceGallery() {
   };
 
   const handleEditMedia = (mediaItem) => {
+    if (!isAdmin) return;
     setActiveItem(null);
     setEditingItem(mediaItem);
     setIsAdminOpen(true);
@@ -228,17 +233,19 @@ export default function ExperienceGallery() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setEditingItem(null);
-                setIsAdminOpen(true);
-              }}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-orange-500/50 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-orange-600 transition active:scale-95"
-            >
-              <Plus size={16} className="stroke-[2.5]" />
-              <span>Add Content</span>
-            </button>
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingItem(null);
+                  setIsAdminOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-orange-500/50 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-orange-600 transition active:scale-95"
+              >
+                <Plus size={16} className="stroke-[2.5]" />
+                <span>Add Content</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -246,7 +253,7 @@ export default function ExperienceGallery() {
       {/* MAIN CONTENT AREA */}
       <div className="mx-auto max-w-[98vw] px-3 py-8 sm:px-4 lg:px-8">
         
-        {/* TITLE (Desktop only, Mobile handles this in header) */}
+        {/* TITLE */}
         <div className="hidden sm:flex justify-between items-end mb-6">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">Experience Gallery</h2>
@@ -257,7 +264,7 @@ export default function ExperienceGallery() {
         {/* CLEAN TOOLBAR */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-2 mb-8 flex flex-col lg:flex-row gap-3 justify-between items-stretch lg:items-center">
           
-          {/* Categories (Desktop: Inline Pills, Mobile: Horizontal Scroll) */}
+          {/* Categories */}
           <div className="flex overflow-x-auto hide-scrollbar space-x-1 pb-1 lg:pb-0">
             {categories.map((cat) => {
               const isActive = activeCategory === cat.id;
@@ -305,7 +312,7 @@ export default function ExperienceGallery() {
               )}
             </div>
 
-            {/* Media Type Dropdown (Replaces 3 buttons) */}
+            {/* Media Type Dropdown */}
             <div className="relative">
               <select
                 value={mediaTypeFilter}
@@ -400,7 +407,7 @@ export default function ExperienceGallery() {
                 ? "Try adjusting your filters or search query to find what you're looking for."
                 : "Be the first to share a moment. Admins can upload photos and videos directly into the cloud bucket."}
             </p>
-            {(!searchQuery && activeCategory === 'all' && mediaTypeFilter === 'all') && (
+            {(!searchQuery && activeCategory === 'all' && mediaTypeFilter === 'all' && isAdmin) && (
               <button
                 type="button"
                 onClick={() => {
@@ -422,6 +429,7 @@ export default function ExperienceGallery() {
               <GalleryMediaCard
                 key={item.id}
                 item={item}
+                isAdmin={isAdmin}
                 category={
                   categories.find(
                     (c) => c.id === (item.categoryId || item.category)
@@ -448,6 +456,7 @@ export default function ExperienceGallery() {
       {activeItem && (
         <GalleryLightbox
           item={activeItem}
+          isAdmin={isAdmin}
           category={
             categories.find(
               (c) => c.id === (activeItem.categoryId || activeItem.category)
@@ -468,22 +477,24 @@ export default function ExperienceGallery() {
       )}
 
       {/* ADMIN UPLOAD / EDIT MODAL */}
-      <GalleryAdmin
-        isOpen={isAdminOpen}
-        editingItem={editingItem}
-        onClose={() => {
-          setIsAdminOpen(false);
-          setEditingItem(null);
-        }}
-        categories={categories}
-        onCategoryCreated={(newCat) =>
-          setCategories((prev) => [...prev, newCat])
-        }
-        onMediaUploaded={(newMedia) =>
-          setItems((prev) => [newMedia, ...prev])
-        }
-        onMediaUpdated={handleMediaUpdated}
-      />
+      {isAdmin && (
+        <GalleryAdmin
+          isOpen={isAdminOpen}
+          editingItem={editingItem}
+          onClose={() => {
+            setIsAdminOpen(false);
+            setEditingItem(null);
+          }}
+          categories={categories}
+          onCategoryCreated={(newCat) =>
+            setCategories((prev) => [...prev, newCat])
+          }
+          onMediaUploaded={(newMedia) =>
+            setItems((prev) => [newMedia, ...prev])
+          }
+          onMediaUpdated={handleMediaUpdated}
+        />
+      )}
     </main>
   );
 }
