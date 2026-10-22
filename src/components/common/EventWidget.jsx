@@ -1,22 +1,11 @@
 // src/components/common/EventWidget.jsx
 //
-// Everything - the trigger button, the auth state, and the modal - lives
-// in ONE component with ONLY local state. No React Context, no separate
-// Provider, no cross-component wiring of any kind. This is mounted
-// exactly ONCE, directly in App.jsx (not inside Header.jsx, which would
-// risk duplication if Header is ever re-rendered per breakpoint the way
-// some other nav items are).
-//
-// The trigger is a fixed-position floating button (bottom-right), visible
-// on every page, rather than embedded inside the header's nav row - this
-// avoids any dependency on exactly where/how many times Header renders.
-//
-// Backend: Appwrite (Auth + Database + Storage, one client) - see
-// src/lib/appwrite.js and src/lib/eventApi.js.
-//
-// Verbose console logging is left in deliberately (prefixed
-// "[EventWidget]") so that if anything ever goes wrong again, there's an
-// immediate, unmistakable trail showing exactly how far execution got.
+// The actual modal - announcement + admin tabs, login, create/edit form.
+// Mounted exactly ONCE, in App.jsx (not duplicated like the trigger
+// button), reading its open/closed state from EventContext. This is also
+// what now serves as the "auto-shown on page load" display - per
+// feedback, the separate full-width red banner style has been dropped in
+// favor of always using this same compact modal layout.
 
 import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
@@ -164,18 +153,8 @@ export default function EventWidget() {
   // Auto-opens the modal on page load if an event is posted - safe to do
   // now that reads are a single one-shot fetch (fetchCurrentEvent), not a
   // persistent listener with a "was that cache or real data" two-step.
-  // The previous version of this feature was removed specifically because
-  // it kept firing prematurely off a stale first response; that ambiguity
-  // doesn't exist with a plain fetch - it either succeeds with the real
-  // answer or it doesn't resolve at all.
   const hasAutoOpenedRef = useRef(false);
 
-  // A one-time fetch (not a persistent listener) on mount - see the notes
-  // in eventApi.js for why. Retries a couple of times on failure, since a
-  // genuine network hiccup during the single request is still possible,
-  // but this is a much smaller, simpler mechanism than the old
-  // listener-retry logic - a plain fetch either resolves or rejects, there's
-  // no "waiting to see if anything ever comes back" ambiguity anymore.
   useEffect(() => {
     let cancelled = false;
 
@@ -208,10 +187,6 @@ export default function EventWidget() {
 
     load();
 
-    // Appwrite doesn't have a built-in reactive "auth state changed"
-    // listener the way Firebase/Supabase do - check once on mount for an
-    // existing session, then update state directly after login/logout
-    // actions (see handleLogin/handleLogout below).
     account
       .get()
       .then((u) => {
@@ -238,7 +213,7 @@ export default function EventWidget() {
         subtitle: currentEvent.subtitle || "",
         tagline: currentEvent.tagline || "",
         eventDate: parseDateLabelToIso(currentEvent.dateLabel),
-        eventTime: "", // free-form labels like "12 Noon" can't be reliably reverse-parsed - admin re-picks if editing
+        eventTime: "",
         venue: currentEvent.venue || "",
         whatsappNumber: currentEvent.whatsappNumber || "",
         performers: (Array.isArray(currentEvent.performers) ? currentEvent.performers : []).join(", "),
@@ -294,9 +269,6 @@ export default function EventWidget() {
       return;
     }
 
-    // Accept either local format (e.g. 08100900926) or already-international
-    // (e.g. 2348100900926) - normalize local numbers to international
-    // before saving, since that's what the wa.me chat link needs.
     let cleanedWhatsapp = form.whatsappNumber.replace(/[\s+()-]/g, "");
     if (/^0\d{10}$/.test(cleanedWhatsapp)) {
       cleanedWhatsapp = "234" + cleanedWhatsapp.slice(1);
@@ -341,10 +313,6 @@ export default function EventWidget() {
 
       await saveCurrentEvent(savedEvent);
 
-      console.log("[EventWidget] Save succeeded.");
-      // No live listener anymore (see eventApi.js) - update the local
-      // view directly with what we just saved, rather than waiting on a
-      // subscription to notice the change.
       setCurrentEvent({ id: "currentEvent", ...savedEvent });
       setEditing(false);
     } catch (err) {
@@ -359,65 +327,69 @@ export default function EventWidget() {
   const handleTakeDown = async () => {
     if (!window.confirm("Take down the current event? This can't be undone.")) return;
     await takeDownCurrentEvent();
-    // Same reasoning as above - update local state directly.
     setCurrentEvent(null);
     setEditing(false);
   };
 
   return (
     <>
-      {/* ================= FLOATING TRIGGER BUTTON ================= */}
-      <motion.button
-        onClick={() => {
-          setActiveTab("announcement");
-          setModalOpen(true);
-        }}
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.94 }}
-        animate={
-          currentEvent
-            ? { scale: [1, 1.04, 1] }
-            : {}
-        }
-        transition={currentEvent ? { scale: { duration: 1.8, repeat: Infinity, ease: "easeInOut" } } : {}}
-        aria-label={currentEvent ? `View ${currentEvent.title} announcement` : "Event announcements"}
-        className={`fixed bottom-6 right-6 z-[9998] flex items-center justify-center gap-2 w-36 h-12 rounded-lg cursor-pointer border-2 overflow-hidden transition-all duration-200 ${
-          currentEvent
-            ? "bg-gradient-to-br from-amber-400 via-amber-500 to-red-500 border-amber-200 shadow-[0_3px_0_rgba(0,0,0,0.4),0_0_18px_rgba(251,191,36,0.55)] hover:shadow-[0_2px_0_rgba(0,0,0,0.4),0_0_22px_rgba(251,191,36,0.7)]"
-            : "bg-stone-800 border-stone-600 hover:bg-stone-700 shadow-[0_3px_0_rgba(0,0,0,0.4)] hover:shadow-[0_2px_0_rgba(0,0,0,0.4)]"
-        } hover:translate-y-[1px]`}
+      {/* ================= FLOATING TRIGGER BUTTON (VERTICALLY DRAGGABLE) ================= */}
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: -500, bottom: 200 }}
+        dragElastic={0.1}
+        className="fixed right-6 z-[9998] cursor-grab active:cursor-grabbing"
+        style={{ bottom: "24px" }}
       >
-        {currentEvent && (
-          <>
-            {/* Soft pulsing glow ring - reads as "alive," not urgent */}
-            <motion.span
-              className="absolute inset-0 rounded-lg border-2 border-amber-200/70"
-              animate={{ scale: [1, 1.1, 1], opacity: [0.7, 0, 0.7] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            />
-            {/* Diagonal shimmer sweep - a touch of "flashy," kept gentle but a bit more frequent */}
-            <motion.span
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%)",
-              }}
-              animate={{ x: ["-120%", "120%"] }}
-              transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1, ease: "easeInOut" }}
-            />
-            {/* Notification badge - unmistakable "something's here" cue */}
-            <span className="absolute top-1 right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-stone-900" />
-          </>
-        )}
-        {currentEvent ? (
-          <Calendar size={19} className="relative text-white drop-shadow flex-shrink-0" />
-        ) : (
-          <Bell size={19} className="relative text-white/70 flex-shrink-0" />
-        )}
-        <span className={`relative text-[11px] font-bold tracking-wide leading-tight ${currentEvent ? "text-white" : "text-white/70"}`}>
-          {currentEvent ? "UPCOMING EVENTS" : "EVENTS"}
-        </span>
-      </motion.button>
+        <motion.button
+          onClick={() => {
+            setActiveTab("announcement");
+            setModalOpen(true);
+          }}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.94 }}
+          animate={
+            currentEvent
+              ? { scale: [1, 1.04, 1] }
+              : {}
+          }
+          transition={currentEvent ? { scale: { duration: 1.8, repeat: Infinity, ease: "easeInOut" } } : {}}
+          aria-label={currentEvent ? `View ${currentEvent.title} announcement` : "Event announcements"}
+          className={`flex items-center justify-center gap-2 w-36 h-12 rounded-lg cursor-pointer border-2 overflow-hidden transition-all duration-200 ${
+            currentEvent
+              ? "bg-gradient-to-br from-amber-400 via-amber-500 to-red-500 border-amber-200 shadow-[0_3px_0_rgba(0,0,0,0.4),0_0_18px_rgba(251,191,36,0.55)] hover:shadow-[0_2px_0_rgba(0,0,0,0.4),0_0_22px_rgba(251,191,36,0.7)]"
+              : "bg-stone-800 border-stone-600 hover:bg-stone-700 shadow-[0_3px_0_rgba(0,0,0,0.4)] hover:shadow-[0_2px_0_rgba(0,0,0,0.4)]"
+          }`}
+        >
+          {currentEvent && (
+            <>
+              <motion.span
+                className="absolute inset-0 rounded-lg border-2 border-amber-200/70"
+                animate={{ scale: [1, 1.1, 1], opacity: [0.7, 0, 0.7] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.span
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%)",
+                }}
+                animate={{ x: ["-120%", "120%"] }}
+                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1, ease: "easeInOut" }}
+              />
+              <span className="absolute top-1 right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-stone-900" />
+            </>
+          )}
+          {currentEvent ? (
+            <Calendar size={19} className="relative text-white drop-shadow flex-shrink-0" />
+          ) : (
+            <Bell size={19} className="relative text-white/70 flex-shrink-0" />
+          )}
+          <span className={`relative text-[11px] font-bold tracking-wide leading-tight ${currentEvent ? "text-white" : "text-white/70"}`}>
+            {currentEvent ? "UPCOMING EVENTS" : "EVENTS"}
+          </span>
+        </motion.button>
+      </motion.div>
 
       {/* ================= MODAL ================= */}
       {createPortal(
@@ -680,12 +652,6 @@ export default function EventWidget() {
                             </div>
                           )}
 
-                          {/* Only reachable after the same real login used for
-                              event management — no separate secret URL, no
-                              second security model to maintain. Just opens
-                              Google's own dashboard; GA's own login (with
-                              individual Viewer access already set up) is
-                              what actually protects the real data. */}
                           {SHOW_ANALYTICS_BUTTON && (
                             <a
                               href="https://analytics.google.com"

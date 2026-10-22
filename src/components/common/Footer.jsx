@@ -398,7 +398,7 @@ const Footer = () => {
               Website crafted by
             </p>
             <p className="text-[8px] text-yellow-100 mt-1 font-medium tracking-wider">
-              JUNGLEX
+              JUNGLE X
             </p>
             <a href="tel:+2348136573235" className="text-[10px] text-gray-100 hover:text-gray-300 transition-colors">
               08136573235

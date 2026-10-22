@@ -1,35 +1,17 @@
 // src/lib/eventApi.js
-// Everything about "the current event" - reading it, saving it, taking it
-// down, and uploading its flyer/video - lives in this one file, all
-// through the single Appwrite client.
-//
-// Same "single record" model as every previous version: one fixed row
-// (ID: "current-event") in an Appwrite table represents whatever's
-// currently posted. If the row exists, there's an event; if it doesn't,
-// there isn't. No date-based auto-expiry - the admin takes it down
-// manually.
-//
-// Uses Appwrite's TablesDB service (Tables/Rows/Columns) - the current
-// API, matching what a table created via Appwrite's console actually is.
-// Row attribute (column) names stay camelCase, matching the rest of the
-// app - no snake_case mapping layer needed.
-//
-// Reads use a single plain request, not a persistent real-time
-// subscription - same reasoning as every previous backend attempt: a
-// one-off request/response is far less likely to be interfered with by
-// browser extensions or network filtering than a kept-open streaming
-// connection is.
+// Handles reading, saving, taking down, and uploading event media
+// via standard Appwrite Databases and Storage SDK methods.
 
 import { ID } from "appwrite";
-import { tablesDB, storage } from "@/lib/appwrite";
+import { tablesDB, storage } from "@/lib/appwrite"; // maps to Databases instance
 
 const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
-const TABLE_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID; // holds the Table ID
+const TABLE_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID;
 const BUCKET_ID = import.meta.env.VITE_APPWRITE_BUCKET_ID;
 const ROW_ID = "current-event";
 
 const MAX_IMAGE_SIZE_MB = 8;
-const MAX_VIDEO_SIZE_MB = 45; // Appwrite Free plan's file size cap is 50MB - staying a little under it
+const MAX_VIDEO_SIZE_MB = 45;
 
 function fromRow(row) {
   if (!row) return null;
@@ -51,16 +33,14 @@ function fromRow(row) {
   };
 }
 
-// One-time read of the current event. Returns the event data if one is
-// posted, or `null` if none is (a 404 from Appwrite is treated as "no
-// event," not an error). Throws for any other failure.
+// Fetches the current event document. Returns null if not found (404).
 export async function fetchCurrentEvent() {
   try {
-    const row = await tablesDB.getRow({
-      databaseId: DATABASE_ID,
-      tableId: TABLE_ID,
-      rowId: ROW_ID,
-    });
+    const row = await tablesDB.getDocument(
+      DATABASE_ID,
+      TABLE_ID,
+      ROW_ID
+    );
     return fromRow(row);
   } catch (err) {
     if (err?.code === 404) return null;
@@ -68,36 +48,47 @@ export async function fetchCurrentEvent() {
   }
 }
 
-// Creates or fully replaces the current event in one call - upsertRow
-// handles both cases, so there's no need to check whether the row
-// already exists first.
-export async function saveCurrentEvent(event) {
-  await tablesDB.upsertRow({
-    databaseId: DATABASE_ID,
-    tableId: TABLE_ID,
-    rowId: ROW_ID,
-    data: event,
-  });
-}
-
-// Manually takes the event down - the admin's explicit action.
-export async function takeDownCurrentEvent() {
+// Creates or fully updates the current event document (upsert pattern).
+export async function saveCurrentEvent(eventData) {
   try {
-    await tablesDB.deleteRow({
-      databaseId: DATABASE_ID,
-      tableId: TABLE_ID,
-      rowId: ROW_ID,
-    });
+    // Check if it already exists to decide between update or create
+    await tablesDB.getDocument(DATABASE_ID, TABLE_ID, ROW_ID);
+    
+    // If it exists, update it
+    return await tablesDB.updateDocument(
+      DATABASE_ID,
+      TABLE_ID,
+      ROW_ID,
+      eventData
+    );
   } catch (err) {
-    if (err?.code !== 404) throw err; // already gone is fine
+    if (err?.code === 404) {
+      // If it doesn't exist, create it with the fixed ROW_ID
+      return await tablesDB.createDocument(
+        DATABASE_ID,
+        TABLE_ID,
+        ROW_ID,
+        eventData
+      );
+    }
+    throw err;
   }
 }
 
-// Uploads an image or video and returns { url, mediaType }. Doesn't
-// report a live upload percentage - Appwrite's web SDK doesn't expose
-// that natively, and reimplementing raw upload just for a progress bar
-// wasn't worth the added complexity. The dashboard shows a simple
-// "Uploading…" state instead.
+// Manually takes the event down.
+export async function takeDownCurrentEvent() {
+  try {
+    await tablesDB.deleteDocument(
+      DATABASE_ID,
+      TABLE_ID,
+      ROW_ID
+    );
+  } catch (err) {
+    if (err?.code !== 404) throw err;
+  }
+}
+
+// Uploads media file to storage and returns view URL and type.
 export async function uploadMedia(file) {
   const isVideo = file.type.startsWith("video/");
   const maxSizeMB = isVideo ? MAX_VIDEO_SIZE_MB : MAX_IMAGE_SIZE_MB;

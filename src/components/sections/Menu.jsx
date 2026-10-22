@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UtensilsCrossed, Wine, Search, X } from "lucide-react";
 
-import chefsBg from "@/assets/images/food/suya.webp";
+import chefsBg from "@/assets/images/sunsets.png";
 import { menu } from "@/data/menuData";
 
 const pages = ["food", "drinks"];
@@ -36,7 +36,7 @@ export default function Menu() {
 
   return (
     <section
-      className="relative min-h-[900px] z-30 text-white overflow-hidden border-t border-white"
+      className="relative min-h-[900px] z-30 text-white overflow-hidden border-t border-white/30"
       style={{
         backgroundImage: `url(${chefsBg})`,
         backgroundSize: "cover",
@@ -49,14 +49,9 @@ export default function Menu() {
         <h2 className="text-xl md:text-3xl font-light font-serif tracking-widest text-center drop-shadow-2xl">
           Explore our Menu
         </h2>
-        <p className="text-xl text-yellow-200 mt-4">
-          Search or Scroll Through
-        </p>
 
-       
-
-        {/* MOBILE TOGGLE TABS (Visible only on mobile to prevent overlapping) */}
-        <div className="flex md:hidden gap-2 mt-6 z-40 bg-black/60 p-1.5 rounded-lg border border-amber-500/30 backdrop-blur-md">
+        {/* MOBILE TOGGLE TABS */}
+        <div className="flex md:hidden gap-2 mt-6 z-40 bg-amber-950/80 p-1.5 rounded-lg border border-amber-500/30 shadow-lg backdrop-blur-md">
           {pages.map((page) => {
             const isActive = page === activePage;
             const Icon = page === "food" ? UtensilsCrossed : Wine;
@@ -89,7 +84,7 @@ export default function Menu() {
             style={{ clipPath: "polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%)" }}
           />
 
-          {/* DESKTOP BOOKMARK TABS (Hidden on mobile) */}
+          {/* DESKTOP BOOKMARK TABS */}
           <div className="hidden md:flex absolute -right-4 top-8 z-40 flex-col gap-3">
             {pages.map((page) => {
               const isActive = page === activePage;
@@ -101,8 +96,8 @@ export default function Menu() {
                   onClick={() => setActivePage(page)}
                   className={`flex items-center gap-2 pl-3 pr-4 py-2.5 rounded-l-lg text-sm font-semibold uppercase tracking-wide shadow-lg transition-all duration-300 ${
                     isActive
-                      ? "bg-amber-50/80 text-amber-900 backdrop-blur-sm translate-x-0"
-                      : "bg-amber-900/60 text-amber-100 backdrop-blur-lg translate-x-2 hover:translate-x-0 hover:bg-amber-800/80"
+                      ? "bg-amber-100 text-amber-950 translate-x-0 font-bold"
+                      : "bg-amber-950/80 text-amber-100 translate-x-2 hover:translate-x-0 hover:bg-amber-900"
                   }`}
                 >
                   <Icon size={15} />
@@ -113,24 +108,27 @@ export default function Menu() {
           </div>
 
           {/* Menu Book Body Container */}
-          <div className="relative rounded-2xl md:rounded-r-2xl md:rounded-l-sm shadow-2xl shadow-black/70 bg-black/40 border border-white/20 overflow-hidden z-20">
-            {/* Page depth effects */}
-            <div className="hidden md:block absolute inset-0 translate-x-2.5 translate-y-2.5 rotate-[0.6deg] bg-amber-100/25 rounded-r-2xl rounded-l-sm -z-10 shadow-md backdrop-blur-xs" />
-            <div className="hidden md:block absolute inset-0 translate-x-[18px] translate-y-[18px] rotate-[1.1deg] bg-amber-200/20 rounded-r-2xl rounded-l-sm -z-20 shadow-md backdrop-blur-lg" />
+          <div className="relative rounded-2xl md:rounded-r-2xl md:rounded-l-sm shadow-2xl shadow-black/90 border border-amber-500/30 overflow-hidden z-20">
+            {/* Separate glass backdrop layer to preserve text sharpness */}
+            <div className="absolute inset-0 bg-amber-950/30 backdrop-blur-md z-0" />
+
+            {/* Unified Page depth effects */}
+            <div className="absolute inset-0 translate-x-2 translate-y-2 rotate-[0.5deg] bg-amber-900/30 rounded-r-2xl rounded-l-sm -z-10 shadow-md" />
+            <div className="absolute inset-0 translate-x-[12px] translate-y-[12px] rotate-[1deg] bg-amber-900/15 rounded-r-2xl rounded-l-sm -z-20 shadow-md" />
 
             {/* Spine shadow overlays */}
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-black/50 z-30 pointer-events-none" />
-            <div className="absolute left-0 top-0 bottom-0 w-4 md:w-6 bg-gradient-to-r from-black/45 via-black/15 to-transparent rounded-l-sm z-30 pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-black/60 z-30 pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-4 md:w-6 bg-gradient-to-r from-black/60 via-black/20 to-transparent rounded-l-sm z-30 pointer-events-none" />
 
-            {/* STATIC HEADER & IN-BOOK SEARCH BAR (Safe from overlap) */}
-            <div className="pt-6 md:pt-8 px-4 md:px-10 pb-4 border-b border-white/10 relative z-30 bg-black/20">
-              <h3 className="text-xl md:text-3xl font-serif text-white text-center mb-3 md:mb-4 drop-shadow-md">
+            {/* STATIC HEADER & IN-BOOK SEARCH BAR */}
+            <div className="pt-6 md:pt-8 px-4 md:px-10 pb-4 border-b border-amber-500/20 relative z-30 bg-black/30">
+              <h3 className="text-xl md:text-3xl font-serif text-amber-100 text-center mb-3 md:mb-4 drop-shadow-md">
                 {currentMenu.title}
               </h3>
 
               {/* In-Book Search Bar */}
               <div className="relative w-full max-w-md mx-auto">
-                <div className="relative flex items-center bg-black/80 backdrop-blur-md rounded-lg p-1.5 shadow-xl focus-within:ring-2 focus-within:ring-amber-300 transition-all">
+                <div className="relative flex items-center bg-black/70 rounded-lg p-1.5 shadow-xl border border-amber-500/30 focus-within:ring-2 focus-within:ring-amber-300 transition-all">
                   <div className="pl-2.5 pr-1.5 text-amber-400 flex items-center">
                     <Search size={18} className="stroke-[2.5]" />
                   </div>
@@ -179,23 +177,23 @@ export default function Menu() {
                   <div className="grid grid-cols-1 gap-y-6 md:gap-y-8">
                     {filteredCategories.map((cat, i) => (
                       <div key={i}>
-                        <h4 className="text-base md:text-lg font-semibold text-white border-b border-white/25 pb-2 mb-3 tracking-wide">
+                        <h4 className="text-base md:text-lg font-semibold text-amber-200 border-b border-amber-500/25 pb-2 mb-3 tracking-wide">
                           {cat.title}
                         </h4>
                         <div className="space-y-3">
                           {cat.items.map((item, j) => (
                             <div key={j} className="flex justify-between items-start gap-3">
                               <div>
-                                <p className="text-sm font-medium text-white/95 leading-tight">
+                                <p className="text-sm font-medium text-amber-50 leading-tight">
                                   {item.name}
                                 </p>
                                 {item.desc && (
-                                  <p className="text-xs text-yellow-100/80 italic mt-0.5">
+                                  <p className="text-xs text-amber-200/80 italic mt-0.5">
                                     {item.desc}
                                   </p>
                                 )}
                               </div>
-                              <span className="text-sm text-white font-semibold whitespace-nowrap">
+                              <span className="text-sm text-amber-300 font-semibold whitespace-nowrap">
                                 {item.price || "-"}
                               </span>
                             </div>

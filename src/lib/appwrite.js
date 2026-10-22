@@ -1,27 +1,24 @@
 // src/lib/appwrite.js
-// Single connection to Appwrite - Account (GM login), TablesDB (event
-// text data), and Storage (flyer image/video files) all come from this
-// one client.
-//
-// Uses the TablesDB service (Tables/Rows/Columns), Appwrite's current
-// API - not the older Databases service (Collections/Documents), which
-// is what a project created through Appwrite's newer console UI actually
-// needs.
-//
-// SETUP: copy .env.example to .env and fill in your Appwrite project's
-// values. IMPORTANT: VITE_APPWRITE_ENDPOINT should be the *exact* value
-// shown in your own project's Settings page, not assumed - some Appwrite
-// Cloud projects are pinned to a specific region (e.g.
-// https://fra.cloud.appwrite.io/v1 for Frankfurt) rather than the
-// generic https://cloud.appwrite.io/v1.
+// Single connection to Appwrite - Account, Databases, and Storage
+// all initialized cleanly from this client.
 
-import { Client, Account, TablesDB, Storage } from "appwrite";
+import { Client, Account, Databases, Storage } from "appwrite";
+
+// Fallback values prevent runtime crashes if environment variables fail to load
+const endpoint =
+  import.meta.env.VITE_APPWRITE_ENDPOINT || "https://fra.cloud.appwrite.io/v1";
+const projectId =
+  import.meta.env.VITE_APPWRITE_PROJECT_ID || "6a8df75b001eb8299009";
 
 const client = new Client()
-  .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT)
-  .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID);
+  .setEndpoint(endpoint)
+  .setProject(projectId);
 
 export const account = new Account(client);
-export const tablesDB = new TablesDB(client);
+export const databases = new Databases(client);
+
+// Alias databases as tablesDB to satisfy eventApi.js imports seamlessly
+export const tablesDB = databases;
+
 export const storage = new Storage(client);
 export default client;

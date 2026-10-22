@@ -11,7 +11,7 @@ import {
 
 import poolVideo from "@/assets/videos/pool.webm";
 import barImage from "@/assets/images/bar.webp";
-import liveMusic from "@/assets/videos/abigbo-dance.webm";
+import liveMusic from "@/assets/videos/spray.mp4";
 import friendsBarVideo from "@/assets/videos/friends-bar.webm";
 
 // "A security camera mounted to the ceiling of a building" by Franck V.

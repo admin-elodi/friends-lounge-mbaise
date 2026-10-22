@@ -19,11 +19,10 @@ const FADE_DURATION = 800; // ms, for fading volume in/out on toggle
 const MusicContext = createContext(null);
 
 export function MusicProvider({ children }) {
-  const [isMusicMuted, setIsMusicMuted] = useState(false);
+  const [isMusicMuted, setIsMusicMuted] = useState(true);
   const [hasStartedMusic, setHasStartedMusic] = useState(false);
 
   const audioRef = useRef(null);
-  const hasInteractedRef = useRef(false);
   const fadeIntervalRef = useRef(null);
 
   const fadeAudioTo = useCallback((target, onComplete) => {
@@ -51,67 +50,46 @@ export function MusicProvider({ children }) {
     }, stepTime);
   }, []);
 
-  // Starts the background track the first time the user interacts with the
-  // page. Only a SUCCESSFUL play() consumes the listeners - some gestures
-  // (notably `scroll`) don't count as real user-activation in most browsers
-  // and get silently rejected by the autoplay policy. If we removed the
-  // listeners regardless of success, one failed scroll-triggered attempt
-  // would permanently block every later click/keydown from ever starting
-  // the music. Only give up trying once we've actually succeeded.
+  // Cleanup fade interval on unmount
   useEffect(() => {
-    const startMusic = () => {
-      if (hasInteractedRef.current) return;
-
-      const audio = audioRef.current;
-      if (!audio) return;
-
-      audio.volume = 0;
-      audio
-        .play()
-        .then(() => {
-          hasInteractedRef.current = true;
-          setHasStartedMusic(true);
-          fadeAudioTo(1);
-          removeListeners();
-        })
-        .catch(() => {
-          // Blocked by the browser's autoplay policy for this gesture -
-          // leave the listeners active so the next interaction can retry.
-        });
-    };
-
-    const events = ["click", "scroll", "touchstart", "keydown"];
-    events.forEach((evt) =>
-      window.addEventListener(evt, startMusic, { passive: true })
-    );
-
-    function removeListeners() {
-      events.forEach((evt) => window.removeEventListener(evt, startMusic));
-    }
-
     return () => {
-      removeListeners();
       clearInterval(fadeIntervalRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Music only starts when the user explicitly triggers toggleMusicMute()
   const toggleMusicMute = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    if (isMusicMuted || audio.paused) {
+    if (!hasStartedMusic) {
+      // First explicit click to turn on music
+      audio.volume = 0;
+      audio
+        .play()
+        .then(() => {
+          setHasStartedMusic(true);
+          setIsMusicMuted(false);
+          fadeAudioTo(1);
+        })
+        .catch((err) => {
+          console.error("Playback failed on toggle:", err);
+        });
+    } else if (isMusicMuted || audio.paused) {
+      // Unmute / Resume
       setIsMusicMuted(false);
       if (audio.paused) {
-        audio.volume = 0;
-        audio.play().then(() => setHasStartedMusic(true)).catch(() => {});
+        audio.play().catch(() => {});
       }
       fadeAudioTo(1);
     } else {
+      // Mute
       setIsMusicMuted(true);
-      fadeAudioTo(0);
+      fadeAudioTo(0, () => {
+        audio.pause();
+      });
     }
-  }, [isMusicMuted, fadeAudioTo]);
+  }, [hasStartedMusic, isMusicMuted, fadeAudioTo]);
 
   return (
     <MusicContext.Provider value={{ isMusicMuted, hasStartedMusic, toggleMusicMute }}>

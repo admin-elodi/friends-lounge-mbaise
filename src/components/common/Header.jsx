@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Search, X as CloseIcon } from "lucide-react";
+import { Menu, X, Search } from "lucide-react";
 
 import Logo from "@/assets/images/friends-logo.webp";
 import palmsVideo from "@/assets/videos/palms.webm";
@@ -9,14 +9,16 @@ import Banner from "@/components/sections/Banner";
 import MusicToggle from "@/components/common/MusicToggle";
 import { useFoodOrder, FoodOrderModal } from "@/features/food-order";
 import BookEvent from "@/features/BookEvent";
+import { ENABLED_PAGES } from "@/config/navigation";
 
 const navItems = [
-  { name: "Home", path: "/" },
-  { name: "Programs", path: "/programs-hub", badge: true },
-  { name: "Friends", path: "/friends" },
-  { name: "Mbaise", path: "/mbaise" },
-  { name: "Projects", path: "/projects" },
-  { name: "Games", path: "/games" },
+  { name: "Home", path: "/", key: "home" },
+  { name: "Programs", path: "/programs-hub", badge: true, key: "programsHub" },
+  { name: "Friends", path: "/friends", key: "friends" },
+  { name: "Mbaise", path: "/mbaise", key: "mbaise" },
+  { name: "Projects", path: "/projects", key: "projects" },
+  { name: "Games", path: "/games", key: "games" },
+  { name: "Experience-Gallery", path: "/experience-gallery", key: "experienceGallery" },
 ];
 
 export default function Header() {
@@ -41,12 +43,13 @@ export default function Header() {
     deliveryFee,
   } = useFoodOrder();
 
-  const navList = useMemo(() => navItems, []);
+  const navList = useMemo(() => {
+    return navItems.filter((item) => ENABLED_PAGES[item.key]?.showInNav);
+  }, []);
 
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
-  // Minimal addition: Force scroll to top before opening the food modal
   const handleOpenFoodOrder = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     openFoodOrder();
@@ -58,7 +61,6 @@ export default function Header() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    // Placeholder: Implement actual search logic here (e.g., navigate to search page or fetch results)
     alert(`Searching for: ${searchQuery}`);
     setSearchModalOpen(false);
     setSearchQuery("");
@@ -74,17 +76,15 @@ export default function Header() {
           muted
           playsInline
           preload="auto"
-          // style={{ filter: 'grayscale(100%)' }}
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src={palmsVideo} type="video/mp4" />
+          <source src={palmsVideo} type="video/webm" />
           Your browser does not support the video tag.
         </video>
 
         <div className="absolute inset-0 bg-black/40" />
 
         <div className="relative flex flex-col md:flex-row justify-between items-center px-4 md:px-10 py-6 gap-4 z-10">
-          {/* Logo & Title - Centered text always */}
           <div className="flex flex-col items-center w-full md:w-1/3 text-center">
             <Link to="/">
               <img
@@ -102,7 +102,6 @@ export default function Header() {
             </p>
           </div>
 
-          {/* Banner */}
           <div className="w-full md:w-2/3 flex justify-center relative -mx-4 md:mx-0">
             <Banner />
           </div>
@@ -114,8 +113,8 @@ export default function Header() {
         <ul className="flex items-center gap-7 text-sm font-medium tracking-wide text-gray-200">
           {navList.map((item) => (
             <li key={item.path} className="relative group">
-              <Link 
-                to={item.path} 
+              <Link
+                to={item.path}
                 className="hover:text-amber-400 transition-colors py-1 block relative z-10"
               >
                 {item.name}
@@ -254,7 +253,7 @@ export default function Header() {
 
       <BookEvent isOpen={bookEventOpen} onClose={() => setBookEventOpen(false)} />
 
-      {/* Search Modal - Small & Cute */}
+      {/* Search Modal */}
       {searchModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="relative w-80 max-w-[90%] bg-white/95 rounded-2xl shadow-2xl p-6 animate-fade-in">
@@ -263,7 +262,7 @@ export default function Header() {
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition-colors"
               aria-label="Close search modal"
             >
-              <CloseIcon size={20} />
+              <X size={20} />
             </button>
 
             <form onSubmit={handleSearchSubmit} className="flex flex-col gap-4">
