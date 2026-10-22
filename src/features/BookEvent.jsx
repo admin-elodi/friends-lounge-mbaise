@@ -251,11 +251,11 @@ Account Number: 3001586851
                   name="selectedSpace" 
                   value={form.selectedSpace} 
                   onChange={handleChange} 
-                  className="input bg-zinc-900 text-white border border-white/30"
+                  className="input border border-white/30"
                 >
-                  <option value="">Select Event Space</option>
+                  <option value="" className="bg-zinc-900 text-white">Select Event Space</option>
                   {SPACE_OPTIONS.map((s) => (
-                    <option key={s.name} value={s.name}>
+                    <option key={s.name} value={s.name} className="bg-zinc-900 text-white">
                       {s.name} (₦{s.price.toLocaleString()})
                     </option>
                   ))}
@@ -270,11 +270,11 @@ Account Number: 3001586851
                   name="eventType" 
                   value={form.eventType} 
                   onChange={handleChange} 
-                  className="input bg-zinc-900 text-white border border-white/30"
+                  className="input border border-white/30"
                 >
-                  <option value="">Select Event Type</option>
+                  <option value="" className="bg-zinc-900 text-white">Select Event Type</option>
                   {eventTypes.map((t) => (
-                    <option key={t} value={t}>{t}</option>
+                    <option key={t} value={t} className="bg-zinc-900 text-white">{t}</option>
                   ))}
                 </select>
               </div>
@@ -377,18 +377,6 @@ Account Number: 3001586851
             }
             .input::placeholder{
               color:rgba(255,255,255,.65);
-            }
-
-            /* Better mobile dropdown visibility */
-            select.input {
-              background-color: #18181b !important;
-              color: white !important;
-            }
-            
-            select.input option {
-              background-color: #18181b;
-              color: white;
-              padding: 12px;
             }
           `}</style>
         </motion.div>
