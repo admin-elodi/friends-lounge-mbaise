@@ -8,17 +8,16 @@ import {
   Plus,
   X,
   Layers,
-  Image as ImageIcon,
-  Video as VideoIcon,
-  Grid2X2,
   Sparkles,
-  Filter,
+  Lock,
+  LogOut,
 } from "lucide-react";
 
 import blackPalmsLogo from "@/assets/images/black-palms.webp";
 import GalleryMediaCard from "@/components/gallery/GalleryMediaCard";
 import GalleryLightbox from "@/components/gallery/GalleryLightbox";
 import GalleryAdmin from "@/components/gallery/GalleryAdmin";
+import AdminLoginModal from "@/components/gallery/AdminLoginModal";
 import galleryService from "@/services/galleryService";
 
 const DEFAULT_CATEGORIES = [
@@ -53,10 +52,13 @@ export default function ExperienceGallery() {
   const [activeItem, setActiveItem] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Admin access check (Set to true for authorized staff / session; can be tied to localStorage or login state)
-  const [isAdmin, setIsAdmin] = useState(true);
+  // Securely check local storage for admin authentication status
+  const [isAdmin, setIsAdmin] = useState(() => {
+    return localStorage.getItem("flm_admin_authenticated") === "true";
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -203,47 +205,79 @@ export default function ExperienceGallery() {
     setIsAdminOpen(false);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("flm_admin_authenticated");
+    setIsAdmin(false);
+  };
+
   return (
-    <main className="min-h-screen bg-gray-50 text-slate-800 font-sans antialiased selection:bg-orange-500/20 selection:text-orange-600">
+    <main className="min-h-screen bg-gray-50 text-slate-800 font-sans antialiased selection:bg-orange-500/20 selection:text-orange-600 pb-16">
       {/* HEADER */}
       <header className="sticky top-0 z-30 border-b border-slate-700/30 bg-slate-500/95 text-white backdrop-blur-xl shadow-sm">
-        <div className="mx-auto flex max-w-[98vw] items-center justify-between px-3 py-3 sm:px-4 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border-2 border-orange-500/50 bg-slate-800 shadow-sm">
+        <div className={`mx-auto flex max-w-[98vw] px-3 py-3 sm:px-4 lg:px-8 sm:flex-row sm:items-center sm:justify-between gap-3 ${
+          isAdmin ? "flex-col items-stretch" : "flex-row items-center justify-between gap-2"
+        }`}>
+          
+          {/* Logo and Title Section */}
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="relative flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border-2 border-orange-500/50 bg-slate-800 shadow-sm">
               <img
                 src={blackPalmsLogo}
                 alt="Friends Lounge Logo"
                 className="h-full w-full object-cover object-center"
               />
             </div>
-            <div>
+            <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold tracking-tight text-white leading-none">
+                <h1 className="text-sm sm:text-lg font-bold tracking-tight text-white leading-none whitespace-nowrap overflow-hidden text-ellipsis">
                   Experience Gallery
                 </h1>
-                <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-orange-500/40 border border-orange-500/20 px-2 py-0.5 text-[10px] font-bold text-white">
+                <span className="hidden md:inline-flex items-center gap-1 rounded-full bg-orange-500/40 border border-orange-500/20 px-2 py-0.5 text-[10px] font-bold text-white">
                   <Sparkles size={10} />
                   Live
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-1 font-medium">
+              <p className="text-[10px] sm:text-xs text-slate-300 mt-1 font-medium whitespace-nowrap overflow-hidden text-ellipsis">
                 Friends Lounge Mbaise
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {isAdmin && (
+          {/* Action Buttons Section */}
+          <div className={`flex items-center gap-2 shrink-0 ${
+            isAdmin ? "w-full sm:w-auto justify-between sm:justify-end" : "justify-end"
+          }`}>
+            {isAdmin ? (
+              <div className="flex w-full sm:w-auto items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingItem(null);
+                    setIsAdminOpen(true);
+                  }}
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 rounded-xl bg-orange-500 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-orange-600 transition active:scale-95 whitespace-nowrap"
+                >
+                  <Plus size={15} className="stroke-[2.5]" />
+                  <span>Add Content</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 rounded-xl bg-red-600/90 px-4 py-2 text-xs font-bold text-white hover:bg-red-700 transition shadow-sm whitespace-nowrap"
+                  title="Log out of admin session"
+                >
+                  <LogOut size={15} />
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : (
               <button
                 type="button"
-                onClick={() => {
-                  setEditingItem(null);
-                  setIsAdminOpen(true);
-                }}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-orange-500/50 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-orange-600 transition active:scale-95"
+                onClick={() => setIsLoginOpen(true)}
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-700/60 border border-white/10 px-3 py-2 text-[11px] sm:text-xs font-medium text-slate-200 hover:bg-slate-700 hover:text-white transition whitespace-nowrap"
               >
-                <Plus size={16} className="stroke-[2.5]" />
-                <span>Add Content</span>
+                <Lock size={12} className="sm:w-3.5 sm:h-3.5" />
+                <span>Admin Login</span>
               </button>
             )}
           </div>
@@ -405,21 +439,8 @@ export default function ExperienceGallery() {
             <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">
               {searchQuery || activeCategory !== 'all' || mediaTypeFilter !== 'all' 
                 ? "Try adjusting your filters or search query to find what you're looking for."
-                : "Be the first to share a moment. Admins can upload photos and videos directly into the cloud bucket."}
+                : "No moments have been shared to this category yet."}
             </p>
-            {(!searchQuery && activeCategory === 'all' && mediaTypeFilter === 'all' && isAdmin) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setEditingItem(null);
-                  setIsAdminOpen(true);
-                }}
-                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-orange-500 px-6 py-3 text-sm font-bold text-white shadow-sm hover:bg-orange-600 transition"
-              >
-                <Plus size={16} />
-                <span>Publish First Content</span>
-              </button>
-            )}
           </div>
         )}
 
@@ -495,6 +516,13 @@ export default function ExperienceGallery() {
           onMediaUpdated={handleMediaUpdated}
         />
       )}
+
+      {/* ADMIN LOGIN MODAL */}
+      <AdminLoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onSuccess={() => setIsAdmin(true)}
+      />
     </main>
   );
 }
