@@ -18,8 +18,7 @@ const client = new Client()
 const databases = new Databases(client);
 
 // Environment variable checks with fallbacks for alternative naming conventions
-const DATABASE_ID =
-  import.meta.env.VITE_APPWRITE_DATABASE_ID || '';
+const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID || '';
 
 const MATCHES_COLLECTION =
   import.meta.env.VITE_APPWRITE_MATCHES_COLLECTION_ID ||
@@ -192,7 +191,7 @@ export default function Games({
   const activeMatch = matches.length > 0 ? matches[0] : null;
 
   return (
-    <main className="min-h-screen bg-black text-white px-4 py-8 sm:px-8 sm:py-12">
+    <main className="min-h-screen bg-black text-white px-3 sm:px-8 py-6 sm:py-12">
       <MatchHeaderBanner activeMatch={activeMatch} onOpenAdmin={() => setIsAdminOpen(true)} />
 
       <LiveStreamViewer activeMatch={activeMatch} />

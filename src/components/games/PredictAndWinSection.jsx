@@ -1,17 +1,16 @@
-// src/components/games/PredictAndWinSection.jsx
 import React, { useState, useEffect } from "react";
-import { 
-  Trophy, 
-  HelpCircle, 
-  Send, 
-  CheckCircle2, 
-  Gift, 
-  Award, 
-  GlassWater, 
+import {
+  Trophy,
+  HelpCircle,
+  Send,
+  CheckCircle2,
+  Gift,
+  Award,
+  GlassWater,
   HelpCircle as QuizIcon,
   Loader2,
   Tv,
-  MapPin
+  MapPin,
 } from "lucide-react";
 import { Client, Databases, Query } from "appwrite";
 
@@ -30,27 +29,29 @@ const PRIZE_CATEGORIES = [
   {
     id: "grand",
     title: "Grand Cash Prize",
-    description: "Predict exact score + correctly answer trivia to enter the ₦10,000 weekly prize pool.",
+    description:
+      "Predict exact score + correctly answer trivia to enter the ₦10,000 weekly prize pool.",
     icon: <Trophy className="w-5 h-5 text-amber-400" />,
     tag: "Top Tier",
   },
   {
     id: "drinks",
     title: "Matchday Refreshment",
-    description: "Free bucket of ice-cold drinks or pepper soup bowl redeemable live at the lounge.",
+    description:
+      "Free bucket of ice-cold drinks or pepper soup bowl redeemable live at the lounge.",
     icon: <GlassWater className="w-5 h-5 text-blue-400" />,
     tag: "Popular",
   },
   {
     id: "vip",
     title: "VIP Lounge Pass",
-    description: "Reserved seating with best view of big screens + complimentary matchday snacks.",
+    description:
+      "Reserved seating with best view of big screens + complimentary matchday snacks.",
     icon: <Award className="w-5 h-5 text-purple-400" />,
     tag: "Exclusive",
   },
 ];
 
-// TIER-SPECIFIC TRIVIA BANK (General Knowledge & Fun Trivia per Prize Category)
 const TRIVIA_BY_PRIZE = {
   grand: [
     {
@@ -66,7 +67,7 @@ const TRIVIA_BY_PRIZE = {
       question: "What is the largest continent in the world by land area?",
       options: ["Africa", "North America", "Asia", "Europe"],
       answer: "Asia",
-    }
+    },
   ],
   drinks: [
     {
@@ -82,7 +83,7 @@ const TRIVIA_BY_PRIZE = {
       question: "How many colors make up a standard rainbow?",
       options: ["5", "6", "7", "8"],
       answer: "7",
-    }
+    },
   ],
   vip: [
     {
@@ -98,8 +99,8 @@ const TRIVIA_BY_PRIZE = {
       question: "How long is a standard professional football match (excluding extra time)?",
       options: ["80 mins", "90 mins", "100 mins", "60 mins"],
       answer: "90 mins",
-    }
-  ]
+    },
+  ],
 };
 
 export default function PredictAndWinSection() {
@@ -120,38 +121,31 @@ export default function PredictAndWinSection() {
   const [attendingInPerson, setAttendingInPerson] = useState(true);
   const [submitted, setSubmitted] = useState(false);
 
-  // Helper to pick a question based on prize ID
   const selectQuestionForPrize = (prizeId) => {
-    const questionPool = TRIVIA_BY_PRIZE[prizeId] || TRIVIA_BY_PRIZE.grand;
-    const randomQuestion = questionPool[Math.floor(Math.random() * questionPool.length)];
-    setActiveQuiz(randomQuestion);
+    const pool = TRIVIA_BY_PRIZE[prizeId] || TRIVIA_BY_PRIZE.grand;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    setActiveQuiz(pick);
     setSelectedAnswer("");
     setQuizError(false);
   };
 
-  // Handle prize tab switch
   const handlePrizeChange = (prizeId) => {
     setSelectedPrize(prizeId);
     selectQuestionForPrize(prizeId);
   };
 
-  // Fetch match schedule from Appwrite
   useEffect(() => {
     async function fetchMatches() {
       try {
         setLoading(true);
-        if (!databaseId || !matchesCollectionId) {
-          setLoading(false);
-          return;
-        }
+        if (!databaseId || !matchesCollectionId) return;
 
-        const res = await databases.listDocuments(
-          databaseId,
-          matchesCollectionId,
-          [Query.orderDesc("$createdAt"), Query.limit(10)]
-        );
+        const res = await databases.listDocuments(databaseId, matchesCollectionId, [
+          Query.orderDesc("$createdAt"),
+          Query.limit(10),
+        ]);
 
-        if (res.documents && res.documents.length > 0) {
+        if (res.documents?.length > 0) {
           setMatches(res.documents);
           setSelectedMatchId(res.documents[0].$id);
         }
@@ -162,7 +156,6 @@ export default function PredictAndWinSection() {
       }
     }
 
-    // Set initial trivia for the default prize tier
     selectQuestionForPrize(PRIZE_CATEGORIES[0].id);
     fetchMatches();
   }, []);
@@ -171,26 +164,15 @@ export default function PredictAndWinSection() {
 
   const handleSubmitPrediction = (e) => {
     e.preventDefault();
-
-    if (!activeMatch) {
-      alert("No active match selected.");
-      return;
-    }
-
-    if (!selectedAnswer) {
-      alert("Please answer the qualification quiz question.");
-      return;
-    }
-
+    if (!activeMatch) return alert("No active match selected.");
+    if (!selectedAnswer) return alert("Please answer the qualification quiz question.");
     if (selectedAnswer !== activeQuiz.answer) {
       setQuizError(true);
       return;
     }
-
     setQuizError(false);
 
     const prizeObj = PRIZE_CATEGORIES.find((p) => p.id === selectedPrize);
-
     const message = `⚽ FRIENDS' LOUNGE PREDICT AND WIN ⚽
 
 Match: ${activeMatch.homeTeam} vs ${activeMatch.awayTeam}
@@ -200,7 +182,9 @@ Schedule: ${activeMatch.date} (${activeMatch.time})
 MY PREDICTION: ${activeMatch.homeTeam} ${homeScore} - ${awayScore} ${activeMatch.awayTeam}
 TARGET REWARD: ${prizeObj ? prizeObj.title : "Standard"}
 QUIZ STATUS: PASSED (${activeQuiz.question} -> ${selectedAnswer})
-ATTENDANCE: ${attendingInPerson ? "Watching Live at Friends Lounge 🍻" : "Watching Remotely 📱"}
+ATTENDANCE: ${
+      attendingInPerson ? "Watching Live at Friends Lounge 🍻" : "Watching Remotely 📱"
+    }
 
 PATRON DETAILS:
 Name: ${userName}
@@ -208,8 +192,10 @@ Phone: ${userPhone}
 
 Logged live from Friends Lounge Web App!`;
 
-    const waUrl = `https://wa.me/${WHATSAPP_MSISDN}?text=${encodeURIComponent(message)}`;
-    window.open(waUrl, "_blank");
+    window.open(
+      `https://wa.me/${WHATSAPP_MSISDN}?text=${encodeURIComponent(message)}`,
+      "_blank"
+    );
     setSubmitted(true);
   };
 
@@ -223,17 +209,17 @@ Logged live from Friends Lounge Web App!`;
   }
 
   return (
-    <section className="my-10 bg-gradient-to-br from-neutral-900 via-black to-neutral-900 border border-neutral-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden text-left">
+    <section className="my-8 sm:my-10 bg-gradient-to-br from-neutral-900 via-black to-neutral-900 border border-neutral-800 rounded-2xl p-4 sm:p-8 shadow-2xl relative overflow-hidden text-left">
       <div className="absolute top-0 right-0 w-72 h-72 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 max-w-3xl mx-auto space-y-8">
-        {/* Main Heading */}
+      <div className="relative z-10 max-w-3xl mx-auto space-y-6 sm:space-y-8">
+        {/* Heading */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase">
+          <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-wider uppercase">
             <Trophy className="w-4 h-4 text-amber-400" />
             Matchday Challenge
           </div>
-          <h2 className="text-3xl sm:text-4xl font-semibold text-white tracking-tight uppercase">
+          <h2 className="text-2xl sm:text-4xl font-semibold text-white tracking-tight uppercase">
             Predict and Win
           </h2>
           <p className="text-xs sm:text-sm text-neutral-400 max-w-xl mx-auto">
@@ -241,7 +227,7 @@ Logged live from Friends Lounge Web App!`;
           </p>
         </div>
 
-        {/* 1. MATCH SELECTION */}
+        {/* Step 1: Match selection */}
         {matches.length > 0 ? (
           <div className="space-y-3">
             <label className="text-xs font-bold text-neutral-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -282,12 +268,12 @@ Logged live from Friends Lounge Web App!`;
             </div>
           </div>
         ) : (
-          <div className="p-6 rounded-xl bg-neutral-900/50 border border-neutral-800 text-center text-neutral-400 text-lg">
+          <div className="p-6 rounded-xl bg-neutral-900/50 border border-neutral-800 text-center text-neutral-400 text-sm sm:text-base">
             No live televised matches yet
           </div>
         )}
 
-        {/* 2. PRIZE TIER SELECTION */}
+        {/* Step 2: Prize tier */}
         <div className="space-y-3">
           <label className="text-xs font-bold text-neutral-300 uppercase tracking-wider flex items-center gap-1.5">
             <Gift className="w-4 h-4 text-amber-400" /> Step 2: Choose Target Reward
@@ -314,7 +300,9 @@ Logged live from Friends Lounge Web App!`;
                       </span>
                     </div>
                     <h3 className="text-sm font-bold text-white mb-1">{prize.title}</h3>
-                    <p className="text-xs text-neutral-400 leading-relaxed">{prize.description}</p>
+                    <p className="text-xs text-neutral-400 leading-relaxed">
+                      {prize.description}
+                    </p>
                   </div>
                 </button>
               );
@@ -322,79 +310,47 @@ Logged live from Friends Lounge Web App!`;
           </div>
         </div>
 
-        {/* 3. SCORE PICKER CARD */}
+        {/* Step 3: Scoreline */}
         {activeMatch && (
-          <div className="bg-neutral-900/90 border border-neutral-800 rounded-xl p-5 shadow-lg space-y-4">
+          <div className="bg-neutral-900/90 border border-neutral-800 rounded-xl p-4 sm:p-5 shadow-lg space-y-4">
             <label className="text-xs font-bold text-neutral-300 uppercase tracking-wider block text-center">
               Step 3: Enter Your Scoreline Prediction
             </label>
 
-            <div className="flex items-center justify-center gap-3 sm:gap-8">
-              <span className="text-sm sm:text-base font-bold text-white max-w-[120px] text-right truncate">
+            <div className="flex items-center justify-center gap-2 sm:gap-8">
+              <span className="text-xs sm:text-base font-bold text-white max-w-[90px] sm:max-w-[120px] text-right truncate">
                 {activeMatch.homeTeam}
               </span>
 
-              <div className="flex items-center gap-2 bg-black/60 px-3 sm:px-4 py-2 rounded-lg border border-neutral-800">
-                <button
-                  type="button"
-                  onClick={() => setHomeScore(Math.max(0, homeScore - 1))}
-                  className="w-7 h-7 rounded bg-neutral-800 text-white font-bold hover:bg-neutral-700 flex items-center justify-center"
-                >
-                  -
-                </button>
-                <span className="text-xl font-extrabold text-amber-400 w-6 text-center">
-                  {homeScore}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setHomeScore(homeScore + 1)}
-                  className="w-7 h-7 rounded bg-neutral-800 text-white font-bold hover:bg-neutral-700 flex items-center justify-center"
-                >
-                  +
-                </button>
-
-                <span className="text-neutral-500 mx-1 font-bold">:</span>
-
-                <button
-                  type="button"
-                  onClick={() => setAwayScore(Math.max(0, awayScore - 1))}
-                  className="w-7 h-7 rounded bg-neutral-800 text-white font-bold hover:bg-neutral-700 flex items-center justify-center"
-                >
-                  -
-                </button>
-                <span className="text-xl font-extrabold text-amber-400 w-6 text-center">
-                  {awayScore}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setAwayScore(awayScore + 1)}
-                  className="w-7 h-7 rounded bg-neutral-800 text-white font-bold hover:bg-neutral-700 flex items-center justify-center"
-                >
-                  +
-                </button>
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/60 px-2.5 sm:px-4 py-2 rounded-lg border border-neutral-800">
+                <ScoreStepper value={homeScore} onChange={setHomeScore} />
+                <span className="text-neutral-500 mx-0.5 font-bold">:</span>
+                <ScoreStepper value={awayScore} onChange={setAwayScore} />
               </div>
 
-              <span className="text-sm sm:text-base font-bold text-white max-w-[120px] text-left truncate">
+              <span className="text-xs sm:text-base font-bold text-white max-w-[90px] sm:max-w-[120px] text-left truncate">
                 {activeMatch.awayTeam}
               </span>
             </div>
           </div>
         )}
 
-        {/* 4. DYNAMIC TIER-BASED TRIVIA QUIZ */}
-        <div className="bg-neutral-900/60 border border-neutral-800/80 rounded-xl p-5 space-y-3">
-          <div className="flex items-center justify-between">
+        {/* Step 4: Quiz — cleaner mobile spacing */}
+        <div className="bg-neutral-900/60 border border-neutral-800/80 rounded-xl p-4 sm:p-5 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <label className="text-xs font-bold text-neutral-300 uppercase tracking-wider flex items-center gap-1.5">
               <QuizIcon className="w-4 h-4 text-red-400" /> Step 4: Qualification Quiz
             </label>
-            <span className="text-[10px] uppercase font-semibold text-amber-400 bg-amber-950/40 border border-amber-800/40 px-2 py-0.5 rounded">
+            <span className="self-start sm:self-auto text-[10px] uppercase font-semibold text-amber-400 bg-amber-950/40 border border-amber-800/40 px-2 py-0.5 rounded">
               {activeQuiz.category}
             </span>
           </div>
 
-          <p className="text-xs text-neutral-200 font-medium">{activeQuiz.question}</p>
+          <p className="text-sm text-neutral-200 font-medium leading-relaxed">
+            {activeQuiz.question}
+          </p>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
             {activeQuiz.options.map((option) => (
               <button
                 type="button"
@@ -403,7 +359,7 @@ Logged live from Friends Lounge Web App!`;
                   setSelectedAnswer(option);
                   setQuizError(false);
                 }}
-                className={`p-2.5 rounded-lg text-xs font-semibold text-center border transition ${
+                className={`px-3 py-3 rounded-lg text-xs sm:text-sm font-semibold text-center border transition ${
                   selectedAnswer === option
                     ? "bg-red-600 text-white border-red-500"
                     : "bg-neutral-800/70 text-neutral-300 border-neutral-700 hover:bg-neutral-700"
@@ -415,34 +371,35 @@ Logged live from Friends Lounge Web App!`;
           </div>
 
           {quizError && (
-            <p className="text-xs text-red-400 font-semibold mt-1">
+            <p className="text-xs text-red-400 font-semibold">
               ❌ Incorrect answer! Try selecting the right option to unlock your entry.
             </p>
           )}
         </div>
 
-        {/* 5. IN-PERSON FOOT TRAFFIC INCENTIVE & SUBMISSION */}
+        {/* Step 5: Foot traffic + submit */}
         {submitted ? (
-          <div className="bg-green-500/10 border border-green-500/20 p-5 rounded-xl flex items-center justify-center gap-3 text-green-400 text-sm font-semibold">
-            <CheckCircle2 className="w-5 h-5" /> Prediction logged! Check WhatsApp to verify with lounge staff.
+          <div className="bg-green-500/10 border border-green-500/20 p-5 rounded-xl flex items-center justify-center gap-3 text-green-400 text-sm font-semibold text-center">
+            <CheckCircle2 className="w-5 h-5 shrink-0" />
+            <span>Prediction logged! Check WhatsApp to verify with lounge staff.</span>
           </div>
         ) : (
           <form onSubmit={handleSubmitPrediction} className="space-y-4">
-            {/* Foot Traffic Nudge */}
-            <div className="p-3.5 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <MapPin className="w-4 h-4 text-red-500 shrink-0" />
-                <span className="text-xs text-neutral-300">
+            {/* Watching-from block — question on its own line, buttons below */}
+            <div className="rounded-xl bg-neutral-900 border border-neutral-800 p-4 space-y-3">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                <p className="text-xs sm:text-sm text-neutral-300 leading-snug">
                   Are you watching live at Friends Lounge?
-                </span>
+                </p>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => setAttendingInPerson(true)}
-                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
+                  className={`py-2.5 rounded-lg text-[11px] sm:text-xs font-bold transition text-center ${
                     attendingInPerson
-                      ? "bg-red-600 text-white"
+                      ? "bg-red-600 text-white shadow-lg shadow-red-600/20"
                       : "bg-neutral-800 text-neutral-400 hover:text-white"
                   }`}
                 >
@@ -451,7 +408,7 @@ Logged live from Friends Lounge Web App!`;
                 <button
                   type="button"
                   onClick={() => setAttendingInPerson(false)}
-                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
+                  className={`py-2.5 rounded-lg text-[11px] sm:text-xs font-bold transition text-center ${
                     !attendingInPerson
                       ? "bg-neutral-700 text-white"
                       : "bg-neutral-800 text-neutral-400 hover:text-white"
@@ -491,11 +448,37 @@ Logged live from Friends Lounge Web App!`;
           </form>
         )}
 
-        <p className="text-[11px] text-neutral-500 text-center flex items-center justify-center gap-1.5">
-          <HelpCircle className="w-3.5 h-3.5 text-neutral-400" />
-          Predictions close at kick-off. Physical prize redemptions are verified at Friends Lounge on matchday.
+        <p className="text-[11px] text-neutral-500 text-center flex items-center justify-center gap-1.5 leading-relaxed px-2">
+          <HelpCircle className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+          Predictions close at kick-off. Physical prize redemptions are verified at Friends
+          Lounge on matchday.
         </p>
       </div>
     </section>
+  );
+}
+
+/* Small helper for the score +/- rows to keep JSX tidy */
+function ScoreStepper({ value, onChange }) {
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => onChange(Math.max(0, value - 1))}
+        className="w-7 h-7 rounded bg-neutral-800 text-white font-bold hover:bg-neutral-700 flex items-center justify-center"
+      >
+        -
+      </button>
+      <span className="text-xl font-extrabold text-amber-400 w-6 text-center tabular-nums">
+        {value}
+      </span>
+      <button
+        type="button"
+        onClick={() => onChange(value + 1)}
+        className="w-7 h-7 rounded bg-neutral-800 text-white font-bold hover:bg-neutral-700 flex items-center justify-center"
+      >
+        +
+      </button>
+    </>
   );
 }
