@@ -153,7 +153,7 @@ export default function Menu() {
               </div>
             </div>
 
-            {/* FLIPPING CONTENT AREA (With Custom Scrollbar & 3-Column Grid on Desktop) */}
+            {/* FLIPPING CONTENT AREA (With Custom Scrollbar & MASONRY LAYOUT) */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={activePage}
@@ -166,10 +166,14 @@ export default function Menu() {
                            scrollbar-thin scrollbar-thumb-amber-500/50 scrollbar-track-transparent hover:scrollbar-thumb-amber-500/80"
               >
                 {filteredCategories.length > 0 ? (
-                  /* Changed to 3 columns on large screens to fill the wider space beautifully */
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-12 lg:gap-x-16">
+                  /* 
+                   * THE FIX: Changed from Grid to CSS Columns.
+                   * This creates a natural flow, filling gaps automatically.
+                   */
+                  <div className="columns-1 md:columns-2 lg:columns-3 gap-x-12 lg:gap-x-16">
                     {filteredCategories.map((cat, i) => (
-                      <div key={i}>
+                      /* break-inside-avoid stops categories from splitting across columns */
+                      <div key={i} className="break-inside-avoid mb-10">
                         <h4 className="text-lg md:text-xl font-semibold text-amber-200 border-b border-amber-500/25 pb-2 md:pb-3 mb-4 md:mb-5 tracking-wider uppercase">
                           {cat.title}
                         </h4>

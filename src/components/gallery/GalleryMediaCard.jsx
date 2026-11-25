@@ -1,8 +1,18 @@
+// src/components/gallery/GalleryMediaCard.jsx
 import React, { useState, useEffect } from "react";
 import { Heart, MessageSquare, Share2, Check, Play, Star, Trash2, Edit3 } from "lucide-react";
 import galleryService from "@/services/galleryService";
 
-export default function GalleryMediaCard({ item, category, onOpen, onUpdated, onDelete, onEdit, isAdmin = false }) {
+export default function GalleryMediaCard({ 
+  item, 
+  category, 
+  onOpen, 
+  onUpdated, 
+  onDelete, 
+  onEdit, 
+  onToggleFeatured, // <-- NEW PROP
+  isAdmin = false 
+}) {
   const [copied, setCopied] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
@@ -48,6 +58,12 @@ export default function GalleryMediaCard({ item, category, onOpen, onUpdated, on
     if (window.confirm(`Are you sure you want to delete "${item.title}"?`)) {
       if (onDelete) onDelete(item.id, item.fileId);
     }
+  };
+
+  // NEW: Handle the quick Star toggle
+  const handleFeaturedToggle = (e) => {
+    e.stopPropagation();
+    if (onToggleFeatured) onToggleFeatured(item);
   };
 
   const handleShare = async (e) => {
@@ -129,9 +145,21 @@ export default function GalleryMediaCard({ item, category, onOpen, onUpdated, on
           )}
         </div>
 
-        {/* EDIT / DELETE ACTIONS — ADMIN ONLY */}
+        {/* ADMIN ACTIONS (Quick Star Toggle added) */}
         {isAdmin && (
           <div className="absolute right-3 top-3 flex items-center gap-1.5 z-10">
+            <button
+              type="button"
+              onClick={handleFeaturedToggle}
+              className={`flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-md border shadow-md transition hover:scale-105 ${
+                item.featured 
+                  ? "bg-amber-400 border-amber-400 text-black" 
+                  : "bg-black/70 border-white/10 text-white hover:bg-amber-500 hover:text-black"
+              }`}
+              title={item.featured ? "Remove from Hero Slideshow" : "Add to Hero Slideshow"}
+            >
+              <Star size={12} className={item.featured ? "fill-black" : ""} />
+            </button>
             <button
               type="button"
               onClick={handleEdit}
@@ -186,7 +214,11 @@ export default function GalleryMediaCard({ item, category, onOpen, onUpdated, on
             <span>{item.likes || 0}</span>
           </button>
 
-          <div className="flex items-center gap-1.5 transition hover:text-amber-400">
+          <div 
+            onClick={(e) => { e.stopPropagation(); onOpen(); }}
+            className="flex items-center gap-1.5 transition hover:text-amber-400 cursor-pointer"
+            title="View comments"
+          >
             <MessageSquare size={14} />
             <span>{item.commentsCount || 0}</span>
           </div>

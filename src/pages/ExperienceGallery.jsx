@@ -1,4 +1,4 @@
-// src/components/gallery/ExperienceGallery.jsx
+// src/pages/ExperienceGallery.jsx
 
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -11,7 +11,9 @@ import {
   Sparkles,
   Lock,
   LogOut,
+  MonitorPlay,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import blackPalmsLogo from "@/assets/images/black-palms.webp";
 import GalleryMediaCard from "@/components/gallery/GalleryMediaCard";
@@ -126,6 +128,10 @@ export default function ExperienceGallery() {
     };
   }, [items]);
 
+  const featuredCount = useMemo(() => {
+    return items.filter((i) => i.featured).length;
+  }, [items]);
+
   const visibleItems = useMemo(() => {
     let result = [...items];
 
@@ -203,6 +209,21 @@ export default function ExperienceGallery() {
     }
     setEditingItem(null);
     setIsAdminOpen(false);
+  };
+
+  // ADDED: Easy toggle for Featured (Slideshow) status
+  const handleToggleFeatured = async (mediaItem) => {
+    if (!isAdmin) return;
+    try {
+      const newFeaturedState = !mediaItem.featured;
+      const updated = await galleryService.updateMediaItem(mediaItem.id, {
+        ...mediaItem,
+        featured: newFeaturedState,
+      });
+      setItems((prev) => prev.map((i) => (i.id === updated.id ? updated : i)));
+    } catch (err) {
+      console.error("Failed to toggle featured status", err);
+    }
   };
 
   const handleLogout = () => {
@@ -287,12 +308,26 @@ export default function ExperienceGallery() {
       {/* MAIN CONTENT AREA */}
       <div className="mx-auto max-w-[98vw] px-3 py-8 sm:px-4 lg:px-8">
         
-        {/* TITLE */}
-        <div className="hidden sm:flex justify-between items-end mb-6">
+        {/* TITLE & HERO SLIDESHOW TRACKER */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">Experience Gallery</h2>
             <p className="text-sm text-slate-500 mt-1">Capturing the best moments at Friends Lounge.</p>
           </div>
+          
+          {isAdmin && (
+            <div className="bg-orange-50 border border-orange-200 rounded-xl p-3 sm:p-4 flex items-center gap-4 shadow-sm">
+              <div className="bg-orange-100 p-2 rounded-lg text-orange-600">
+                <MonitorPlay size={20} />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-orange-900 uppercase tracking-wider">Hero Slideshow Tracker</p>
+                <p className="text-sm text-orange-700 font-medium">
+                  <strong className="text-lg text-orange-600">{featuredCount}</strong> items currently featured on the homepage.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* CLEAN TOOLBAR */}
@@ -459,6 +494,7 @@ export default function ExperienceGallery() {
                 onOpen={() => setActiveItem(item)}
                 onEdit={handleEditMedia}
                 onDelete={handleDeleteMedia}
+                onToggleFeatured={handleToggleFeatured}
                 onUpdated={(updated) => {
                   setItems((prev) =>
                     prev.map((i) => (i.id === updated.id ? updated : i))

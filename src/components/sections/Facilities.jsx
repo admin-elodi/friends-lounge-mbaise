@@ -4,10 +4,11 @@ import {
   Waves,
   Wine,
   ShieldCheck,
-  Sparkles,
   Car,
-  Clock,
-  ArrowRight,
+  CalendarCheck,
+  BookOpen,
+  Key,
+  ShieldAlert,
 } from "lucide-react";
 
 import poolVideo from "@/assets/videos/pool.webm";
@@ -15,213 +16,176 @@ import barImage from "@/assets/images/bar.webp";
 import carRentalImage from "@/assets/images/car-rental.jpeg";
 import securityImage from "@/assets/images/security-cctv.webp";
 
+const facilities = [
+  {
+    id: "pool",
+    title: "The Poolside",
+    media: poolVideo,
+    isVideo: true,
+    icon: <Waves size={20} />,
+    tag: "Signature",
+    publicDesc: "Relax your nerves & order drinks poolside.",
+    publicAction: "Reserve Cabana",
+    publicIcon: <CalendarCheck size={16} />,
+  },
+  {
+    id: "bar",
+    title: "Premium Bar",
+    media: barImage,
+    isVideo: false,
+    icon: <Wine size={20} />,
+    publicDesc: "Enjoy curated world-class spirits",
+    publicAction: "Explore Drinks",
+    publicIcon: <BookOpen size={16} />,
+  },
+  {
+    id: "car",
+    title: "Car Rental",
+    media: carRentalImage,
+    isVideo: false,
+    icon: <Car size={20} />,
+    tag: "New",
+    publicDesc: "Rent premium vehicles anytime",
+    publicAction: "Book a Ride",
+    publicIcon: <Key size={16} />,
+  },
+  {
+    id: "security",
+    title: "Elite Security",
+    media: securityImage,
+    isVideo: false,
+    icon: <ShieldCheck size={20} />,
+    publicDesc: "Discreet & professional 24/7 protection",
+    publicAction: "Safety Protocols",
+    publicIcon: <ShieldAlert size={16} />,
+  },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
+};
+
+const itemVariants = {
+  hidden: { y: 40, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
+};
+
 export default function Facilities() {
-  const facilities = [
-    {
-      title: "Swimming Pool",
-      media: poolVideo,
-      type: "video",
-      icon: <Waves className="text-blue-400" />,
-      badge: "Signature",
-      desc: "Our outdoor pool sits at the heart of the lounge. Order drinks poolside, or book a shaded cabana for the afternoon.",
-      hours: "Open daily · 8am – Sunset",
-      cta: "Reserve Poolside",
-    },
-    {
-      title: "Premium Bar",
-      media: barImage,
-      type: "image",
-      icon: <Wine className="text-amber-500" />,
-      desc: "Expertly crafted cocktails and a curated selection of world-class spirits served in an intimate setting.",
-      hours: "Open daily · 12pm – Late",
-      cta: "View Menu",
-    },
-    {
-      title: "Car Rental",
-      media: carRentalImage,
-      type: "flyer",
-      icon: <Car className="text-rose-400" />,
-      badge: "New",
-      desc: "Premium vehicles available for airport transfers, weekend escapes, and city errands. Book directly with our concierge.",
-      hours: "Available 24/7 · By reservation",
-      cta: "Book Vehicle",
-    },
-    {
-      title: "Elite Security",
-      media: securityImage,
-      type: "image",
-      icon: <ShieldCheck className="text-emerald-400" />,
-      desc: "Discreet, professional security ensures a safe environment for you and your vehicle around the clock.",
-      hours: "Active 24 Hours",
-      cta: "Safety Protocols",
-    },
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
-  };
-
   return (
-    <main className="relative min-h-screen bg-[#0f1113] font-montserrat text-gray-100 overflow-x-hidden pb-20">
-      {/* Subtle decorative glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-slate-800/30 to-transparent pointer-events-none" />
-
-      {/* Main container: stripped of max-width to allow near full-bleed cards, only tiny padding */}
-      <div className="w-full px-2 sm:px-6 pt-24 space-y-16 relative z-10">
-
-        {/* Page Header - Centered and spaced out */}
+    <main className="relative min-h-screen bg-[#1a1a1a] font-sans text-zinc-300 overflow-x-hidden pb-24 selection:bg-amber-500/30">
+      
+      <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-10 pt-24 pb-16 text-center">
+        
+        {/* EDITORIAL HEADER */}
         <motion.section
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center space-y-8 pb-4 w-full max-w-5xl mx-auto"
+          transition={{ duration: 0.8 }}
+          className="max-w-4xl mb-16 md:mb-24"
         >
-          <div className="flex justify-center items-center gap-3 mb-2">
-            <Sparkles className="text-amber-400 size-3.5" />
-            <span className="uppercase tracking-[0.4em] text-[10px] font-bold text-gray-500 ml-2">
-              The Ultimate Experience
-            </span>
-          </div>
-          
-          <h1 className="text-xl md:text-5xl lg:text-4xl font-light tracking-[0.15em] text-white uppercase">
-            Facilities & Services
+          <h1 className="text-2xl md:text-5xl lg:text-3xl font-serif text-white leading-tight mb-4">
+            Friends Lounge Facilities
           </h1>
-          
-          <div className="flex items-center justify-center gap-4">
-            <div className="h-[1px] w-12 md:w-24 bg-white/20"></div>
-            <p className="text-gray-400 text-[9px] md:text-sm max-w-xl mx-auto font-light leading-relaxed tracking-[0.25em] uppercase">
-              Enjoy Premium Mbaise Hospitality
-            </p>
-            <div className="h-[1px] w-12 md:w-24 bg-white/20"></div>
-          </div>
+          <p className="text-zinc-400 text-base md:text-lg font-light leading-relaxed max-w-2xl">
+            Discover our Facilities and Operations
+          </p>
         </motion.section>
 
-        {/* Quick Facts Strip */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap items-center justify-center gap-x-4 text-[8px] uppercase font-medium text-gray-500 pb-6 w-full max-w-5xl mx-auto"
-        >
-          <span className="flex items-center gap-2"><Waves className="w-4 h-4 text-blue-400/60" /> Pool</span>
-          <span className="flex items-center gap-2"><Wine className="w-4 h-4 text-amber-500/60" /> Bar</span>
-          <span className="flex items-center gap-2"><Car className="w-4 h-4 text-rose-400/60" /> Car Rental</span>
-          <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-emerald-400/60" /> 24/7 Security</span>
-        </motion.div>
-
-        {/* Strictly Stacked Near Full-Width Facility Cards */}
+        {/* FULL-WIDTH EDITORIAL ROWS */}
         <motion.section
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
-          className="flex flex-col gap-10 w-full"
+          viewport={{ once: true, margin: "-100px" }}
+          className="flex flex-col space-y-6 md:space-y-8"
         >
-          {facilities.map((item, i) => (
-            <motion.div
-              key={i}
+          {facilities.map((item) => (
+            <motion.article
+              key={item.id}
               variants={itemVariants}
-              whileHover={{ y: -4 }}
-              className="group relative bg-[#1a1d20] border border-white/[0.04] rounded-lg sm:rounded-xl overflow-hidden shadow-2xl transition-all duration-300 w-full"
+              className="group relative w-full bg-[#2a2a2a] border border-white/10 rounded-2xl overflow-hidden flex flex-col lg:flex-row transition-all duration-500 hover:border-white/20 hover:shadow-2xl hover:shadow-black/40"
             >
-              {/* Media Section */}
-              <div className="relative w-full overflow-hidden h-72 sm:h-96 md:h-[450px]">
-                {item.type === "video" && (
+              {/* 1. MEDIA SECTION */}
+              <div className="relative w-full lg:w-[45%] h-[250px] lg:h-auto overflow-hidden shrink-0">
+                {item.isVideo ? (
                   <video
                     src={item.media}
                     autoPlay
                     loop
                     muted
                     playsInline
-                    className="w-full h-full object-cover brightness-90 group-hover:brightness-100 transition duration-700"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-105 opacity-90 group-hover:opacity-100"
                   />
-                )}
-
-                {item.type === "image" && (
+                ) : (
                   <img
                     src={item.media}
-                    className="w-full h-full object-cover object-center brightness-90 group-hover:brightness-100 transition duration-700"
                     alt={item.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-105 opacity-90 group-hover:opacity-100"
                   />
                 )}
-
-                {item.type === "flyer" && (
-                  <div className="relative w-full h-full flex items-center justify-center bg-[#0f1113]">
-                    <img
-                      src={item.media}
-                      className="absolute inset-0 w-full h-full object-cover blur-lg opacity-25 scale-110"
-                      aria-hidden="true"
-                      alt=""
-                    />
-                    <img
-                      src={item.media}
-                      className="relative z-10 h-[90%] w-auto object-contain shadow-2xl rounded-sm"
-                      alt={item.title}
-                    />
-                  </div>
-                )}
-
-                {item.badge && (
-                  <div className="absolute top-6 left-6 z-30">
-                    <span className="px-4 py-2 bg-[#1a1d20]/80 backdrop-blur-md border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg">
-                      {item.badge}
+                
+                {/* Gradient Blend */}
+                <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#2a2a2a] via-[#2a2a2a]/40 to-transparent z-10" />
+                
+                {item.tag && (
+                  <div className="absolute top-5 left-5 z-20">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest rounded-md">
+                      {item.tag}
                     </span>
                   </div>
                 )}
-
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1a1d20] via-transparent to-transparent opacity-80 z-20 pointer-events-none" />
               </div>
 
-              {/* Content Section */}
-              <div className="p-8 sm:p-12 md:p-16 space-y-6 relative z-30">
-                <div className="flex items-center gap-4">
-                  <div className="p-3.5 bg-white/[0.03] rounded-xl border border-white/[0.06]">
-                    {item.icon}
+              {/* 2. CONTENT SECTION */}
+              <div className="relative z-20 flex-1 p-6 md:p-10 flex flex-col justify-center">
+                
+                {/* Header Area */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-white/[0.04] border border-white/10 rounded-lg text-amber-500">
+                      {item.icon}
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-serif text-white">
+                      {item.title}
+                    </h3>
                   </div>
-                  <h4 className="text-3xl sm:text-4xl font-semibold text-white tracking-tight">
-                    {item.title}
-                  </h4>
                 </div>
-
-                <div className="flex items-center gap-2 text-[11px] font-semibold text-amber-500/90 uppercase tracking-widest">
-                  <Clock className="w-3.5 h-3.5" />
-                  {item.hours}
-                </div>
-
-                <p className="text-gray-400 text-sm sm:text-base leading-relaxed font-light max-w-5xl">
-                  {item.desc}
+                
+                {/* Public-facing Description */}
+                <p className="text-sm md:text-base text-zinc-200 leading-relaxed max-w-2xl mt-2">
+                  {item.publicDesc}
                 </p>
 
-                <div className="pt-8 border-t border-white/[0.06] mt-4">
-                  <button className="flex items-center gap-3 text-[11px] font-bold text-white/70 hover:text-white uppercase tracking-[0.2em] transition-colors group/btn">
-                    {item.cta}
-                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1.5 transition-transform" />
+                {/* Bottom Actions Row */}
+                <div className="mt-8 flex justify-start">
+                  <button className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-6 py-2.5 rounded-lg font-semibold text-sm transition-all shadow-lg hover:shadow-amber-500/20 w-full sm:w-auto">
+                    {item.publicIcon}
+                    {item.publicAction}
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </motion.article>
           ))}
         </motion.section>
 
-        {/* Footer Detail */}
+        {/* BOTTOM NOTE */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          className="text-center py-12"
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4"
         >
-          <p className="text-gray-600 text-[10px] uppercase tracking-[0.4em] font-medium">
+          <p className="text-zinc-400 text-xs tracking-widest uppercase">
             Exclusively Friends' Lounge
           </p>
+          <p className="text-zinc-500 text-xs font-light">
+            Mbaise, Imo State.
+          </p>
         </motion.div>
+
       </div>
     </main>
   );

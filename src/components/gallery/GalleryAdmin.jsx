@@ -1,3 +1,4 @@
+// src/components/gallery/GalleryAdmin.jsx
 import React, { useState, useEffect } from "react";
 import { X, Upload, Plus, Sparkles, FileImage, Link as LinkIcon, Edit3, Loader2 } from "lucide-react";
 import galleryService from "@/services/galleryService";
@@ -22,7 +23,6 @@ export default function GalleryAdmin({
   const [selectedFile, setSelectedFile] = useState(null);
   const [mediaType, setMediaType] = useState("image");
   const [categoryId, setCategoryId] = useState(categories[0]?.id || "place");
-  const [featured, setFeatured] = useState(false);
 
   // Category State
   const [catName, setCatName] = useState("");
@@ -36,7 +36,6 @@ export default function GalleryAdmin({
       setMediaUrl(editingItem.mediaUrl || "");
       setMediaType(editingItem.mediaType || "image");
       setCategoryId(editingItem.categoryId || editingItem.category || categories[0]?.id || "place");
-      setFeatured(!!editingItem.featured);
       setUploadMode("url");
     } else {
       setTitle("");
@@ -45,7 +44,6 @@ export default function GalleryAdmin({
       setSelectedFile(null);
       setMediaType("image");
       setCategoryId(categories[0]?.id || "place");
-      setFeatured(false);
       setUploadMode("file");
     }
   }, [editingItem, categories, isOpen]);
@@ -77,7 +75,6 @@ export default function GalleryAdmin({
           mediaType,
           categoryId,
           gbpCategory: selectedCatObj?.gbpCategory || "ADDITIONAL",
-          featured,
         });
         if (onMediaUpdated) onMediaUpdated(updated);
       } else {
@@ -89,7 +86,6 @@ export default function GalleryAdmin({
             mediaType,
             categoryId,
             gbpCategory: selectedCatObj?.gbpCategory || "ADDITIONAL",
-            featured,
           },
           selectedFile
         );
@@ -289,19 +285,6 @@ export default function GalleryAdmin({
                 placeholder="Short caption for viewers..."
                 className="w-full rounded-xl border border-white/10 bg-zinc-800/60 px-3.5 py-2 text-white placeholder:text-zinc-500 focus:border-amber-400 focus:outline-none"
               />
-            </div>
-
-            <div className="flex items-center gap-2 pt-1">
-              <input
-                type="checkbox"
-                id="admin-featured"
-                checked={featured}
-                onChange={(e) => setFeatured(e.target.checked)}
-                className="rounded border-zinc-700 bg-zinc-800 text-amber-500 focus:ring-amber-400"
-              />
-              <label htmlFor="admin-featured" className="text-zinc-300 font-medium">
-                Feature on Lounge Showcase
-              </label>
             </div>
 
             <button

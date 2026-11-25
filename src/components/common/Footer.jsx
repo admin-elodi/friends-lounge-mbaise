@@ -394,14 +394,14 @@ const Footer = () => {
             transition={{ delay: 1 }}
             className="mt-16 pt-8 border-t border-white/5 text-center"
           >
-            <p className="text-[10px] text-white tracking-widest font-light">
+            <p className="text-[12px] text-white tracking-widest font-light">
               Website crafted by
             </p>
-            <p className="text-[8px] text-yellow-100 mt-1 font-medium tracking-wider">
+            <p className="text-[12px] text-yellow-100 mt-1 font-medium tracking-wider">
               JUNGLE X
             </p>
-            <a href="tel:+2348136573235" className="text-[10px] text-gray-100 hover:text-gray-300 transition-colors">
-              08136573235
+            <a href="tel:+2348136573235" className="text-[12px] text-gray-100 hover:text-gray-300 transition-colors">
+              0813 657 3235
             </a>
           </motion.div>
         </motion.div>
