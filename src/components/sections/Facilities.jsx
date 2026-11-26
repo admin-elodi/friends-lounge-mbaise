@@ -75,7 +75,7 @@ export default function Facilities() {
   return (
     <main className="relative min-h-screen bg-[#1a1a1a] font-sans text-zinc-300 overflow-x-hidden pb-24 selection:bg-amber-500/30">
       
-      <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-10 pt-24 pb-16 text-center">
+      <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-10 pt-24 pb-16">
         
         {/* EDITORIAL HEADER */}
         <motion.section
@@ -83,9 +83,9 @@ export default function Facilities() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="max-w-4xl mb-16 md:mb-24"
+          className="w-full flex flex-col items-center justify-center text-center mb-16 md:mb-24"
         >
-          <h1 className="text-2xl md:text-5xl lg:text-3xl font-serif text-white leading-tight mb-4">
+          <h1 className="text-2xl md:text-5xl lg:text-4xl font-serif text-white leading-tight mb-4">
             Friends Lounge Facilities
           </h1>
           <p className="text-zinc-400 text-base md:text-lg font-light leading-relaxed max-w-2xl">
@@ -139,7 +139,7 @@ export default function Facilities() {
               </div>
 
               {/* 2. CONTENT SECTION */}
-              <div className="relative z-20 flex-1 p-6 md:p-10 flex flex-col justify-center">
+              <div className="relative z-20 flex-1 p-6 md:p-10 flex flex-col justify-center text-left">
                 
                 {/* Header Area */}
                 <div className="flex items-center justify-between mb-3">
@@ -154,7 +154,7 @@ export default function Facilities() {
                 </div>
                 
                 {/* Public-facing Description */}
-                <p className="text-sm md:text-base text-zinc-200 leading-relaxed max-w-2xl mt-2">
+                <p className="text-sm md:text-base text-zinc-200 leading-relaxed max-w-2xl mt-2 text-left">
                   {item.publicDesc}
                 </p>
 
